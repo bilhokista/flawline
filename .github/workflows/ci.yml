@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+
+  scaffold:
+    # The templates the tool ships must survive the tool's own checker.
+    # Without this, a template edit can quietly break every new project.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: init and check a fresh project
+        run: |
+          mkdir -p /tmp/fresh
+          cd /tmp/fresh
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" check
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" status
