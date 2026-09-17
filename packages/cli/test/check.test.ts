@@ -26,8 +26,14 @@ function claim(overrides: ClaimOverrides = {}): Claim {
   };
 }
 
+/** Evidence that stops at `indicated`, whatever the count. */
 function interviews(n: number): Evidence[] {
   return [{ method: 'interview', source: 'research/interviews.md', n }];
+}
+
+/** Evidence that can carry a claim all the way to `validated`. */
+function payments(n: number): Evidence[] {
+  return [{ method: 'payment', source: 'billing/stripe.md', n }];
 }
 
 function thesis(claims: readonly Claim[], gates: Thesis['gates'] = []): Thesis {
@@ -64,14 +70,14 @@ describe('evidence requirements', () => {
   });
 
   test('rejects validated below the default observation bar', () => {
-    const findings = check(thesis([claim({ confidence: 'validated', evidence: interviews(4) })]));
+    const findings = check(thesis([claim({ confidence: 'validated', evidence: payments(4) })]));
 
     expect(codes(findings)).toEqual(['insufficient-observations']);
     expect(findings[0]?.message).toContain('requires 5');
   });
 
   test('accepts validated at the default observation bar', () => {
-    const findings = check(thesis([claim({ confidence: 'validated', evidence: interviews(5) })]));
+    const findings = check(thesis([claim({ confidence: 'validated', evidence: payments(5) })]));
 
     expect(findings).toEqual([]);
   });
@@ -82,8 +88,8 @@ describe('evidence requirements', () => {
         claim({
           confidence: 'validated',
           evidence: [
-            { method: 'interview', source: 'a.md', n: 3 },
-            { method: 'interview', source: 'b.md', n: 2 },
+            { method: 'payment', source: 'a.md', n: 3 },
+            { method: 'payment', source: 'b.md', n: 2 },
           ],
         }),
       ]),
@@ -109,7 +115,7 @@ describe('evidence requirements', () => {
   test('honours a stricter per-stage observation bar', () => {
     const findings = check(
       thesis(
-        [claim({ stage: 'customer', confidence: 'validated', evidence: interviews(6) })],
+        [claim({ stage: 'customer', confidence: 'validated', evidence: payments(6) })],
         [{ stage: 'customer', minObservations: 12, requires: 'indicated' }],
       ),
     );
@@ -133,7 +139,7 @@ describe('dependency strength', () => {
           id: 'they-will-pay',
           stage: 'offer',
           confidence: 'validated',
-          evidence: interviews(9),
+          evidence: payments(9),
           dependsOn: ['problem-real'],
         }),
       ]),
@@ -146,7 +152,7 @@ describe('dependency strength', () => {
   test('allows a claim no stronger than its weakest support', () => {
     const findings = check(
       thesis([
-        claim({ id: 'problem-real', confidence: 'validated', evidence: interviews(7) }),
+        claim({ id: 'problem-real', confidence: 'validated', evidence: payments(7) }),
         claim({
           id: 'they-will-pay',
           stage: 'offer',
@@ -163,13 +169,13 @@ describe('dependency strength', () => {
   test('takes the weakest of several dependencies', () => {
     const findings = check(
       thesis([
-        claim({ id: 'strong', confidence: 'validated', evidence: interviews(8) }),
+        claim({ id: 'strong', confidence: 'validated', evidence: payments(8) }),
         claim({ id: 'weak', confidence: 'indicated', evidence: interviews(1) }),
         claim({
           id: 'conclusion',
           stage: 'offer',
           confidence: 'validated',
-          evidence: interviews(9),
+          evidence: payments(9),
           dependsOn: ['strong', 'weak'],
         }),
       ]),
@@ -217,7 +223,7 @@ describe('dependency strength', () => {
           id: 'downstream',
           stage: 'offer',
           confidence: 'validated',
-          evidence: interviews(9),
+          evidence: payments(9),
           dependsOn: ['dead'],
         }),
       ]),

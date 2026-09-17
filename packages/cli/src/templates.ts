@@ -152,6 +152,25 @@ transcript you can cite in the \`evidence\` block of a claim.
 | Who must approve | | |
 | What would make them say no | | |
 
+## Interviews stop at "indicated", permanently
+
+\`thesis-os check\` will not let an interview-backed claim reach \`validated\`,
+however many interviews you run. This is not a quota you can grind past.
+
+The reason is narrow and worth sitting with: nothing was at stake when the
+answer was given. An interview can establish that a problem exists, what it
+costs, who is involved and what they do today — genuinely the most valuable
+research available at this stage. What it cannot establish is that anyone will
+part with money, because being asked costs nothing and paying does not.
+
+So the honest ceiling for this whole stage is \`indicated\`, and that is fine.
+\`validated\` arrives later, in the offer and motion stages, and it arrives
+carrying a receipt.
+
+The same ceiling applies to surveys, waitlists, proposal requests and demos
+that went well. Engagement — likes, saves, views, warm replies in DMs — buys
+nothing at all, and the checker treats it that way.
+
 ## Before you move on
 
 If you cannot name ten real people or one reliable channel where this segment
@@ -246,6 +265,10 @@ stage: model
 gate:
   requires: indicated
   min_observations: 3
+  # Channel and cost facts rot. A conversion rate from six months ago
+  # describes a platform that has since changed its algorithm, or a referral
+  # pool that has since run dry. Re-measure or downgrade.
+  evidence_half_life_days: 120
 claims:
   - id: price-clears-value
     statement: >-
@@ -270,6 +293,15 @@ claims:
     confidence: assumed
     critical: true
     depends_on: [segment-is-reachable]
+
+  - id: reach-is-owned-or-decay-is-planned
+    statement: >-
+      REPLACE ME. Say whether the channel's reach is owned or borrowed, and if
+      borrowed, what you will do when it stops. Marketplace placement, platform
+      algorithms and word of mouth are borrowed. They end without notice.
+    confidence: assumed
+    critical: true
+    depends_on: [channel-exists]
 
   - id: moat-or-honest-absence
     statement: >-
@@ -314,6 +346,45 @@ Then answer the three that actually set the number:
    like it or not.
 3. What is the cheapest way they can say yes? That is the top of your ladder,
    not the whole ladder.
+
+## Owned reach and borrowed reach
+
+This is the distinction that decides whether your channel is an asset or a
+loan, and it is the one most founders never make explicitly.
+
+| Borrowed | Owned |
+| --- | --- |
+| Marketplace placement and in-platform search | Your list, your customers' inboxes |
+| Organic reach from a social algorithm | A direct relationship you can contact |
+| Word of mouth and referral | A partnership with terms in writing |
+| Anything a platform can switch off | Anything you would keep if a platform died |
+
+Borrowed reach is not bad. It is often the only affordable way to start, and
+turning it down on principle is its own mistake. The error is treating it as
+permanent.
+
+Two properties make it dangerous:
+
+1. **It ends without notice.** Nobody sends a message when the algorithm
+   changes or the referral pool empties. Revenue simply stops, and by the time
+   the trend is obvious you have built several months of plans on top of it.
+2. **The decline looks like your fault.** Founders respond by working harder in
+   a channel that has already closed, because the alternative explanation is
+   uncomfortable.
+
+So \`reach-is-owned-or-decay-is-planned\` asks for two things: which kind it is,
+and — if borrowed — what you are converting it into while it still works. A
+borrowed channel with no conversion plan is a countdown nobody is watching.
+
+## Evidence in this stage expires
+
+The gate sets \`evidence_half_life_days: 120\`. A \`validated\` claim here goes
+stale after four months and \`thesis-os check\` will say so.
+
+That is not pedantry. A conversion rate, an acquisition cost and a channel
+that works are all claims about a world that changes underneath you. Put a
+\`collected_at\` date on every evidence entry in this stage so the tool can tell
+you when a fact has quietly become a memory.
 
 ## The check that matters
 
@@ -478,14 +549,17 @@ stage: motion
 gate:
   requires: indicated
   min_observations: 3
+  # A channel that worked is not a channel that works. Re-measure quarterly.
+  evidence_half_life_days: 120
 claims:
   - id: first-channel-proven
     statement: >-
-      REPLACE ME. The one channel where you have reached a stranger and they
-      engaged. One proven channel beats a plan with five.
+      REPLACE ME. The one channel where a stranger arrived and bought. The
+      strongest form of this is someone approaching you unprompted, because
+      nothing you pushed can explain it away.
     confidence: assumed
     critical: true
-    depends_on: [channel-exists, positioning-is-contested]
+    depends_on: [reach-is-owned-or-decay-is-planned, positioning-is-contested]
 
   - id: someone-unrelated-paid
     statement: >-
@@ -524,6 +598,28 @@ claims:
    accelerates a broken one.
 
 Skipping to step four is the most expensive mistake available to you.
+
+## The strongest proof a channel is real
+
+Ranked by how hard each one is to explain away:
+
+1. **Someone arrived unprompted and bought.** Nothing you pushed can account
+   for it. Record it as \`method: inbound-unprompted\`.
+2. **Acquisition cost held steady across two separate periods.** One good month
+   is variance; two is a pattern. One month is the number founders quote.
+3. **A second purchase from the same customer.** Proves the value landed, not
+   only that the pitch did.
+4. **A first payment from a stranger.** The floor. Necessary, and routinely
+   mistaken for the ceiling.
+
+Anything below that line — enthusiasm, saved posts, a proposal request, a
+meeting that went well — is not channel evidence. \`thesis-os check\` enforces
+this through method ceilings, so recording it honestly costs you nothing.
+
+Also note which channel this was, and whether its reach was owned or borrowed.
+A borrowed channel that is working right now is on a clock you cannot see; the
+work of converting it into owned reach has to happen while the numbers are
+still good, because afterwards there is nothing left to convert.
 
 ## Selling, for people who do not think of themselves as salespeople
 

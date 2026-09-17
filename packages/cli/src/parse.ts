@@ -155,7 +155,25 @@ function readGate(
     requires = requiresRaw;
   }
 
-  return { stage, minObservations, requires };
+  const halfLifeRaw = record['evidence_half_life_days'] ?? record['evidenceHalfLifeDays'];
+  let evidenceHalfLifeDays: number | undefined;
+  if (halfLifeRaw !== undefined && halfLifeRaw !== null) {
+    if (typeof halfLifeRaw !== 'number' || !Number.isInteger(halfLifeRaw) || halfLifeRaw < 1) {
+      issues.push({
+        source,
+        message: `Stage "${stage}": gate "evidence_half_life_days" must be a positive whole number of days, or omitted for no expiry.`,
+      });
+      return null;
+    }
+    evidenceHalfLifeDays = halfLifeRaw;
+  }
+
+  return {
+    stage,
+    minObservations,
+    requires,
+    ...(evidenceHalfLifeDays !== undefined ? { evidenceHalfLifeDays } : {}),
+  };
 }
 
 /** Reads one stage document into claims plus its optional gate override. */

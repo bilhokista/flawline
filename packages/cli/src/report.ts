@@ -1,4 +1,4 @@
-import { check, hasBlockingFindings, type Finding } from './check.js';
+import { check, hasBlockingFindings, type CheckOptions, type Finding } from './check.js';
 import { STAGES, strengthOf, type Claim, type Confidence, type Stage } from './model.js';
 import type { ParseIssue } from './parse.js';
 import type { Thesis } from './model.js';
@@ -30,8 +30,8 @@ function isSettled(claim: Claim): boolean {
   return claim.confidence !== 'refuted' && strengthOf(claim.confidence) >= strengthOf('indicated');
 }
 
-export function summarise(thesis: Thesis): Status {
-  const findings = check(thesis);
+export function summarise(thesis: Thesis, options: CheckOptions = {}): Status {
+  const findings = check(thesis, options);
 
   const stages = STAGES.map((stage): StageSummary => {
     const claims = thesis.claims.filter((claim) => claim.stage === stage);

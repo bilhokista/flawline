@@ -82,6 +82,22 @@ is contamination.
 about. People approve what makes their own number look better. A problem that
 does not touch anyone's scorecard does not get budget, however real it is.
 
+## This whole stage stops at "indicated"
+
+`thesis-os check` will not let an interview-backed claim reach `validated`,
+however many interviews were run. Tell the founder this early, before they
+invest hope in hitting a number.
+
+The reason is narrow. Nothing was at stake when the answer was given. An
+interview can establish that a problem exists, what it costs, who is involved
+and what they do today — the most valuable research available at this stage.
+What it cannot establish is that anyone will part with money, because being
+asked costs nothing and paying does not.
+
+So `indicated` is the honest ceiling here, and that is a finding rather than a
+failure. The same applies to surveys, waitlists and demos that went well.
+Engagement — likes, saves, views, warm replies — buys nothing at all.
+
 ## Watch for these
 
 - **The enthusiastic non-buyer.** Loves the idea, has no budget, will take every

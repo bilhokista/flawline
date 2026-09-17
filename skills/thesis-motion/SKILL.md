@@ -24,6 +24,27 @@ Jumping to step four is the most expensive mistake available. If the founder
 wants to start with ads, ask what the ad will say and whose retelling proved the
 sentence works.
 
+## What actually proves a channel, ranked
+
+By how hard each one is to explain away:
+
+1. **Someone arrived unprompted and bought.** Nothing you pushed accounts for
+   it. Record it as `method: inbound-unprompted`; it is the only signal short
+   of repeat revenue that cannot be talked into meaning something it does not.
+2. **Acquisition cost held steady across two separate periods.** One good month
+   is variance. Two is a pattern. One month is the number founders quote.
+3. **A second purchase from the same customer.** The value landed, not just the
+   pitch.
+4. **A first payment from a stranger.** The floor, and routinely mistaken for
+   the ceiling.
+
+Below that line — enthusiasm, saved posts, a proposal request, a call that went
+well — is not channel evidence, and `thesis-os check` will refuse to let it
+carry a `validated` claim.
+
+Note which channel it was and whether its reach was owned or borrowed. A
+borrowed channel working right now is on a clock you cannot read.
+
 ## `someone-unrelated-paid` is the honest line
 
 Friends, ex-colleagues, the investor's portfolio company and the founder's old

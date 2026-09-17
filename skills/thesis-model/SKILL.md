@@ -6,7 +6,8 @@ description: Decide how the business makes money and whether the arithmetic surv
 # Model
 
 Owns `strategy/model.md` and the claims `price-clears-value`,
-`unit-economics-work`, `channel-exists`, `moat-or-honest-absence`.
+`unit-economics-work`, `channel-exists`, `reach-is-owned-or-decay-is-planned`,
+`moat-or-honest-absence`.
 
 Read [../DISCIPLINE.md](../DISCIPLINE.md) before writing anything.
 
@@ -16,21 +17,16 @@ A model written before the problem, customer and offer stages is a wish list
 with a grid drawn around it. If the founder wants to start here, ask what the
 Problem box will say, and let the silence make the argument.
 
-| Box | Your answer | Confidence |
-| --- | --- | --- |
-| Problem | | |
-| Segment | | |
-| Unique value | | |
-| Solution | | |
-| Channels | | |
-| Revenue | | |
-| Cost structure | | |
-| Key metrics | | |
-| Unfair advantage | | |
+The worksheet is `canvases/one-page-model.md` in the repository. It lives there
+rather than here because it adapts work released under ShareAlike terms, and
+those terms travel with the file — copying its layout into this skill would
+pull a copyleft obligation into MIT-licensed material. `canvases/ATTRIBUTION.md`
+records the lineage and the reasoning. Read it before reproducing or renaming
+anything from it.
 
-Before reproducing or renaming this layout anywhere, read
-`canvases/ATTRIBUTION.md` in the repository root. The lineage and licence terms
-are recorded there and they are not decorative.
+Have the founder copy each box's confidence from the matching claim rather than
+judging it afresh. A summary that upgrades a guess into a fact is worse than no
+summary, and a nine-box grid is unusually good at doing exactly that.
 
 ## Price against their cost, never your effort
 
@@ -83,6 +79,45 @@ someone else's evidence for someone else's business.
 What it does not accept is a first-mover claim, a "we execute better" claim, or
 a feature list. Early on, no moat is the normal condition. Pretending otherwise
 is the only real error available here.
+
+## Owned reach or a plan for its decay
+
+`reach-is-owned-or-decay-is-planned` is in this stage because it is the claim
+whose absence is most expensive, and it is almost never written down.
+
+Ask which kind the channel is:
+
+- **Borrowed** — marketplace placement, in-platform search, organic reach from
+  an algorithm, word of mouth. The reach belongs to someone else, or to a pool
+  with a bottom.
+- **Owned** — a list you hold, a relationship you can contact directly, a
+  partnership with terms in writing.
+
+Borrowed reach is not a mistake. It is frequently the only channel a new
+business can afford, and turning it down on principle is its own error. Two
+things make it dangerous, and both are about timing rather than quality:
+
+1. **It ends without notice.** Nobody sends a message when the ranking changes
+   or the referral pool empties. The numbers taper, and months of planning are
+   already resting on them.
+2. **The decline looks like a performance problem.** Founders respond by
+   working harder in a channel that has already closed, because the other
+   explanation is harder to accept.
+
+So if the answer is borrowed, the claim is only settled when there is an answer
+to the second half: what is it being converted into, while it still works? A
+borrowed channel with no conversion plan is a countdown with nobody watching
+it.
+
+## Evidence in this stage expires
+
+The gate ships with `evidence_half_life_days: 120`. A `validated` claim here
+goes stale after four months.
+
+Put a `collected_at` date on every evidence entry, or the claim earns an
+`undated-evidence` warning. And when something does go stale, re-measure it
+rather than re-dating it. Re-dating without re-measuring makes the whole tool
+lie, quietly, in the direction the founder was already hoping for.
 
 ## Watch for these
 

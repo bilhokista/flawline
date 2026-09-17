@@ -82,6 +82,70 @@ export interface Claim {
   readonly source: string;
 }
 
+/**
+ * The strongest confidence a given kind of signal can ever buy, however much
+ * of it you gather.
+ *
+ * This exists because volume does not change the kind of thing a signal is. A
+ * thousand people saving a post is a thousand observations of interest and
+ * zero observations of anyone paying. The ceiling is the honest limit of what
+ * the method can tell you.
+ *
+ * The line at `interview` is the one founders argue with. Interviews, done
+ * properly, establish that a problem exists and what it costs. They cannot
+ * establish that anyone will part with money, because nothing was at stake
+ * when the answer was given. So they stop at `indicated`, permanently, no
+ * matter how many you run.
+ *
+ * Methods not listed here are uncapped. This tool is a mirror, not an
+ * adversary: if you invent a method name to get around a ceiling, it will let
+ * you, and you will know you did it.
+ */
+export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refuted'>>> = {
+  // Signals that cannot buy any confidence at all. Nothing was at stake.
+  engagement: 'assumed',
+  likes: 'assumed',
+  views: 'assumed',
+  saves: 'assumed',
+  followers: 'assumed',
+  dm: 'assumed',
+  chat: 'assumed',
+  'verbal-interest': 'assumed',
+
+  // Real signal, but no money moved, so it stops short of settled.
+  interview: 'indicated',
+  survey: 'indicated',
+  'quote-request': 'indicated',
+  proposal: 'indicated',
+  'letter-of-intent': 'indicated',
+  waitlist: 'indicated',
+  'landing-page': 'indicated',
+  demo: 'indicated',
+
+  // Money, or an unprompted approach. These can settle a claim.
+  deposit: 'validated',
+  payment: 'validated',
+  sale: 'validated',
+  'repeat-payment': 'validated',
+  invoice: 'validated',
+  'inbound-unprompted': 'validated',
+};
+
+/**
+ * Whether a channel's reach belongs to you.
+ *
+ * Borrowed reach decays without warning and without your involvement, because
+ * the thing generating it answers to someone else. Owned reach can still fail,
+ * but it fails for reasons you can see.
+ */
+export const REACH_KINDS = ['owned', 'borrowed'] as const;
+
+export type ReachKind = (typeof REACH_KINDS)[number];
+
+export function isReachKind(value: string): value is ReachKind {
+  return (REACH_KINDS as readonly string[]).includes(value);
+}
+
 /** The bar a stage sets before downstream stages may rely on it. */
 export interface StageGate {
   readonly stage: Stage;
@@ -92,6 +156,16 @@ export interface StageGate {
    * stage may treat it as settled.
    */
   readonly requires: Exclude<Confidence, 'refuted'>;
+  /**
+   * How long a `validated` claim in this stage stays validated before its
+   * evidence must be refreshed, in days. Absent means it never expires.
+   *
+   * Stages about the world outside the company need this and stages about the
+   * company do not. A channel that converted at four percent six months ago is
+   * not a fact about today; the platform changed its algorithm, or the pool of
+   * people willing to refer you ran dry. Nothing announces either.
+   */
+  readonly evidenceHalfLifeDays?: number;
 }
 
 export interface Thesis {

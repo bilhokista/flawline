@@ -76,7 +76,7 @@ claims:
     statement: >-
       Ops leads re-key invoice data between two systems every Monday because
       the finance export drops the cost centre.
-    confidence: validated
+    confidence: indicated
     critical: true
     depends_on: [problem-exists]
     evidence:
@@ -86,6 +86,10 @@ claims:
         collected_at: 2026-09-12
 ---
 ```
+
+Nine interviews, and the claim is `indicated` rather than `validated`. That is
+not modesty — it is the ceiling the checker enforces on interview evidence, for
+reasons in the next section.
 
 Four fields do the work:
 
@@ -102,6 +106,9 @@ Four fields do the work:
 | --- | --- |
 | `unsupported-confidence` | Marked `indicated` or better with no evidence cited. |
 | `insufficient-observations` | Marked `validated` below the stage's bar. |
+| `method-ceiling` | The *kind* of evidence cannot carry that confidence, at any volume. |
+| `stale-evidence` | `validated` on evidence past the stage's shelf life. |
+| `undated-evidence` | `validated` in an expiring stage with no `collected_at`. Warning. |
 | `overreach` | Stronger than the claim holding it up. |
 | `rests-on-refuted` | Built on something reality has already killed. |
 | `gate-not-met` | A critical claim behind you is unsettled while you claim evidence ahead of it. |
@@ -109,7 +116,47 @@ Four fields do the work:
 | `dependency-cycle` | Two claims justifying each other. |
 | `duplicate-claim-id` | The same id declared twice. |
 
-Two design decisions are worth knowing about:
+### The kind of signal caps the confidence
+
+Volume does not change what a signal *is*. A hundred thousand saved posts is a
+hundred thousand observations of costless attention and zero observations of
+anyone paying.
+
+| Signal | Ceiling |
+| --- | --- |
+| Engagement — likes, saves, views, follows | `assumed` |
+| Warm replies in DMs, stated intent | `assumed` |
+| Interviews and surveys | `indicated` |
+| Waitlists, landing pages, demos that went well | `indicated` |
+| Quote and proposal requests | `indicated` |
+| Deposits, payments, repeat payments | `validated` |
+| Someone approaching unprompted | `validated` |
+
+The interview line is the one people argue with, so: interviews establish that
+a problem exists and what it costs, which is the most valuable research
+available early. They cannot establish that anyone will pay, because nothing
+was at stake when the answer was given. Four hundred interviews still stop at
+`indicated`.
+
+Methods not on the list are uncapped. The tool is a mirror, not an adversary —
+if you rename `engagement` to `payment` it will believe you, and you will know
+you did it.
+
+### Settled facts about the outside world expire
+
+The `model` and `motion` stages ship with `evidence_half_life_days: 120`. A
+`validated` claim there goes stale after four months.
+
+Channels stop working without telling anyone. A marketplace changes its
+ranking, an algorithm stops surfacing an account, the pool of people willing to
+refer you runs dry. Revenue tapers, and by the time the trend is unmistakable
+there are months of plans resting on a number that died quietly.
+
+Re-measure a stale claim. Do not re-date it — re-dating without re-measuring is
+the easiest way to make this tool lie to you, in the direction you were already
+hoping for.
+
+### Two more decisions worth knowing about
 
 **Planning ahead is free.** Sketching all seven stages as assumptions passes
 cleanly. Only claiming that reality has *confirmed* something moves the frontier
@@ -170,6 +217,30 @@ makes drift visible.
 A canvas in a design tool cannot do any of that. It also cannot be wrong in a
 way anyone notices.
 
+## Where the rules came from
+
+The dependency and gate logic is a design. The method ceilings, the four-month
+shelf life and the owned-versus-borrowed distinction are not — they come from a
+structured debrief with a founder of four years, and each one exists because
+something specific went wrong.
+
+- **Borrowed channels died at three to six months**, twice: marketplace
+  placement and word-of-mouth referral. Neither announced it. That is where
+  `evidence_half_life_days: 120` comes from, and why the distinction between
+  owned and borrowed reach is a claim the `model` stage insists on.
+- **The evidence that misled hardest was engagement, DM enthusiasm, and
+  proposal requests that evaporated.** Hence the ceilings, and hence engagement
+  buying nothing at all.
+- **Interviews were nominated as the evidence most in need of a hard cap** —
+  including interviews done properly — on the grounds that until money moves it
+  is still just talk. That is a stricter rule than the first draft of this tool
+  had, and it invalidated part of its own test suite when it landed.
+- **The failure point was channel and unit economics, not the problem stage.**
+  The strictest gates sit there as a result, rather than at the front.
+
+One debrief is one debrief; n=1 by the standards this tool applies to everyone
+else. If your four years went differently, that is worth an issue.
+
 ## Prior art and licensing
 
 This project stands on the Business Model Canvas, the Lean Canvas, and the jobs
@@ -197,4 +268,4 @@ licence is honoured rather than quietly dropped.
 2. **Methodology changes need a reason, not a preference.** Say what goes wrong
    for a real founder today, and what the change would have caught.
 
-98 tests, 98% coverage. `npm test` at the repository root.
+120 tests, 98% coverage. `npm test` at the repository root.

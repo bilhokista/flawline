@@ -1,8 +1,11 @@
 export {
   STAGES,
   CONFIDENCE,
+  METHOD_CEILINGS,
+  REACH_KINDS,
   isStage,
   isConfidence,
+  isReachKind,
   strengthOf,
   type Stage,
   type Confidence,
@@ -10,12 +13,14 @@ export {
   type Evidence,
   type StageGate,
   type Thesis,
+  type ReachKind,
 } from './model.js';
 
 export {
   check,
   hasBlockingFindings,
   FINDING_CODES,
+  type CheckOptions,
   type Finding,
   type FindingCode,
   type Severity,

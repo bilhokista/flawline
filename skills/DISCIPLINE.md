@@ -34,6 +34,68 @@ Rules that admit no exceptions:
 - A claim can never be stronger than the claim it rests on. If the founder wants
   a strong downstream claim, the work belongs upstream.
 
+## The kind of signal caps the confidence, and volume never lifts it
+
+This is the rule founders argue with most, so know why it holds. A signal given
+when nothing was at stake tells you what someone was willing to say, not what
+they were willing to do. Gathering more of it multiplies the saying.
+
+| Signal | Ceiling | Why it stops there |
+| --- | --- | --- |
+| Engagement: likes, saves, views, follows | `assumed` | Costless attention. The distance to a purchase is not measured by it. |
+| Warm replies in DMs or chat, stated intent | `assumed` | Politeness is indistinguishable from demand in a text message. |
+| Interviews and surveys | `indicated` | Establishes the problem and its cost. Cannot establish that anyone will pay. |
+| Waitlists, landing pages, demos that went well | `indicated` | Interest with no cost attached. |
+| Quote and proposal requests | `indicated` | Looks like a buyer right up until it evaporates. |
+| Deposits, payments, repeat payments | `validated` | Something was at stake. |
+| Someone approaching unprompted | `validated` | Nothing you pushed can explain it away. |
+
+`thesis-os check` enforces these as `method-ceiling` findings, so pick the
+`method:` value that honestly describes how the signal was collected. Do not
+relabel `engagement` as `interview` to get past a ceiling. The tool will let
+you, which is exactly why doing it means something.
+
+**The interview ceiling is not a quota to grind past.** Four hundred interviews
+still stop at `indicated`. That is not a flaw in the method; it is the honest
+limit of asking people questions. `validated` arrives later and arrives
+carrying a receipt.
+
+## Settled facts about the outside world expire
+
+The `model` and `motion` stages ship with `evidence_half_life_days: 120`. A
+`validated` claim in those stages goes stale after four months and the checker
+says so.
+
+This exists because channels stop working without telling anyone. A marketplace
+changes its ranking, an algorithm stops surfacing the account, the pool of
+people willing to refer you runs dry. Revenue simply tapers, and by the time
+the trend is unmistakable there are months of plans resting on a number that
+died quietly.
+
+So: put a `collected_at` date on every evidence entry in those stages. A
+`validated` claim with no date earns an `undated-evidence` warning, because
+freshness cannot be checked and the claim is trusted on nothing but its own
+say-so.
+
+When a claim goes stale, do not simply re-date it. Re-measure it, or downgrade
+it to `indicated`. Re-dating without re-measuring is the single easiest way to
+make this whole tool lie to you.
+
+## Owned reach and borrowed reach
+
+When a claim concerns a channel, establish which it is, and say it out loud.
+
+- **Borrowed:** marketplace placement, in-platform search, organic reach from a
+  social algorithm, word of mouth, anything a platform can switch off.
+- **Owned:** a list you hold, a direct relationship you can contact, a
+  partnership with written terms.
+
+Borrowed reach is often the only affordable way to start and refusing it on
+principle is its own mistake. The error is treating it as permanent. If it is
+borrowed, ask what it is being converted into while it still works — that
+conversion has to happen during the good months, because afterwards there is
+nothing left to convert.
+
 ## Write down what would prove you wrong
 
 For every critical claim, ask: what observation would make you abandon this? If
