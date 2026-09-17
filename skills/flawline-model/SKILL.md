@@ -128,7 +128,7 @@ lie, quietly, in the direction the founder was already hoping for.
 
 - **The price with no anchor.** Set by feel, defended by comparison to
   competitors whose costs and funding are unknown.
-- **Channel cost that the price cannot carry.** A £30/month product sold by a
+- **Channel cost that the price cannot carry.** A $30/month product sold by a
   founder on calls is not a business, it is a hobby with revenue.
 - **Five channels in the plan.** One channel that demonstrably works beats five
   that might. Make them pick.
