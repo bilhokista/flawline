@@ -253,6 +253,27 @@ describe('graph integrity', () => {
     expect(cycles[0]?.message).toContain('->');
   });
 
+  test('detects a claim that depends on itself', () => {
+    const findings = check(thesis([claim({ id: 'bootstrap', dependsOn: ['bootstrap'] })]));
+
+    const cycles = findings.filter((f) => f.code === 'dependency-cycle');
+    expect(cycles).toHaveLength(1);
+    expect(cycles[0]?.message).toContain('bootstrap -> bootstrap');
+  });
+
+  test('finds a second cycle reachable only through the first', () => {
+    const findings = check(
+      thesis([
+        claim({ id: 'a', dependsOn: ['b'] }),
+        claim({ id: 'b', dependsOn: ['c'] }),
+        claim({ id: 'c', dependsOn: ['a', 'e'] }),
+        claim({ id: 'e', dependsOn: ['c'] }),
+      ]),
+    );
+
+    expect(findings.filter((f) => f.code === 'dependency-cycle')).toHaveLength(2);
+  });
+
   test('a diamond is not a cycle', () => {
     const findings = check(
       thesis([
