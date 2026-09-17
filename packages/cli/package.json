@@ -1,23 +1,60 @@
 {
   "name": "flawline",
   "version": "0.1.0",
-  "description": "Evidence-gated strategy pipeline for founders: decide what to build, for whom, and whether anyone will pay — before you write code.",
-  "keywords": ["founder", "startup", "strategy", "product-discovery", "jobs-to-be-done", "lean-canvas", "go-to-market", "claude-code", "agent-skills", "validation"],
+  "description": "Evidence-gated strategy pipeline for founders: decide what to build, for whom, and whether anyone will pay \u2014 before you write code.",
+  "keywords": [
+    "founder",
+    "startup",
+    "strategy",
+    "product-discovery",
+    "jobs-to-be-done",
+    "lean-canvas",
+    "go-to-market",
+    "claude-code",
+    "agent-skills",
+    "validation"
+  ],
   "license": "MIT",
+  "author": "Dian Bilhokista",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bilhokista/flawline.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/bilhokista/flawline#readme",
+  "bugs": {
+    "url": "https://github.com/bilhokista/flawline/issues"
+  },
   "type": "module",
-  "bin": { "flawline": "./dist/cli.js" },
+  "bin": {
+    "flawline": "./dist/cli.js"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
-  "files": ["dist", "templates", "README.md", "LICENSE"],
-  "engines": { "node": ">=20" },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": { "yaml": "^2.5.1" },
+  "dependencies": {
+    "yaml": "^2.5.1"
+  },
   "devDependencies": {
     "@types/node": "^22.7.4",
     "@vitest/coverage-v8": "^2.1.2",
