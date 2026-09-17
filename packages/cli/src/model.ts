@@ -10,6 +10,7 @@
 /** Stages of the pipeline, in the order a founder walks them. */
 export const STAGES = [
   'problem',
+  'advantage',
   'customer',
   'offer',
   'model',
@@ -122,6 +123,11 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   'landing-page': 'indicated',
   demo: 'indicated',
 
+  // You are a reliable narrator of your own history, and an unreliable one
+  // about what that history is worth. So it establishes the trait, never its
+  // value.
+  'self-report': 'indicated',
+
   // Money, or an unprompted approach. These can settle a claim.
   deposit: 'validated',
   payment: 'validated',
@@ -129,6 +135,9 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   'repeat-payment': 'validated',
   invoice: 'validated',
   'inbound-unprompted': 'validated',
+  'competitor-failed-to-copy': 'validated',
+  'won-for-this-reason': 'validated',
+  'lost-for-this-reason': 'validated',
 };
 
 /**

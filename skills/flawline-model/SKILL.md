@@ -1,5 +1,5 @@
 ---
-name: thesis-model
+name: flawline-model
 description: Decide how the business makes money and whether the arithmetic survives contact with a price, covering pricing, revenue shape, unit economics, channel cost and whether any moat exists. Use when setting or changing a price, choosing between subscription, usage, take-rate or one-off revenue, filling in a business model or lean canvas, sanity-checking unit economics, or answering "how will this make money". Also use when revenue exists but margin does not.
 ---
 
@@ -70,7 +70,12 @@ someone else's evidence for someone else's business.
 
 ## On the moat
 
-`moat-or-honest-absence` accepts two answers and both are fine:
+`moat-or-honest-absence` now depends on `expensive-to-fake` from the
+advantage stage, so this claim cannot be stronger than the forgery test that
+sits under it. If the founder has not done that stage, do it rather than
+guessing here — the checker will report `overreach` otherwise, correctly.
+
+It accepts two answers and both are fine:
 
 - Something that gets harder to copy over time: accumulating data, switching
   costs, a distribution position, a regulatory licence, genuine brand trust.
@@ -132,5 +137,5 @@ lie, quietly, in the direction the founder was already hoping for.
 
 ## Handoff
 
-Move to `thesis-evidence` once the riskiest number in this stage is identified.
+Move to `flawline-evidence` once the riskiest number in this stage is identified.
 Usually it is acquisition cost or willingness to pay, not the technology.

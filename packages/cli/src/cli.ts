@@ -5,16 +5,16 @@ import { init, loadThesis, STRATEGY_DIR } from './workspace.js';
 
 const VERSION = '0.1.0';
 
-const HELP = `thesis-os ${VERSION}
+const HELP = `flawline ${VERSION}
 
 Decide what to build, for whom, and whether anyone will pay — on evidence
 rather than on confidence. Strategy lives in ${STRATEGY_DIR}/*.md, in git,
 next to the code.
 
 Usage
-  thesis-os init      Lay out the seven stage documents (never overwrites)
-  thesis-os status    Show how far the thesis has come and what is settled
-  thesis-os check     Fail if any claim leans on more support than it has
+  flawline init      Lay out the seven stage documents (never overwrites)
+  flawline status    Show how far the thesis has come and what is settled
+  flawline check     Fail if any claim leans on more support than it has
 
 Options
   -C, --cwd <dir>     Run against another directory
@@ -105,7 +105,7 @@ async function runInit(cwd: string): Promise<RunOutcome> {
   lines.push('');
   lines.push(
     result.created.length > 0
-      ? `Start in ${STRATEGY_DIR}/problem.md. Replace the placeholder statements with what you actually believe, then run \`thesis-os check\`.`
+      ? `Start in ${STRATEGY_DIR}/problem.md. Replace the placeholder statements with what you actually believe, then run \`flawline check\`.`
       : 'Everything was already in place. Nothing was overwritten.',
   );
 
@@ -124,7 +124,7 @@ async function runStatus(cwd: string): Promise<RunOutcome> {
 
   if (status.findings.length > 0) {
     lines.push('');
-    lines.push(`${status.findings.length} finding(s). Run \`thesis-os check\` for detail.`);
+    lines.push(`${status.findings.length} finding(s). Run \`flawline check\` for detail.`);
   }
 
   return { code: 0, out: lines.join('\n') };
@@ -140,7 +140,7 @@ async function runCheck(cwd: string): Promise<RunOutcome> {
   if (thesis.claims.length === 0) {
     return {
       code: 1,
-      out: `No claims found in ${STRATEGY_DIR}/. Run \`thesis-os init\` first.`,
+      out: `No claims found in ${STRATEGY_DIR}/. Run \`flawline init\` first.`,
     };
   }
 
@@ -164,7 +164,7 @@ if (isDirectInvocation) {
     })
     .catch((error: unknown) => {
       const detail = error instanceof Error ? error.message : String(error);
-      process.stderr.write(`thesis-os failed: ${detail}\n`);
+      process.stderr.write(`flawline failed: ${detail}\n`);
       process.exitCode = 1;
     });
 }

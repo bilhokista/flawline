@@ -1,5 +1,5 @@
 ---
-name: thesis-motion
+name: flawline-motion
 description: Get from zero to a repeatable sale, covering go-to-market sequencing, founder-led selling, objection handling, and hiring against the actual bottleneck. Use when planning a launch or go-to-market, writing outreach or a sales script, preparing for sales calls, handling recurring objections, deciding whether to spend on paid acquisition, or working out which role to hire next. Also use when leads arrive and nothing closes.
 ---
 
@@ -39,7 +39,7 @@ By how hard each one is to explain away:
    the ceiling.
 
 Below that line — enthusiasm, saved posts, a proposal request, a call that went
-well — is not channel evidence, and `thesis-os check` will refuse to let it
+well — is not channel evidence, and `flawline check` will refuse to let it
 carry a `validated` claim.
 
 Note which channel it was and whether its reach was owned or borrowed. A
@@ -80,8 +80,8 @@ where you find out whether this particular person has the problem.
 | | | | |
 
 Three repeats of the same objection is not a sales problem. It is a message
-problem or an offer problem, and it belongs back in `thesis-narrative` or
-`thesis-offer`. Say which, and send them back. Handling the same objection
+problem or an offer problem, and it belongs back in `flawline-narrative` or
+`flawline-offer`. Say which, and send them back. Handling the same objection
 better forty times is not a strategy.
 
 ## What repeatable actually means
@@ -117,7 +117,7 @@ coordination work then justifies more headcount.
 ## Where this hands off
 
 Once `sale-is-repeatable` is settled, you know what to build, for whom, and that
-someone pays for it. That is the boundary of thesis-os.
+someone pays for it. That is the boundary of flawline.
 
 Build-side methods take over from here: PRDs, architecture, epics and delivery.
 Hand over the settled claims as the input, so that whatever gets built is

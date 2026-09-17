@@ -6,7 +6,7 @@ instruction files.
 ## Install
 
 ```bash
-cp -r thesis-* ~/.claude/skills/
+cp -r flawline-* ~/.claude/skills/
 ```
 
 Each directory is a standalone `SKILL.md` with frontmatter, so it also works by
@@ -16,17 +16,18 @@ pointing any other agent at the file directly.
 
 | Skill | Owns | Invoke it when |
 | --- | --- | --- |
-| `thesis-problem` | `problem-exists`, `problem-is-expensive`, `they-already-try` | Someone brings an idea. Always first. |
-| `thesis-customer` | `segment-is-reachable`, `what-they-want-done`, `what-gets-in-the-way`, `what-good-looks-like`, `who-can-say-yes` | Defining who it is for, or turning transcripts into claims. |
-| `thesis-offer` | `offer-relieves-the-blocker`, `offer-is-better-than-today`, `they-will-switch`, `what-we-sell` | Deciding what to sell, or cutting a feature list to a wedge. |
-| `thesis-model` | `price-clears-value`, `unit-economics-work`, `channel-exists`, `moat-or-honest-absence` | Pricing, revenue shape, unit economics. |
-| `thesis-evidence` | `riskiest-assumption-named`, `test-is-cheaper-than-building`, `pass-fail-set-in-advance` | Planning validation, scoping an MVP, recording a result. |
-| `thesis-narrative` | `why-this-exists`, `positioning-is-contested`, `story-is-theirs-not-yours` | Positioning, vision, mission, brand story. |
-| `thesis-motion` | `first-channel-proven`, `someone-unrelated-paid`, `sale-is-repeatable`, `org-matches-the-bottleneck` | Go to market, selling, hiring the bottleneck. |
+| `flawline-problem` | `problem-exists`, `problem-is-expensive`, `they-already-try` | Someone brings an idea. Always first. |
+| `flawline-advantage` | `what-is-authentically-mine`, `context-values-it`, `expensive-to-fake`, `combination-is-mine` | Moat, differentiation, or "why this founder". Runs second. |
+| `flawline-customer` | `segment-is-reachable`, `what-they-want-done`, `what-gets-in-the-way`, `what-good-looks-like`, `who-can-say-yes` | Defining who it is for, or turning transcripts into claims. |
+| `flawline-offer` | `offer-relieves-the-blocker`, `offer-is-better-than-today`, `they-will-switch`, `what-we-sell` | Deciding what to sell, or cutting a feature list to a wedge. |
+| `flawline-model` | `price-clears-value`, `unit-economics-work`, `channel-exists`, `moat-or-honest-absence` | Pricing, revenue shape, unit economics. |
+| `flawline-evidence` | `riskiest-assumption-named`, `test-is-cheaper-than-building`, `pass-fail-set-in-advance` | Planning validation, scoping an MVP, recording a result. |
+| `flawline-narrative` | `why-this-exists`, `positioning-is-contested`, `story-is-theirs-not-yours` | Positioning, vision, mission, brand story. |
+| `flawline-motion` | `first-channel-proven`, `someone-unrelated-paid`, `sale-is-repeatable`, `org-matches-the-bottleneck` | Go to market, selling, hiring the bottleneck. |
 
 They are ordered because the claims depend on each other. A skill invoked out of
 order will still run, and will leave its upstream claims marked `assumed` — so
-`thesis-os check` keeps telling the truth about what was skipped.
+`flawline check` keeps telling the truth about what was skipped.
 
 ## Read this first
 
@@ -50,5 +51,5 @@ If you fork a stage skill, keep three things:
    breaks the graph.
 2. **The confidence rules.** A skill that raises confidence generously makes the
    checker lie, and a checker that lies is worse than no checker.
-3. **The finishing step.** Run `npx thesis-os check`, then tell the founder the
+3. **The finishing step.** Run `npx flawline check`, then tell the founder the
    one thing that most needs evidence next.

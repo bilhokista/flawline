@@ -1,5 +1,5 @@
 ---
-name: thesis-problem
+name: flawline-problem
 description: Interrogate a business idea down to the problem underneath it, before any solution, customer segment or offer is discussed. Use when someone brings a startup idea, a new product line, a feature they are sure about, or says "I want to build X" — and use it first, because every later stage depends on its claims. Also use when an existing thesis keeps failing at later stages, which usually means the problem was never established.
 ---
 
@@ -71,7 +71,8 @@ For each critical claim, record in the prose what observation would refute it.
 ## Handoff
 
 Only after `problem-exists` has real signal behind it, move to
-`thesis-customer`. If the founder wants to skip ahead to the offer, tell them
+`flawline-advantage`, which runs second and decides which version of this
+problem is yours to solve. `flawline-customer` comes after that. If the founder wants to skip ahead to the offer, tell them
 once that the offer stage will produce a confident answer to an unverified
 question, then do as they ask if they insist — and leave the problem claims
 marked `assumed` so the checker keeps telling the truth.

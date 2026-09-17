@@ -37,7 +37,7 @@ settled fact.
   like this has usually been filled in from reasoning, and it will be defended
   for months.
 
-Run `npx thesis-os status` to see the confidences rather than transcribing them
+Run `npx flawline status` to see the confidences rather than transcribing them
 from memory.
 
 ## Why the claim column exists

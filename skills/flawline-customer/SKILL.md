@@ -1,5 +1,5 @@
 ---
-name: thesis-customer
+name: flawline-customer
 description: Turn customer conversations into a segment definition, a picture of what people are trying to get done, and a persona built only from things that were actually said. Use when defining who a product is for, choosing which segment to serve first, writing or auditing a persona or ICP, planning customer interviews, or turning interview transcripts into claims. Also use when someone says "our users want" without being able to name a user.
 ---
 
@@ -10,6 +10,12 @@ Owns `strategy/customer.md` and the claims `segment-is-reachable`,
 `who-can-say-yes`.
 
 Read [../DISCIPLINE.md](../DISCIPLINE.md) before writing anything.
+
+## Start from the arena the advantage stage named
+
+If `context-values-it` is settled, the segment is already half chosen: pick
+the people who pay for the founder's particular oddity rather than the ones who
+merely tolerate it. Read `strategy/advantage.md` before narrowing.
 
 ## Narrow until it is uncomfortable
 
@@ -84,7 +90,7 @@ does not touch anyone's scorecard does not get budget, however real it is.
 
 ## This whole stage stops at "indicated"
 
-`thesis-os check` will not let an interview-backed claim reach `validated`,
+`flawline check` will not let an interview-backed claim reach `validated`,
 however many interviews were run. Tell the founder this early, before they
 invest hope in hitting a number.
 
@@ -110,6 +116,6 @@ Engagement — likes, saves, views, warm replies — buys nothing at all.
 
 ## Handoff
 
-Move to `thesis-offer` once `what-gets-in-the-way` has a ranked first entry with
+Move to `flawline-offer` once `what-gets-in-the-way` has a ranked first entry with
 real signal behind it. The offer stage needs one named obstacle to aim at; give
 it the obstacle, not a list.

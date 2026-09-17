@@ -80,7 +80,7 @@ export function renderStatus(status: Status): string {
   const lines: string[] = [];
 
   if (status.reached === null) {
-    return 'No claims yet. Run `thesis-os init` to lay out the stages, then write your first claim in strategy/problem.md.';
+    return 'No claims yet. Run `flawline init` to lay out the stages, then write your first claim in strategy/problem.md.';
   }
 
   lines.push('stage      claims        critical settled');

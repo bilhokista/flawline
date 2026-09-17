@@ -1,11 +1,11 @@
 {
-  "name": "thesis-os",
+  "name": "flawline",
   "version": "0.1.0",
   "description": "Evidence-gated strategy pipeline for founders: decide what to build, for whom, and whether anyone will pay — before you write code.",
   "keywords": ["founder", "startup", "strategy", "product-discovery", "jobs-to-be-done", "lean-canvas", "go-to-market", "claude-code", "agent-skills", "validation"],
   "license": "MIT",
   "type": "module",
-  "bin": { "thesis-os": "./dist/cli.js" },
+  "bin": { "flawline": "./dist/cli.js" },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },

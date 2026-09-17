@@ -1,4 +1,4 @@
-# thesis-os
+# flawline
 
 **Your strategy document cannot tell you which parts of it are guesses. This one can.**
 
@@ -12,12 +12,12 @@ So the stack gets built anyway, and the failure shows up months later as "we
 built the wrong thing", when what actually happened is that a confident sentence
 on slide fourteen was resting on an assumption nobody had written down.
 
-thesis-os puts the strategy in git as markdown, makes every claim declare what
+flawline puts the strategy in git as markdown, makes every claim declare what
 holds it up, and then refuses to let a claim be stronger than its own
 foundations.
 
 ```console
-$ npx thesis-os check
+$ npx flawline check
 strategy/motion.md: error: [overreach] channel-works
     Claims "validated" while resting on "problem-exists", which is only
     "assumed". A claim cannot be stronger than what holds it up.
@@ -38,16 +38,17 @@ The numbers are not the weak link — the sentence underneath them is.
 ## Install
 
 ```bash
-npx thesis-os init
+npx flawline init
 ```
 
-Seven documents appear in `strategy/`, one per stage, each pre-loaded with the
+Eight documents appear in `strategy/`, one per stage, each pre-loaded with the
 claims that stage owns — all marked `assumed`, because on day one that is what
 they are.
 
 ```
 strategy/
   problem.md     what goes badly, for whom, and what it costs
+  advantage.md   what is authentically yours and expensive to fake
   customer.md    who they are, what they want done, who can say yes
   offer.md       what you sell, and whether the gain clears switching cost
   model.md       price, unit economics, channel, moat or honest absence
@@ -59,8 +60,8 @@ strategy/
 Edit the statements to say what you actually believe. Commit them. Then:
 
 ```bash
-npx thesis-os status   # what is settled, what is still a guess
-npx thesis-os check    # exits 1 when a claim outruns its evidence
+npx flawline status   # what is settled, what is still a guess
+npx flawline check    # exits 1 when a claim outruns its evidence
 ```
 
 ## How a claim works
@@ -127,6 +128,7 @@ anyone paying.
 | Engagement — likes, saves, views, follows | `assumed` |
 | Warm replies in DMs, stated intent | `assumed` |
 | Interviews and surveys | `indicated` |
+| Self-report about your own history | `indicated` |
 | Waitlists, landing pages, demos that went well | `indicated` |
 | Quote and proposal requests | `indicated` |
 | Deposits, payments, repeat payments | `validated` |
@@ -158,7 +160,7 @@ hoping for.
 
 ### Two more decisions worth knowing about
 
-**Planning ahead is free.** Sketching all seven stages as assumptions passes
+**Planning ahead is free.** Sketching all eight stages as assumptions passes
 cleanly. Only claiming that reality has *confirmed* something moves the frontier
 and starts gating what sits behind it. You are never punished for thinking
 ahead, only for asserting ahead.
@@ -168,6 +170,45 @@ a claim to `refuted`, every claim above it starts erroring. That cascade is the
 product. It is the list of things you believed for reasons that just stopped
 being true, and no other tool in a founder's stack will hand it to you.
 
+## The advantage stage, and the name
+
+The second stage is the one this project is named after, and it inverts the
+usual advice.
+
+Most moat guidance points at things a solo founder cannot build: network
+effects, accumulated data, a distribution position. `advantage.md` starts
+somewhere available to everyone — at constraints and defects rather than
+strengths — on a simple argument:
+
+**Strengths are mostly purchased, and anything purchasable can be purchased by
+someone with more money than you. What is authentically yours cannot be bought
+at all.**
+
+Three claims carry it:
+
+- `what-is-authentically-mine` — a trait, constraint or history you would have
+  anyway. Not a skill acquired because it was useful.
+- `context-values-it` — the arena where that trait is an asset rather than a
+  liability. A trait has no fixed value; the work is choosing the setting.
+- `expensive-to-fake` — what it would cost a competitor to fake it credibly.
+  A weekend means you have a preference. Years they did not live means you have
+  something that compounds.
+
+`moat-or-honest-absence` in the model stage depends on `expensive-to-fake`, so
+a moat claim cannot outrun the forgery test underneath it.
+
+The intellectual debts are specific. Eric Barker's *Barking Up the Wrong Tree*
+supplies the mechanism — intensifiers, traits penalised in one environment and
+rewarded in another. Dave Trott's *One Plus One Equals Three* supplies the
+combination method. Peter Thiel's *Zero to One* supplies the goal and, by the
+account of the founder this was built with, not much procedure — which is why
+the stage is a set of questions rather than an invitation to find a secret.
+
+The criterion that ties them together is not from any of the three: **a flaw is
+authentic to one person, so it cannot be copied, and that is what makes it a
+moat rather than a quirk.** That is Dian Bilhokista's, from four years of
+running small businesses, and it is why the project is called flawline.
+
 ## Working with an AI agent
 
 `skills/` holds one skill per stage, written for Claude Code, Cursor and any
@@ -176,7 +217,7 @@ and — the part that matters — refuse to inflate a confidence because you sou
 certain.
 
 ```bash
-cp -r skills/thesis-* ~/.claude/skills/
+cp -r skills/flawline-* ~/.claude/skills/
 ```
 
 Each skill is a standalone `SKILL.md`. Shared rules live in
@@ -193,7 +234,7 @@ exist to make it argue with you instead.
 
 ## Where this stops
 
-thesis-os ends at `sale-is-repeatable`: you know what to build, for whom, and
+flawline ends at `sale-is-repeatable`: you know what to build, for whom, and
 that a stranger has paid for it. Build-side methods take over from there —
 requirements, architecture, delivery. There are good tools for that stage and
 this is not one of them.
@@ -209,7 +250,7 @@ makes drift visible.
 
 - `git log strategy/problem.md` shows when you stopped believing something, and
   what you knew at the time.
-- `thesis-os check` runs in CI, so a pull request that quietly upgrades a guess
+- `flawline check` runs in CI, so a pull request that quietly upgrades a guess
   to a fact fails like any other broken build.
 - It lives beside the code, so the people implementing a decision can read the
   evidence for it without asking anyone for access.
@@ -220,9 +261,10 @@ way anyone notices.
 ## Where the rules came from
 
 The dependency and gate logic is a design. The method ceilings, the four-month
-shelf life and the owned-versus-borrowed distinction are not — they come from a
-structured debrief with a founder of four years, and each one exists because
-something specific went wrong.
+shelf life, the owned-versus-borrowed distinction and the advantage stage are
+not — they come from a structured debrief with Dian Bilhokista, who spent four
+years running small businesses. Each one exists because something specific went
+wrong.
 
 - **Borrowed channels died at three to six months**, twice: marketplace
   placement and word-of-mouth referral. Neither announced it. That is where
@@ -238,8 +280,9 @@ something specific went wrong.
 - **The failure point was channel and unit economics, not the problem stage.**
   The strictest gates sit there as a result, rather than at the front.
 
-One debrief is one debrief; n=1 by the standards this tool applies to everyone
-else. If your four years went differently, that is worth an issue.
+One debrief is one debrief — n=1 by the standard this tool applies to everyone
+else, and recorded as such rather than dressed up as research. If your own years
+went differently, that is worth an issue.
 
 ## Prior art and licensing
 

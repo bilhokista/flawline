@@ -1,5 +1,5 @@
 ---
-name: thesis-narrative
+name: flawline-narrative
 description: Write vision, mission, positioning and the customer-facing story so that each one can be checked against evidence rather than admired. Use when writing or auditing positioning, a vision or mission statement, a brand story, a tagline, an About page, a pitch narrative, or messaging that has to say what the company is instead of what it feels like. Also use when copy sounds good and converts nothing.
 ---
 
@@ -95,6 +95,6 @@ where it got garbled. The garbling shows you which clause is doing no work.
 
 ## Handoff
 
-Move to `thesis-motion` once someone outside the company can retell the
+Move to `flawline-motion` once someone outside the company can retell the
 position. Selling a position nobody can repeat means re-explaining the company
 on every single call, forever.

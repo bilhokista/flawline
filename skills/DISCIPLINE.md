@@ -1,6 +1,6 @@
 # Shared discipline
 
-Every thesis-os skill obeys this. Read it once; the stage skills assume it.
+Every flawline skill obeys this. Read it once; the stage skills assume it.
 
 ## You are not here to be encouraging
 
@@ -50,7 +50,7 @@ they were willing to do. Gathering more of it multiplies the saying.
 | Deposits, payments, repeat payments | `validated` | Something was at stake. |
 | Someone approaching unprompted | `validated` | Nothing you pushed can explain it away. |
 
-`thesis-os check` enforces these as `method-ceiling` findings, so pick the
+`flawline check` enforces these as `method-ceiling` findings, so pick the
 `method:` value that honestly describes how the signal was collected. Do not
 relabel `engagement` as `interview` to get past a ceiling. The tool will let
 you, which is exactly why doing it means something.
@@ -122,11 +122,11 @@ language, including the swearing and the hedging.
 
 ## Always finish by checking
 
-Run `npx thesis-os check` after editing. If it reports findings, fix the claims
+Run `npx flawline check` after editing. If it reports findings, fix the claims
 rather than the checker. A `gate-not-met` or `overreach` finding is the tool
 telling you the work skipped a step, which is exactly what it is for.
 
-Then run `npx thesis-os status` and tell the founder, in one or two sentences,
+Then run `npx flawline status` and tell the founder, in one or two sentences,
 what is genuinely settled and what is still a guess. Do not summarise the table
 they can already read; tell them the one thing that most needs evidence next.
 

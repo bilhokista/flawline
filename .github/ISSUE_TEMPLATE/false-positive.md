@@ -6,7 +6,7 @@ labels: false-positive
 
 **The finding**
 
-Paste the exact output of `npx thesis-os check`.
+Paste the exact output of `npx flawline check`.
 
 **Smallest document that reproduces it**
 
@@ -18,4 +18,4 @@ What evidence you had, and why the rule should not have fired.
 
 **Version**
 
-`npx thesis-os --version`
+`npx flawline --version`

@@ -10,7 +10,7 @@ import { loadThesis, init, STRATEGY_DIR } from '../src/workspace.js';
 let root: string;
 
 beforeEach(async () => {
-  root = await mkdtemp(join(tmpdir(), 'thesis-os-'));
+  root = await mkdtemp(join(tmpdir(), 'flawline-'));
 });
 
 afterEach(async () => {
@@ -61,7 +61,7 @@ describe('run', () => {
     const result = await run([]);
 
     expect(result.code).toBe(0);
-    expect(result.out).toContain('thesis-os init');
+    expect(result.out).toContain('flawline init');
   });
 
   test('prints the version', async () => {
@@ -165,7 +165,7 @@ describe('check', () => {
     const result = await run(['check', '-C', root]);
 
     expect(result.code).toBe(1);
-    expect(result.out).toContain('thesis-os init');
+    expect(result.out).toContain('flawline init');
   });
 
   test('exits 1 and names the file when a document cannot be read', async () => {
@@ -268,7 +268,7 @@ describe('status', () => {
 
     const result = await run(['status', '-C', root]);
 
-    expect(result.out).toContain('thesis-os check');
+    expect(result.out).toContain('flawline check');
   });
 
   test('exits 1 and reports unreadable documents rather than a table', async () => {

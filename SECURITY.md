@@ -1,6 +1,6 @@
 # Security
 
-thesis-os reads markdown from your own repository and writes markdown back. It
+flawline reads markdown from your own repository and writes markdown back. It
 makes no network requests, runs no code from your documents, and has one runtime
 dependency (`yaml`).
 

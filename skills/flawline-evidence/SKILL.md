@@ -1,5 +1,5 @@
 ---
-name: thesis-evidence
+name: flawline-evidence
 description: Decide what to test, in what order, with pass and fail thresholds fixed before the test runs, and scope the smallest thing worth building. Use when planning validation or experiments, prioritising assumptions by risk, designing an MVP or prototype scope, deciding whether to build something in order to learn, or recording the result of a test that has finished. Also use when a founder is about to build for months on an untested premise.
 ---
 
@@ -23,7 +23,7 @@ Test the top-right first: high damage, low cost. Founders reliably default to
 the bottom-left — cheap tests of things that cannot hurt them — because it feels
 like progress and cannot produce bad news. Name the pattern when you see it.
 
-Run `npx thesis-os status` and read the `assumed` counts. The riskiest
+Run `npx flawline status` and read the `assumed` counts. The riskiest
 assumption is usually a critical claim in an early stage that everything else
 depends on. The dependency graph already knows; use it.
 
@@ -88,12 +88,12 @@ When a test finishes, go back to the claim it tested and edit it:
 - Failed: set it to `refuted`. Do not soften it, do not delete it, do not
   rewrite the statement into something that passed.
 
-Then run `npx thesis-os check`. Refuting one claim is **supposed** to break the
+Then run `npx flawline check`. Refuting one claim is **supposed** to break the
 claims above it, and the `rests-on-refuted` findings that appear are the point
 of the whole tool. Walk the founder through each one and ask what it means. That
 conversation is the value; the passing build is not.
 
 ## Handoff
 
-Move to `thesis-narrative` once the offer survives its riskiest test. There is
+Move to `flawline-narrative` once the offer survives its riskiest test. There is
 no point writing a positioning statement for an offer that has not earned one.

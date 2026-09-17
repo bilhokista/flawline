@@ -73,6 +73,183 @@ you have talked to real people, not that you feel confident. Five conversations
 is a floor, not a target.
 `;
 
+const ADVANTAGE = `---
+stage: advantage
+gate:
+  requires: indicated
+  min_observations: 3
+  # Who you are does not expire. Whether the world still rewards this
+  # particular oddity does, so recheck it about once a year.
+  evidence_half_life_days: 365
+claims:
+  - id: what-is-authentically-mine
+    statement: >-
+      REPLACE ME. One trait, constraint, defect or piece of history that is
+      genuinely yours and was not purchased. Not a skill you acquired because it
+      was useful. The thing you would have anyway.
+    confidence: assumed
+    critical: true
+
+  - id: context-values-it
+    statement: >-
+      REPLACE ME. The specific situation where that trait is an asset rather
+      than a liability. Name the arena, not the aspiration.
+    confidence: assumed
+    critical: true
+    depends_on: [what-is-authentically-mine, problem-exists]
+
+  - id: expensive-to-fake
+    statement: >-
+      REPLACE ME. What it would cost a competitor to fake this credibly, in
+      money, years or reputation. If the answer is a weekend, it is not an
+      advantage.
+    confidence: assumed
+    critical: true
+    depends_on: [what-is-authentically-mine]
+
+  - id: combination-is-mine
+    statement: >-
+      REPLACE ME. Two unrelated things you hold together that others in this
+      market do not. Optional, and often where the real answer hides.
+    confidence: assumed
+    depends_on: [what-is-authentically-mine]
+---
+
+# Advantage
+
+This stage sits second, immediately after the problem, and that placement is
+deliberate. An advantage discovered at the end is a justification written to
+fit decisions already made. Discovered early, it decides which problem is
+yours to solve, which segment will tolerate you, and which channel you can
+sustain.
+
+## Start from the defect, not the strength
+
+The instinct is to list strengths. Resist it. Strengths are mostly purchased —
+a skill you trained, a certificate you earned, a tool you bought — and anything
+purchasable can be purchased by a competitor with more money than you.
+
+So start at the other end. What is true of you that you would not have chosen?
+
+- A constraint you cannot remove: where you live, what you can afford, how much
+  time you actually have, who will not take your call.
+- A trait that has cost you something: impatience, obsessiveness, an inability
+  to let a wrong number go, discomfort in rooms where everyone agrees.
+- A history that does not fit the role: the wrong degree, the failed venture,
+  the unrelated decade, the thing you leave off the profile.
+- A taste nobody asked for: the detail you cannot stop noticing, the standard
+  you hold when nobody is watching.
+
+Write these down plainly. Not reframed, not marketed. The reframing comes next
+and it does not work on a sentence that has already been polished.
+
+## Context decides whether a trait is a flaw
+
+The mechanism is not that your defects are secretly virtues. It is that a trait
+has no fixed value — the same characteristic is a liability in one setting and
+an asset in another, so the work is choosing the setting.
+
+Eric Barker calls these intensifiers in *Barking Up the Wrong Tree*, arguing
+from the differential susceptibility research: traits that are normally
+penalised become disproportionate advantages in the right environment. The
+implication is uncomfortable and useful. The task is not to fix yourself. It is
+to stop competing in the arena that charges you for being who you are.
+
+So for each item above, ask:
+
+1. **Where does this get punished?** Be specific. That is the arena to leave.
+2. **Where would this be the exact thing required?** That is \`context-values-it\`.
+3. **Who is in that arena already?** If nobody, ask why. If everybody, your
+   trait is table stakes there rather than an edge.
+
+An obsessive eye for detail is a liability in a business that competes on speed
+and a requirement in one that competes on trust. Neither is a fact about the
+trait.
+
+## The forgery test
+
+This is the claim that separates an advantage from a personality quirk, and it
+is the one most founders skip because it is the one that can fail.
+
+Ask literally: **what would it cost a competitor to fake this credibly?**
+
+| Cost to fake | What you have |
+| --- | --- |
+| A weekend | Nothing. A preference. |
+| A hire | A feature. They will copy it when you prove it works. |
+| A year of doing it badly in public | A real advantage, for about a year. |
+| Years of lived experience they did not have | An advantage that compounds. |
+| They would have to become someone else | The only kind that lasts. |
+
+The last two rows are only available for things that are authentically yours,
+which is the whole reason this stage starts at defects rather than strengths. A
+competitor can buy a skill, hire a specialist and license a technology. They
+cannot buy having been the person who lived it, and they cannot fake the taste
+that came from it without eventually being found out.
+
+Note the second row carefully. Most things founders call an unfair advantage
+are a feature with a hiring cost attached. That is not a reason to abandon it;
+it is a reason to know how long you have.
+
+## Two unrelated things, held together
+
+Dave Trott's argument in *One Plus One Equals Three* is that new ideas are
+recombinations, and that the useful connections come from material you were not
+naturally drawn to. Most people gather more of what they already know, which
+produces more of what already exists.
+
+So \`combination-is-mine\` asks what two things you hold together that nobody
+else in this market does. Not two skills — two worlds. The trade you learned
+before this one, the community you belong to for unrelated reasons, the second
+language, the craft that has nothing to do with the business.
+
+A combination is harder to fake than either half, because a competitor would
+have to want both, and almost nobody wants both.
+
+## "Nothing yet" remains an honest answer
+
+If no claim here survives the forgery test, write \`what-is-authentically-mine\`
+as best you can and leave the rest \`assumed\`. That is an accurate description
+of most businesses in their first year, and it is far better than a confident
+sentence nobody believes.
+
+What it tells you is specific and worth knowing: you are competing on execution
+alone, in an arena where anyone with funding can follow you. That may be fine.
+It should be a decision rather than a surprise.
+
+## What counts as evidence here
+
+This stage is the only one where you are a legitimate primary source, and the
+limits are exact.
+
+- \`method: self-report\` is capped at \`indicated\`. You know your own history.
+  You are not a reliable judge of what it is worth, and the reason is that you
+  have been rehearsing your own explanation for years.
+- \`context-values-it\` needs outside evidence. Somebody chose you, paid you, or
+  came to you **for this reason specifically**. Record it as
+  \`won-for-this-reason\`.
+- A deal lost because you lacked something is evidence too. Record it as
+  \`lost-for-this-reason\`; it tells you where the trait is not an asset, and
+  that boundary is more useful than another testimonial.
+- \`expensive-to-fake\` is settled by what competitors actually did. Somebody
+  tried to copy it and produced a worse version, or nobody tried at all despite
+  obvious incentive. Record it as \`competitor-failed-to-copy\`.
+
+Engagement, compliments and encouragement buy nothing here, exactly as
+elsewhere. "People always tell me I'm good at this" is a self-report wearing a
+borrowed coat.
+
+## Where this goes next
+
+Carry \`context-values-it\` into the customer and offer stages. The segment you
+choose should be one that pays for your particular oddity rather than tolerating
+it, and the offer should be the one only you would think to build.
+
+Carry \`expensive-to-fake\` into the model stage, where
+\`moat-or-honest-absence\` depends on it directly. A moat claim with no answer
+here is a moat claim with nothing under it.
+`;
+
 const CUSTOMER = `---
 stage: customer
 gate:
@@ -154,7 +331,7 @@ transcript you can cite in the \`evidence\` block of a claim.
 
 ## Interviews stop at "indicated", permanently
 
-\`thesis-os check\` will not let an interview-backed claim reach \`validated\`,
+\`flawline check\` will not let an interview-backed claim reach \`validated\`,
 however many interviews you run. This is not a quota you can grind past.
 
 The reason is narrow and worth sitting with: nothing was at stake when the
@@ -308,6 +485,7 @@ claims:
       REPLACE ME. What gets harder for a competitor over time, or an honest
       admission that nothing does yet. Both are acceptable. Pretending is not.
     confidence: assumed
+    depends_on: [expensive-to-fake]
 ---
 
 # Model
@@ -379,7 +557,7 @@ borrowed channel with no conversion plan is a countdown nobody is watching.
 ## Evidence in this stage expires
 
 The gate sets \`evidence_half_life_days: 120\`. A \`validated\` claim here goes
-stale after four months and \`thesis-os check\` will say so.
+stale after four months and \`flawline check\` will say so.
 
 That is not pedantry. A conversion rate, an acquisition cost and a channel
 that works are all claims about a world that changes underneath you. Put a
@@ -463,7 +641,7 @@ Anything that does not serve question one is version two.
 ## Recording results
 
 When a test finishes, go back and edit the claim it tested: raise the confidence
-and add the evidence, or set it to \`refuted\`. Then run \`thesis-os check\`.
+and add the evidence, or set it to \`refuted\`. Then run \`flawline check\`.
 Refuting one claim is supposed to break the claims above it. That breakage is
 the tool working.
 `;
@@ -613,7 +791,7 @@ Ranked by how hard each one is to explain away:
    mistaken for the ceiling.
 
 Anything below that line — enthusiasm, saved posts, a proposal request, a
-meeting that went well — is not channel evidence. \`thesis-os check\` enforces
+meeting that went well — is not channel evidence. \`flawline check\` enforces
 this through method ceilings, so recording it honestly costs you nothing.
 
 Also note which channel this was, and whether its reach was owned or borrowed.
@@ -663,6 +841,7 @@ That is the boundary of this tool. Build-side methods take over from here.
 
 export const STAGE_TEMPLATES: Readonly<Record<Stage, string>> = {
   problem: PROBLEM,
+  advantage: ADVANTAGE,
   customer: CUSTOMER,
   offer: OFFER,
   model: MODEL,

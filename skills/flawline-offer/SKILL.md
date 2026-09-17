@@ -1,5 +1,5 @@
 ---
-name: thesis-offer
+name: flawline-offer
 description: Design what you actually sell and test whether it fits an obstacle a customer really named, including whether the gain clears their switching cost. Use when deciding what to build or sell, scoping an offer or product, choosing the unit of sale, checking product-market fit reasoning, or cutting a bloated feature list down to a wedge. Also use when an offer sounds compelling but nobody is switching.
 ---
 
@@ -85,6 +85,6 @@ Enthusiasm on a call is not behaviour.
 
 ## Handoff
 
-Move to `thesis-model` when `what-we-sell` is a sentence a buyer would repeat
+Move to `flawline-model` when `what-we-sell` is a sentence a buyer would repeat
 back accurately. The model stage prices what this stage defined; an undefined
 unit of sale cannot be priced, only guessed at.
