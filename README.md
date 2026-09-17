@@ -30,10 +30,10 @@ $ echo $?
 1
 ```
 
-That is a real run. The founder had campaign data for 200 prospects and a
-conversion rate they were pleased with, sitting on top of a problem statement
-nobody had ever checked with a customer. Both facts were in the same repository.
-Nothing in a slide deck would have connected them.
+The shape that produces: campaign data for 200 prospects and a conversion rate
+worth celebrating, sitting on top of a problem statement nobody had ever checked
+with a customer. Both facts in the same repository, and nothing connecting them.
+The numbers are not the weak link — the sentence underneath them is.
 
 ## Install
 
