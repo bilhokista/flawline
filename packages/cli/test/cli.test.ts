@@ -88,6 +88,47 @@ describe('run', () => {
   });
 });
 
+describe('machine readable output', () => {
+  test('report --json carries the state, the riskiest claim and the advice', async () => {
+    await init(root);
+
+    const result = await run(['report', '--json', '-C', root]);
+    const payload = JSON.parse(result.out);
+
+    expect(result.code).toBe(0);
+    expect(payload.stages).toHaveLength(STAGES.length);
+    expect(payload.riskiest.id).toBe('problem-exists');
+    expect(payload.advice.stage).toBe('problem');
+    expect(payload.advice.next).toContain('five');
+    expect(payload.advice.withheld.map((item: { stage: string }) => item.stage)).toContain('offer');
+  });
+
+  test('check --json carries the findings and keeps the exit code', async () => {
+    await writeStage(
+      'problem.md',
+      '---\nstage: problem\nclaims:\n  - id: p\n    statement: S\n    confidence: validated\n---\n',
+    );
+
+    const result = await run(['check', '--json', '-C', root]);
+    const payload = JSON.parse(result.out);
+
+    expect(result.code).toBe(1);
+    expect(payload.blocked).toBe(true);
+    expect(payload.findings[0].code).toBe('unsupported-confidence');
+  });
+
+  test('a clean check in json says so without any prose', async () => {
+    await init(root);
+
+    const result = await run(['check', '--json', '-C', root]);
+    const payload = JSON.parse(result.out);
+
+    expect(result.code).toBe(0);
+    expect(payload.findings).toEqual([]);
+    expect(payload.blocked).toBe(false);
+  });
+});
+
 describe('report', () => {
   test('a day-one thesis is told to go and talk to people, and nothing else', async () => {
     await init(root);

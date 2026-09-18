@@ -191,3 +191,33 @@ export function renderReport(thesis: Thesis, status: Status): string {
 
   return lines.join('\n');
 }
+
+/**
+ * The same content `report` prints, in a form another agent can act on without
+ * parsing prose. Nothing here is computed differently — if the two ever
+ * disagree, the text is the one to fix.
+ */
+export function reportPayload(thesis: Thesis, status: Status): unknown {
+  const riskiest = riskiestAssumption(thesis);
+
+  return {
+    stages: status.stages,
+    reached: status.reached,
+    blocked: status.blocked,
+    riskiest:
+      riskiest === null
+        ? null
+        : {
+            id: riskiest.id,
+            stage: riskiest.stage,
+            statement: riskiest.statement,
+            dependents: thesis.claims.filter((claim) => claim.dependsOn.includes(riskiest.id))
+              .length,
+          },
+    advice: adviseOn(thesis),
+  };
+}
+
+export function findingsPayload(status: Status): unknown {
+  return { findings: status.findings, blocked: status.blocked };
+}

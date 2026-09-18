@@ -3,8 +3,10 @@ import { pathToFileURL } from 'node:url';
 import {
   renderFindings,
   renderParseIssues,
+  findingsPayload,
   renderReport,
   renderStatus,
+  reportPayload,
   summarise,
 } from './report.js';
 import { STAGES } from './model.js';
@@ -26,6 +28,7 @@ Usage
 
 Options
   -C, --cwd <dir>     Run against another directory
+      --json          Emit report or check as JSON, for another agent to read
   -h, --help          Show this
   -v, --version       Print the version
 
@@ -39,6 +42,7 @@ interface ParsedArgs {
   readonly command: string | null;
   readonly cwd: string;
   readonly help: boolean;
+  readonly json: boolean;
   readonly version: boolean;
   readonly error: string | null;
 }
@@ -47,6 +51,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   let command: string | null = null;
   let cwd = process.cwd();
   let help = false;
+  let json = false;
   let version = false;
   let error: string | null = null;
 
@@ -55,6 +60,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
 
     if (argument === '-h' || argument === '--help') {
       help = true;
+    } else if (argument === '--json') {
+      json = true;
     } else if (argument === '-v' || argument === '--version') {
       version = true;
     } else if (argument === '-C' || argument === '--cwd') {
@@ -76,7 +83,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     }
   }
 
-  return { command, cwd, help, version, error };
+  return { command, cwd, help, json, version, error };
 }
 
 export interface RunOutcome {
@@ -97,9 +104,9 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
     case 'status':
       return runStatus(args.cwd);
     case 'report':
-      return runReport(args.cwd);
+      return runReport(args.cwd, args.json);
     case 'check':
-      return runCheck(args.cwd);
+      return runCheck(args.cwd, args.json);
     default:
       return { code: 2, out: `Unknown command: ${args.command}\n\n${HELP}` };
   }
@@ -179,7 +186,7 @@ async function runStatus(cwd: string): Promise<RunOutcome> {
   return { code: 0, out: lines.join('\n') };
 }
 
-async function runReport(cwd: string): Promise<RunOutcome> {
+async function runReport(cwd: string, json = false): Promise<RunOutcome> {
   const { thesis, issues } = await loadThesis(cwd);
 
   if (issues.length > 0) {
@@ -193,10 +200,14 @@ async function runReport(cwd: string): Promise<RunOutcome> {
     };
   }
 
-  return { code: 0, out: renderReport(thesis, summarise(thesis)) };
+  const status = summarise(thesis);
+
+  return json
+    ? { code: 0, out: JSON.stringify(reportPayload(thesis, status), null, 2) }
+    : { code: 0, out: renderReport(thesis, status) };
 }
 
-async function runCheck(cwd: string): Promise<RunOutcome> {
+async function runCheck(cwd: string, json = false): Promise<RunOutcome> {
   const { thesis, issues } = await loadThesis(cwd);
 
   if (issues.length > 0) {
@@ -214,7 +225,7 @@ async function runCheck(cwd: string): Promise<RunOutcome> {
 
   return {
     code: status.blocked ? 1 : 0,
-    out: renderFindings(status.findings),
+    out: json ? JSON.stringify(findingsPayload(status), null, 2) : renderFindings(status.findings),
   };
 }
 

@@ -62,7 +62,18 @@ Edit the statements to say what you actually believe. Commit them. Then:
 ```bash
 npx flawline status   # what is settled, what is still a guess
 npx flawline check    # exits 1 when a claim outruns its evidence
+npx flawline report   # where this stands, and the one thing to do next
 ```
+
+`report` names the riskiest claim resting on nothing, says how much is riding on
+it, and gives exactly one recommendation. It also names what it refuses to
+advise on and why — a summary that recommends a channel on top of eight
+assumptions is the slide this project exists to prevent, so a recommendation is
+held to the same rule as a claim.
+
+`report --json` and `check --json` emit the same content for another agent to
+act on. One task does not delegate: an agent cannot sit down with a stranger,
+and until someone does, nothing leaves `assumed`.
 
 ## How a claim works
 
