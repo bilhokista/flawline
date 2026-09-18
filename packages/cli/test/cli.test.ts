@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { parseArgs, run } from '../src/cli.js';
 import { STAGES } from '../src/model.js';
+import { STAGE_TEMPLATES } from '../src/templates.js';
 
 const PACKAGE_VERSION = JSON.parse(
   readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
@@ -188,14 +189,20 @@ describe('report', () => {
   });
 });
 
+async function layDownEveryStage(): Promise<void> {
+  await mkdir(join(root, STRATEGY_DIR), { recursive: true });
+  for (const stage of STAGES) {
+    await writeFile(join(root, STRATEGY_DIR, `${stage}.md`), STAGE_TEMPLATES[stage], 'utf8');
+  }
+}
+
 describe('init', () => {
-  test('creates one document per stage', async () => {
+  test('opens the first stage only', async () => {
     const result = await run(['init', '-C', root]);
 
     expect(result.code).toBe(0);
-    for (const stage of STAGES) {
-      expect(result.out).toContain(`created  ${STRATEGY_DIR}/${stage}.md`);
-    }
+    expect(result.out).toContain(`created  ${STRATEGY_DIR}/problem.md`);
+    expect(result.out).not.toContain(`created  ${STRATEGY_DIR}/offer.md`);
   });
 
   test('is safe to run twice and never overwrites edits', async () => {
@@ -247,7 +254,7 @@ describe('the scaffolded thesis', () => {
   });
 
   test('passes check, because every starter claim admits it is an assumption', async () => {
-    await init(root);
+    await layDownEveryStage();
 
     const { thesis } = await loadThesis(root);
 
@@ -255,7 +262,7 @@ describe('the scaffolded thesis', () => {
   });
 
   test('declares claims in every stage', async () => {
-    await init(root);
+    await layDownEveryStage();
 
     const { thesis } = await loadThesis(root);
     const stagesWithClaims = new Set(thesis.claims.map((claim) => claim.stage));
@@ -276,7 +283,7 @@ describe('the scaffolded thesis', () => {
   });
 
   test('every stage carries at least one critical claim', async () => {
-    await init(root);
+    await layDownEveryStage();
 
     const { thesis } = await loadThesis(root);
 
@@ -449,7 +456,7 @@ describe('document discovery', () => {
   });
 
   test('reads documents in pipeline order, not alphabetical order', async () => {
-    await init(root);
+    await layDownEveryStage();
 
     const { thesis } = await loadThesis(root);
     const order = [...new Set(thesis.claims.map((claim) => claim.stage))];

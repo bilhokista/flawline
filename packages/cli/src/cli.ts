@@ -145,9 +145,10 @@ const INTRODUCTION = `What this is
   you is that later, when something stops being assumed, you will know exactly
   what moved it.
 
-  The ${STAGES.length} stages run in order because the claims depend on each other. An
-  offer written before the problem is understood is a confident answer to a
-  question nobody asked.
+  The ${STAGES.length} stages run in order because the claims depend on each other, and
+  each one opens only when the stage before it holds. An offer written before
+  the problem is understood is a confident answer to a question nobody asked,
+  so this tool will not hand you the document to write it in yet.
 
   This works as a conversation, not a form. Filling in the placeholders alone
   produces documents that pass the checker and tell you nothing. Bring an agent
@@ -161,6 +162,13 @@ async function runInit(cwd: string): Promise<RunOutcome> {
   for (const file of result.skipped) lines.push(`kept     ${file}`);
 
   lines.push('');
+
+  if (result.withheld.length > 0) {
+    lines.push(
+      `Not yet: ${result.withheld.join(', ')}. Each opens when the stage before it holds.`,
+    );
+    lines.push('');
+  }
 
   if (result.created.length > 0) {
     lines.push(INTRODUCTION);

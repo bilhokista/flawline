@@ -1,5 +1,6 @@
 import { readdir, readFile, mkdir, writeFile, access } from 'node:fs/promises';
 import { join, relative, sep } from 'node:path';
+import { openStages } from './advice.js';
 import { STAGES, type Stage } from './model.js';
 import { parseThesis, type ParseResult } from './parse.js';
 import { STAGE_TEMPLATES } from './templates.js';
@@ -67,6 +68,8 @@ export async function loadThesis(root: string): Promise<ParseResult> {
 export interface InitResult {
   readonly created: readonly string[];
   readonly skipped: readonly string[];
+  /** Stages not opened yet, because the claims under them do not hold. */
+  readonly withheld: readonly Stage[];
 }
 
 /**
@@ -80,7 +83,11 @@ export async function init(root: string): Promise<InitResult> {
   const created: string[] = [];
   const skipped: string[] = [];
 
-  for (const stage of STAGES) {
+  const { thesis } = await loadThesis(root);
+  const open = openStages(thesis);
+  const withheld = STAGES.filter((stage) => !open.includes(stage));
+
+  for (const stage of open) {
     const name = `${stage}.md`;
     const absolute = join(directory, name);
     const display = `${STRATEGY_DIR}/${name}`;
@@ -94,7 +101,7 @@ export async function init(root: string): Promise<InitResult> {
     created.push(display);
   }
 
-  return { created, skipped };
+  return { created, skipped, withheld };
 }
 
 export function templateFor(stage: Stage): string {

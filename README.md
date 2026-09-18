@@ -41,9 +41,14 @@ The numbers are not the weak link — the sentence underneath them is.
 npx flawline init
 ```
 
-Eight documents appear in `strategy/`, one per stage, each pre-loaded with the
-claims that stage owns — all marked `assumed`, because on day one that is what
-they are.
+One document appears in `strategy/`, for the stage you are actually in,
+pre-loaded with the claims it owns — all marked `assumed`, because on day one
+that is what they are.
+
+The other seven stay shut. Eight blank documents invite you to fill in eight,
+and a form filled in alone passes the checker while establishing nothing. Each
+one opens when the stage before it holds, and `flawline init` is how you collect
+them.
 
 ```
 strategy/

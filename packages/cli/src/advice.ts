@@ -61,7 +61,7 @@ function criticalIn(thesis: Thesis, stage: Stage): Claim[] {
  * what everything after it is waiting on. A stage with no critical claims
  * recorded counts as unsettled: an empty document is not a finished one.
  */
-function firstUnsettledStage(thesis: Thesis): Stage | null {
+export function firstUnsettledStage(thesis: Thesis): Stage | null {
   for (const stage of STAGES) {
     const critical = criticalIn(thesis, stage);
     if (critical.length === 0 || !critical.every(isSettled)) return stage;
@@ -112,4 +112,19 @@ export function riskiestAssumption(thesis: Thesis): Claim | null {
   }
 
   return null;
+}
+
+/**
+ * The stages a reader may work in: everything up to and including the one the
+ * work actually sits in.
+ *
+ * Handing someone eight blank documents invites them to fill in eight, and a
+ * form filled in alone passes the checker while establishing nothing. A
+ * document that does not exist cannot be filled in, so later stages stay shut
+ * until the claims under them hold.
+ */
+export function openStages(thesis: Thesis): readonly Stage[] {
+  const unsettled = firstUnsettledStage(thesis);
+
+  return unsettled === null ? STAGES : STAGES.slice(0, STAGES.indexOf(unsettled) + 1);
 }
