@@ -268,6 +268,36 @@ describe('status', () => {
     expect(result.out).toContain('<- furthest');
   });
 
+  test('a freshly laid out thesis shows the table, and marks no stage as furthest', async () => {
+    await writeStage(
+      'problem.md',
+      '---\nstage: problem\nclaims:\n  - id: p\n    statement: S\n---\n',
+    );
+
+    const result = await run(['status', '-C', root]);
+
+    expect(result.code).toBe(0);
+    expect(result.out).not.toContain('No claims yet');
+    expect(result.out).toContain('problem');
+    expect(result.out).not.toContain('<- furthest');
+  });
+
+  test('the furthest stage is the last one that settled something, not the last one written', async () => {
+    await writeStage(
+      'problem.md',
+      '---\nstage: problem\nclaims:\n  - id: p\n    statement: S\n    confidence: indicated\n    evidence:\n      - method: interview\n        source: r.md\n        n: 6\n---\n',
+    );
+    await writeStage(
+      'motion.md',
+      '---\nstage: motion\nclaims:\n  - id: m\n    statement: S\n---\n',
+    );
+
+    const result = await run(['status', '-C', root]);
+
+    expect(result.out).toMatch(/problem.*<- furthest/);
+    expect(result.out).not.toMatch(/motion.*<- furthest/);
+  });
+
   test('points at check when there are findings', async () => {
     await writeStage(
       'problem.md',

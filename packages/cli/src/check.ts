@@ -67,6 +67,33 @@ function totalObservations(claim: Claim): number {
 }
 
 /**
+ * How far the thesis has actually come: the last stage holding a claim that
+ * has left `assumed`.
+ *
+ * Writing down what you intend to believe later is planning, and planning
+ * ahead costs nothing — `init` fills every stage on the first run. So a stage
+ * counts as reached only once something in it has been substantiated.
+ *
+ * Returns -1 when nothing has been substantiated anywhere.
+ */
+export function furthestStageIndex(claims: readonly Claim[]): number {
+  const substantiated = claims
+    .filter((claim) => claim.confidence !== 'assumed')
+    .map((claim) => stageIndex(claim.stage));
+
+  return substantiated.length > 0 ? Math.max(...substantiated) : -1;
+}
+
+/**
+ * The stage the thesis has actually reached, or null when nothing is settled.
+ */
+export function furthestStage(claims: readonly Claim[]): Stage | null {
+  const index = furthestStageIndex(claims);
+
+  return index === -1 ? null : (STAGES[index] as Stage);
+}
+
+/**
  * Walks the dependency graph and reports every claim that leans on more
  * support than it has.
  *
@@ -361,10 +388,7 @@ function checkCycles(byId: ReadonlyMap<string, Claim>): Finding[] {
  */
 function checkGates(byId: ReadonlyMap<string, Claim>, gates: readonly StageGate[]): Finding[] {
   const claims = [...byId.values()];
-  const substantiated = claims
-    .filter((claim) => claim.confidence !== 'assumed')
-    .map((claim) => stageIndex(claim.stage));
-  const furthest = substantiated.length > 0 ? Math.max(...substantiated) : -1;
+  const furthest = furthestStageIndex(claims);
 
   const findings: Finding[] = [];
 

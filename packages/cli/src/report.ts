@@ -1,4 +1,10 @@
-import { check, hasBlockingFindings, type CheckOptions, type Finding } from './check.js';
+import {
+  check,
+  furthestStage,
+  hasBlockingFindings,
+  type CheckOptions,
+  type Finding,
+} from './check.js';
 import { STAGES, strengthOf, type Claim, type Confidence, type Stage } from './model.js';
 import type { ParseIssue } from './parse.js';
 import type { Thesis } from './model.js';
@@ -6,6 +12,7 @@ import type { Thesis } from './model.js';
 export interface StageSummary {
   readonly stage: Stage;
   readonly counts: Readonly<Record<Confidence, number>>;
+  readonly claimTotal: number;
   readonly criticalTotal: number;
   readonly criticalSettled: number;
   readonly findings: number;
@@ -13,7 +20,7 @@ export interface StageSummary {
 
 export interface Status {
   readonly stages: readonly StageSummary[];
-  /** Furthest stage any claim has been written in, or null for an empty thesis. */
+  /** Furthest stage holding a substantiated claim, or null while all are assumed. */
   readonly reached: Stage | null;
   readonly findings: readonly Finding[];
   readonly blocked: boolean;
@@ -43,6 +50,7 @@ export function summarise(thesis: Thesis, options: CheckOptions = {}): Status {
     return {
       stage,
       counts,
+      claimTotal: claims.length,
       criticalTotal: critical.length,
       criticalSettled: critical.filter(isSettled).length,
       findings: findings.filter((finding) =>
@@ -51,11 +59,9 @@ export function summarise(thesis: Thesis, options: CheckOptions = {}): Status {
     };
   });
 
-  const occupied = STAGES.filter((stage) => thesis.claims.some((claim) => claim.stage === stage));
-
   return {
     stages,
-    reached: occupied.length > 0 ? (occupied[occupied.length - 1] as Stage) : null,
+    reached: furthestStage(thesis.claims),
     findings,
     blocked: hasBlockingFindings(findings),
   };
@@ -79,7 +85,7 @@ function bar(summary: StageSummary): string {
 export function renderStatus(status: Status): string {
   const lines: string[] = [];
 
-  if (status.reached === null) {
+  if (status.stages.every((summary) => summary.claimTotal === 0)) {
     return 'No claims yet. Run `flawline init` to lay out the stages, then write your first claim in strategy/problem.md.';
   }
 
