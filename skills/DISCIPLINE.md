@@ -76,6 +76,7 @@ they were willing to do. Gathering more of it multiplies the saying.
 | Engagement: likes, saves, views, follows | `assumed` | Costless attention. The distance to a purchase is not measured by it. |
 | Warm replies in DMs or chat, stated intent | `assumed` | Politeness is indistinguishable from demand in a text message. |
 | Interviews and surveys | `indicated` | Establishes the problem and its cost. Cannot establish that anyone will pay. |
+| Working inside it and watching it go wrong | `indicated` | Nobody was performing for you, which beats an interview. Still one witness, still nothing at stake. Record it as `field-observation`; watching from outside without that access is not this. |
 | Waitlists, landing pages, demos that went well | `indicated` | Interest with no cost attached. |
 | Quote and proposal requests | `indicated` | Looks like a buyer right up until it evaporates. |
 | Deposits, payments, repeat payments | `validated` | Something was at stake. |

@@ -170,6 +170,32 @@ describe('method ceilings', () => {
     expect(findings).toEqual([]);
   });
 
+  test('working inside a business and seeing it go wrong reaches indicated', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'indicated',
+          evidence: [{ method: 'field-observation', source: 'two years at the company', n: 1 }],
+        }),
+      ]),
+    );
+
+    expect(findings).toEqual([]);
+  });
+
+  test('seeing it from the inside still settles nothing on its own', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'validated',
+          evidence: [{ method: 'field-observation', source: 'four companies', n: 4 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
   test('a colleague is not a stranger, however many of them there are', () => {
     const findings = run(
       thesis([

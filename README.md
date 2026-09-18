@@ -140,6 +140,12 @@ available early. They cannot establish that anyone will pay, because nothing
 was at stake when the answer was given. Four hundred interviews still stop at
 `indicated`.
 
+`field-observation` sits with interviews at `indicated`: you worked inside it
+and watched it happen, so nobody was performing for you and nobody was being
+polite. That beats asking. It is still one witness with no artefact a stranger
+could open, so it stops where interviews stop. Watching from outside without
+that access is not this.
+
 People who already know you sit at `assumed` too — `colleague` and `friend`
 answer about the relationship, and the offer cannot be separated out
 afterwards. So does reading about a market rather than sampling it: `scraping`

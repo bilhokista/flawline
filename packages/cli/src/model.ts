@@ -138,6 +138,14 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   'landing-page': 'indicated',
   demo: 'indicated',
 
+  // Sustained first-hand access: you worked inside it and watched it happen,
+  // without asking anyone. Stronger than an interview, because nobody was
+  // performing for you and nobody was being polite. Still one witness with no
+  // artefact a stranger could open, and still nothing at stake, so it stops
+  // where interviews stop. Watching from outside without that access is not
+  // this — leave it unlisted, where it counts as an assumption.
+  'field-observation': 'indicated',
+
   // You are a reliable narrator of your own history, and an unreliable one
   // about what that history is worth. So it establishes the trait, never its
   // value — and only on the stage that is about you. See SELF_REPORT_STAGE.
