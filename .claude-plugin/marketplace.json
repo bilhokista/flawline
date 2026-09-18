@@ -11,7 +11,7 @@
       "name": "flawline",
       "source": "./",
       "description": "Eight strategy skills run in dependency order, each leaving claims marked assumed, indicated or validated. Pairs with the flawline CLI, which exits 1 when a claim outruns its evidence.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "category": "productivity",
       "author": {
         "name": "Dian Bilhokista"
@@ -29,6 +29,6 @@
     }
   ],
   "metadata": {
-    "version": "0.2.0"
+    "version": "0.3.0"
   }
 }

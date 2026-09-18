@@ -1,6 +1,6 @@
 {
   "name": "flawline",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Evidence-gated strategy pipeline for founders: decide what to build, for whom, and whether anyone will pay \u2014 before you write code.",
   "keywords": [
     "founder",

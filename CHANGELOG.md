@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.0
+
+### Changed
+
+- **`init` opens one stage at a time.** It used to write all eight documents at
+  once, which invites filling in eight — and a form filled in alone passes the
+  checker while establishing nothing. Now only the stage the work is actually in
+  exists on disk; the rest are named as withheld and each opens when the stage
+  before it holds. Run `init` again to collect the next one. Documents already
+  on disk are never touched.
+
+`init` on a thesis that already has its documents changes nothing: existing
+files are never touched.
+
 ## 0.2.0
 
 Documents that passed `check` under 0.1.0 can fail under this release. Every
@@ -33,12 +47,6 @@ new failure is a finding rather than a regression.
 
 ### New
 
-- **`init` opens one stage at a time.** It used to write all eight documents at
-  once, which invites filling in eight — and a form filled in alone passes the
-  checker while establishing nothing. Now only the stage the work is actually in
-  exists on disk; the rest are named as withheld and each opens when the stage
-  before it holds. Run `init` again to collect the next one. Documents already
-  on disk are never touched.
 - **`flawline report`** — where the thesis stands, the riskiest claim resting on
   nothing and how much is riding on it, and the one piece of work the evidence
   licenses next. It also names what it refuses to advise on and why: a
