@@ -1,5 +1,7 @@
 # What is being built next
 
+> All four landed on 2026-09-18. Kept as the record of why each one exists.
+
 Four changes, in order. The order is by cost: the cheapest one fixes the worst
 minute, and each later one is easier once the earlier ones exist.
 
