@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 import { pathToFileURL } from 'node:url';
-import { renderFindings, renderParseIssues, renderStatus, summarise } from './report.js';
+import {
+  renderFindings,
+  renderParseIssues,
+  renderReport,
+  renderStatus,
+  summarise,
+} from './report.js';
 import { STAGES } from './model.js';
 import { init, loadThesis, STRATEGY_DIR } from './workspace.js';
 
@@ -15,6 +21,7 @@ next to the code.
 Usage
   flawline init      Lay out the ${STAGES.length} stage documents (never overwrites)
   flawline status    Show how far the thesis has come and what is settled
+  flawline report    Say where this stands and what the evidence lets you do
   flawline check     Fail if any claim leans on more support than it has
 
 Options
@@ -89,6 +96,8 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
       return runInit(args.cwd);
     case 'status':
       return runStatus(args.cwd);
+    case 'report':
+      return runReport(args.cwd);
     case 'check':
       return runCheck(args.cwd);
     default:
@@ -168,6 +177,23 @@ async function runStatus(cwd: string): Promise<RunOutcome> {
   }
 
   return { code: 0, out: lines.join('\n') };
+}
+
+async function runReport(cwd: string): Promise<RunOutcome> {
+  const { thesis, issues } = await loadThesis(cwd);
+
+  if (issues.length > 0) {
+    return { code: 1, out: renderParseIssues(issues) };
+  }
+
+  if (thesis.claims.length === 0) {
+    return {
+      code: 1,
+      out: `No claims found in ${STRATEGY_DIR}/. Run \`flawline init\` first.`,
+    };
+  }
+
+  return { code: 0, out: renderReport(thesis, summarise(thesis)) };
 }
 
 async function runCheck(cwd: string): Promise<RunOutcome> {

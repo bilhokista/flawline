@@ -8,6 +8,7 @@ import {
 import { STAGES, strengthOf, type Claim, type Confidence, type Stage } from './model.js';
 import type { ParseIssue } from './parse.js';
 import type { Thesis } from './model.js';
+import { adviseOn, riskiestAssumption } from './advice.js';
 
 export interface StageSummary {
   readonly stage: Stage;
@@ -128,4 +129,65 @@ export function renderFindings(findings: readonly Finding[]): string {
 
 export function renderParseIssues(issues: readonly ParseIssue[]): string {
   return issues.map((issue) => `${issue.source}: cannot read: ${issue.message}`).join('\n');
+}
+
+/**
+ * The report a reader actually wants: where the thesis stands, the riskiest
+ * thing being believed, and the one piece of work the evidence licenses next.
+ *
+ * The refusal list is the load-bearing part. A summary that recommends a
+ * channel on top of eight assumptions is the confident slide this project
+ * exists to prevent, so a recommendation is held to the same rule as a claim
+ * and may not outrun what supports it.
+ */
+export function renderReport(thesis: Thesis, status: Status): string {
+  const lines: string[] = [];
+
+  lines.push('Where this stands');
+  lines.push('');
+
+  for (const summary of status.stages) {
+    const critical =
+      summary.criticalTotal === 0 ? '-' : `${summary.criticalSettled}/${summary.criticalTotal}`;
+    lines.push(`  ${summary.stage.padEnd(10)} ${critical.padEnd(6)} critical claims settled`);
+  }
+
+  const riskiest = riskiestAssumption(thesis);
+
+  if (riskiest !== null) {
+    lines.push('');
+    lines.push('The riskiest thing you believe');
+    lines.push('');
+    lines.push(`  ${riskiest.id}  (${riskiest.stage})`);
+    lines.push(`  ${riskiest.statement}`);
+
+    const resting = thesis.claims.filter((claim) => claim.dependsOn.includes(riskiest.id)).length;
+    const carried = resting === 1 ? '1 claim rests on it' : `${resting} claims rest on it`;
+    lines.push(`  Nothing supports it, and ${carried}.`);
+  }
+
+  const advice = adviseOn(thesis);
+
+  lines.push('');
+  lines.push('What the evidence lets you do next');
+  lines.push('');
+
+  if (advice.next === null) {
+    lines.push('  Every critical claim is settled. Go and re-measure the ones that expire.');
+
+    return lines.join('\n');
+  }
+
+  lines.push(`  ${advice.next}`);
+
+  if (advice.withheld.length > 0) {
+    const [first] = advice.withheld;
+    lines.push('');
+    lines.push(
+      `  Not yet: ${advice.withheld.map((item) => item.stage).join(', ')} — ${first?.because}.`,
+    );
+    lines.push('  This tool will not advise on those until the claims under them hold.');
+  }
+
+  return lines.join('\n');
 }

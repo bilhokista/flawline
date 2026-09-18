@@ -88,6 +88,36 @@ describe('run', () => {
   });
 });
 
+describe('report', () => {
+  test('a day-one thesis is told to go and talk to people, and nothing else', async () => {
+    await init(root);
+
+    const result = await run(['report', '-C', root]);
+
+    expect(result.code).toBe(0);
+    expect(result.out).toContain('five');
+    expect(result.out).toContain('Not yet');
+    expect(result.out).toMatch(/offer/i);
+    expect(result.out).not.toMatch(/funnel/i);
+  });
+
+  test('names the riskiest thing being believed', async () => {
+    await init(root);
+
+    const result = await run(['report', '-C', root]);
+
+    expect(result.out).toContain('riskiest');
+    expect(result.out).toContain('problem-exists');
+  });
+
+  test('says so plainly when there are no claims at all', async () => {
+    const result = await run(['report', '-C', root]);
+
+    expect(result.code).toBe(1);
+    expect(result.out).toContain('No claims');
+  });
+});
+
 describe('init', () => {
   test('creates one document per stage', async () => {
     const result = await run(['init', '-C', root]);
