@@ -96,6 +96,39 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
   }
 }
 
+/**
+ * Printed once, on the run that creates the documents. A reader who has just
+ * installed this has been handed eight files of placeholders and told nothing,
+ * which is how the first real session went wrong: it opened by making demands
+ * of someone who did not yet know what they had downloaded.
+ *
+ * Short enough to read standing up. It says what the thing is, what the
+ * confidences mean, that `assumed` is the normal state rather than a grade,
+ * and what happens next.
+ */
+const INTRODUCTION = `What this is
+
+  Your strategy, as a list of claims, in git next to the code. Every claim
+  records what holds it up, and \`flawline check\` fails when one is stated
+  more strongly than its evidence allows.
+
+  Three confidences do the work. \`assumed\` is a belief. \`indicated\` means
+  real signal exists from outside your own head. \`validated\` means it is
+  settled, and almost nothing is, for a long time.
+
+  On day one every claim is \`assumed\`. That is not a grade and not a
+  failure — it is an accurate description of day one. What the documents buy
+  you is that later, when something stops being assumed, you will know exactly
+  what moved it.
+
+  The ${STAGES.length} stages run in order because the claims depend on each other. An
+  offer written before the problem is understood is a confident answer to a
+  question nobody asked.
+
+  This works as a conversation, not a form. Filling in the placeholders alone
+  produces documents that pass the checker and tell you nothing. Bring an agent
+  that will argue with you, or argue with yourself on paper.`;
+
 async function runInit(cwd: string): Promise<RunOutcome> {
   const result = await init(cwd);
   const lines: string[] = [];
@@ -104,11 +137,17 @@ async function runInit(cwd: string): Promise<RunOutcome> {
   for (const file of result.skipped) lines.push(`kept     ${file}`);
 
   lines.push('');
-  lines.push(
-    result.created.length > 0
-      ? `Start in ${STRATEGY_DIR}/problem.md. Replace the placeholder statements with what you actually believe, then run \`flawline check\`.`
-      : 'Everything was already in place. Nothing was overwritten.',
-  );
+
+  if (result.created.length > 0) {
+    lines.push(INTRODUCTION);
+    lines.push('');
+    lines.push(
+      `Start in ${STRATEGY_DIR}/problem.md. Then \`flawline status\` for where you are,
+and \`flawline check\` for what is overstated.`,
+    );
+  } else {
+    lines.push('Everything was already in place. Nothing was overwritten.');
+  }
 
   return { code: 0, out: lines.join('\n') };
 }

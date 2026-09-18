@@ -111,6 +111,25 @@ describe('init', () => {
     expect(await readFile(path, 'utf8')).toContain('My own notes.');
   });
 
+  test('tells a first-time reader what this is before asking anything of them', async () => {
+    const out = (await run(['init', '-C', root])).out;
+
+    expect(out).toContain('What this is');
+    expect(out).toContain('assumed');
+    expect(out).toContain('in order');
+    expect(out).toContain('a conversation');
+    expect(out).toContain(`${STRATEGY_DIR}/problem.md`);
+  });
+
+  test('does not repeat the introduction once the documents exist', async () => {
+    await init(root);
+
+    const out = (await run(['init', '-C', root])).out;
+
+    expect(out).not.toContain('What this is');
+    expect(out).toContain('already in place');
+  });
+
   test('reports when there was nothing left to create', async () => {
     await init(root);
 
