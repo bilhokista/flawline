@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { parseArgs, run } from '../src/cli.js';
+import { STAGES } from '../src/model.js';
 import { check } from '../src/check.js';
 import { STAGES } from '../src/model.js';
 import { loadThesis, init, STRATEGY_DIR } from '../src/workspace.js';
@@ -62,6 +63,13 @@ describe('run', () => {
 
     expect(result.code).toBe(0);
     expect(result.out).toContain('flawline init');
+  });
+
+  test('counts the stage documents it will actually write', async () => {
+    const result = await run([]);
+
+    expect(result.out).toContain(`${STAGES.length} stage documents`);
+    expect(result.out).not.toContain('seven stage documents');
   });
 
   test('prints the version', async () => {

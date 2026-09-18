@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { pathToFileURL } from 'node:url';
 import { renderFindings, renderParseIssues, renderStatus, summarise } from './report.js';
+import { STAGES } from './model.js';
 import { init, loadThesis, STRATEGY_DIR } from './workspace.js';
 
 const VERSION = '0.1.0';
@@ -12,7 +13,7 @@ rather than on confidence. Strategy lives in ${STRATEGY_DIR}/*.md, in git,
 next to the code.
 
 Usage
-  flawline init      Lay out the seven stage documents (never overwrites)
+  flawline init      Lay out the ${STAGES.length} stage documents (never overwrites)
   flawline status    Show how far the thesis has come and what is settled
   flawline check     Fail if any claim leans on more support than it has
 
