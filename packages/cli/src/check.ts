@@ -67,6 +67,25 @@ function totalObservations(claim: Claim): number {
 }
 
 /**
+ * Observations recorded on a method that can actually carry the confidence
+ * being claimed.
+ *
+ * The count gate and the method ceiling are separate rules, and counting every
+ * observation regardless of method let one of them defeat the other: four
+ * conversations with friends plus a single payment cleared a five-observation
+ * bar that only the payment could speak to. A weak method does not become
+ * strong in a crowd.
+ */
+function qualifyingObservations(claim: Claim, target: Exclude<Confidence, 'refuted'>): number {
+  return claim.evidence
+    .filter((item) => {
+      const ceiling = ceilingForMethod(item.method, claim.stage) ?? 'assumed';
+      return strengthOf(ceiling) >= strengthOf(target);
+    })
+    .reduce((sum, item) => sum + (item.n ?? 1), 0);
+}
+
+/**
  * How far the thesis has actually come: the last stage holding a claim that
  * has left `assumed`.
  *
@@ -151,15 +170,27 @@ function checkEvidence(claim: Claim, gate: StageGate): Finding[] {
   }
 
   if (claim.confidence === 'validated') {
-    const observed = totalObservations(claim);
+    // The ceiling check owns this claim while the evidence is the wrong kind.
+    // Reporting a shortfall as well would bury the finding that matters.
+    if (strengthOf(claim.confidence) > strengthOf(ceilingOf(claim.evidence, claim.stage))) {
+      return [];
+    }
+
+    const observed = qualifyingObservations(claim, 'validated');
     if (observed < gate.minObservations) {
+      const setAside = totalObservations(claim) - observed;
+      const note =
+        setAside > 0
+          ? ` ${setAside} further observation(s) sit on methods that cap below "validated" and cannot count toward it.`
+          : '';
+
       return [
         {
           code: 'insufficient-observations',
           severity: 'error',
           claimId: claim.id,
           source: claim.source,
-          message: `Marked "validated" on ${observed} observation(s); the ${claim.stage} gate requires ${gate.minObservations}. Downgrade to "indicated" or gather more.`,
+          message: `Marked "validated" on ${observed} qualifying observation(s); the ${claim.stage} gate requires ${gate.minObservations}.${note} Downgrade to "indicated" or gather more.`,
         },
       ];
     }

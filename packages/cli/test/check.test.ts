@@ -109,7 +109,57 @@ describe('evidence requirements', () => {
     );
 
     expect(codes(findings)).toEqual(['insufficient-observations']);
-    expect(findings[0]?.message).toContain('1 observation');
+    expect(findings[0]?.message).toContain('1 qualifying observation');
+  });
+
+  test('observations on methods that cap below the claim do not count toward it', () => {
+    const findings = check(
+      thesis([
+        claim({
+          confidence: 'validated',
+          evidence: [
+            { method: 'payment', source: 'stripe.md', n: 1 },
+            { method: 'friend', source: 'notes.md', n: 4 },
+            { method: 'interview', source: 'research.md', n: 9 },
+          ],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['insufficient-observations']);
+    expect(findings[0]?.message).toContain('1 qualifying observation');
+  });
+
+  test('says how many observations were set aside, so the count is not a mystery', () => {
+    const findings = check(
+      thesis([
+        claim({
+          confidence: 'validated',
+          evidence: [
+            { method: 'payment', source: 'stripe.md', n: 1 },
+            { method: 'friend', source: 'notes.md', n: 4 },
+          ],
+        }),
+      ]),
+    );
+
+    expect(findings[0]?.message).toContain('4 further');
+  });
+
+  test('a full count of qualifying observations still settles the claim', () => {
+    const findings = check(
+      thesis([
+        claim({
+          confidence: 'validated',
+          evidence: [
+            { method: 'payment', source: 'stripe.md', n: 5 },
+            { method: 'friend', source: 'notes.md', n: 40 },
+          ],
+        }),
+      ]),
+    );
+
+    expect(findings).toEqual([]);
   });
 
   test('honours a stricter per-stage observation bar', () => {
