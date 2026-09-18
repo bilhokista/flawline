@@ -140,6 +140,12 @@ available early. They cannot establish that anyone will pay, because nothing
 was at stake when the answer was given. Four hundred interviews still stop at
 `indicated`.
 
+People who already know you sit at `assumed` too — `colleague` and `friend`
+answer about the relationship, and the offer cannot be separated out
+afterwards. So does reading about a market rather than sampling it: `scraping`
+and `desk-research` cap at `assumed`, because nobody in a scraped post was
+asked your question or had anything at stake when they wrote it.
+
 A method not on the list counts as an assumption. The tool cannot read what a
 name means, and a name it cannot read is not a reason to believe anything.
 Stronger evidence recorded beside it still lifts the claim, so one real payment

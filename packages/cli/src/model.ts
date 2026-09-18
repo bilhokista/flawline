@@ -117,6 +117,17 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   chat: 'assumed',
   'verbal-interest': 'assumed',
 
+  // People who already know you. They are answering about the relationship,
+  // not the offer, and the signal cannot be separated out afterwards.
+  colleague: 'assumed',
+  friend: 'assumed',
+
+  // Reading about a market is not sampling it. Nobody in a scraped post or a
+  // published report was asked your question, and nobody had anything at
+  // stake when they wrote it. Volume changes none of that.
+  scraping: 'assumed',
+  'desk-research': 'assumed',
+
   // Real signal, but no money moved, so it stops short of settled.
   interview: 'indicated',
   survey: 'indicated',
@@ -138,6 +149,7 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   sale: 'validated',
   'repeat-payment': 'validated',
   invoice: 'validated',
+  'signed-contract': 'validated',
   'inbound-unprompted': 'validated',
   'competitor-failed-to-copy': 'validated',
   'won-for-this-reason': 'validated',

@@ -170,7 +170,59 @@ describe('method ceilings', () => {
     expect(findings).toEqual([]);
   });
 
-  test('an unrecognised method carries no more than an assumption', () => {
+  test('a colleague is not a stranger, however many of them there are', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'indicated',
+          evidence: [{ method: 'colleague', source: 'notes.md', n: 12 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
+  test('a friend using the product proves nothing about the market', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'indicated',
+          evidence: [{ method: 'friend', source: 'notes.md', n: 8 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
+  test('scraped complaints stay an assumption whatever the volume', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'indicated',
+          evidence: [{ method: 'scraping', source: 'posts.json', n: 2000 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
+  test('desk research stays an assumption', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'indicated',
+          evidence: [{ method: 'desk-research', source: 'report.md', n: 30 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
+  test('a signed contract settles a claim', () => {
     const findings = run(
       thesis([
         claim({
@@ -180,8 +232,21 @@ describe('method ceilings', () => {
       ]),
     );
 
+    expect(findings).toEqual([]);
+  });
+
+  test('an unrecognised method carries no more than an assumption', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'validated',
+          evidence: [{ method: 'vibes', source: 'gut.md', n: 6, collectedAt: daysAgo(1) }],
+        }),
+      ]),
+    );
+
     expect(codes(findings)).toEqual(['unknown-method']);
-    expect(findings[0]?.message).toContain('signed-contract');
+    expect(findings[0]?.message).toContain('vibes');
   });
 
   test('names every unrecognised method so the writer can fix or rename it', () => {
@@ -190,7 +255,7 @@ describe('method ceilings', () => {
         claim({
           confidence: 'indicated',
           evidence: [
-            { method: 'scraping', source: 'posts.json', n: 2000 },
+            { method: 'gut-feel', source: 'notes.md', n: 2000 },
             { method: 'court-order', source: 'odd.md', n: 6, collectedAt: daysAgo(1) },
           ],
         }),
@@ -198,7 +263,7 @@ describe('method ceilings', () => {
     );
 
     expect(codes(findings)).toEqual(['unknown-method']);
-    expect(findings[0]?.message).toContain('scraping');
+    expect(findings[0]?.message).toContain('gut-feel');
     expect(findings[0]?.message).toContain('court-order');
   });
 
