@@ -98,9 +98,13 @@ export interface Claim {
  * when the answer was given. So they stop at `indicated`, permanently, no
  * matter how many you run.
  *
- * Methods not listed here are uncapped. This tool is a mirror, not an
- * adversary: if you invent a method name to get around a ceiling, it will let
- * you, and you will know you did it.
+ * A method not listed here counts as an assumption. The tool cannot check what
+ * a name means, so an unreadable name buys nothing — inventing one to dodge a
+ * ceiling now costs the claim instead of freeing it. Stronger evidence beside
+ * it still lifts the claim.
+ *
+ * Within this list the tool is a mirror, not an adversary: if you rename
+ * `engagement` to `payment` it will believe you, and you will know you did it.
  */
 export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refuted'>>> = {
   // Signals that cannot buy any confidence at all. Nothing was at stake.

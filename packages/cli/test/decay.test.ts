@@ -170,7 +170,7 @@ describe('method ceilings', () => {
     expect(findings).toEqual([]);
   });
 
-  test('an unlisted method imposes no ceiling, and says so by saying nothing', () => {
+  test('an unrecognised method carries no more than an assumption', () => {
     const findings = run(
       thesis([
         claim({
@@ -180,18 +180,50 @@ describe('method ceilings', () => {
       ]),
     );
 
-    expect(findings).toEqual([]);
+    expect(codes(findings)).toEqual(['unknown-method']);
+    expect(findings[0]?.message).toContain('signed-contract');
   });
 
-  test('one unlisted method among capped ones lifts the ceiling', () => {
+  test('names every unrecognised method so the writer can fix or rename it', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'indicated',
+          evidence: [
+            { method: 'scraping', source: 'posts.json', n: 2000 },
+            { method: 'court-order', source: 'odd.md', n: 6, collectedAt: daysAgo(1) },
+          ],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['unknown-method']);
+    expect(findings[0]?.message).toContain('scraping');
+    expect(findings[0]?.message).toContain('court-order');
+  });
+
+  test('an unrecognised method does not drag down stronger evidence beside it', () => {
     const findings = run(
       thesis([
         claim({
           confidence: 'validated',
           evidence: [
-            { method: 'engagement', source: 'ig.png', n: 900 },
-            { method: 'court-order', source: 'odd.md', n: 6, collectedAt: daysAgo(1) },
+            { method: 'scraping', source: 'posts.json', n: 2000 },
+            { method: 'payment', source: 'stripe.md', n: 5, collectedAt: daysAgo(5) },
           ],
+        }),
+      ]),
+    );
+
+    expect(findings).toEqual([]);
+  });
+
+  test('an unrecognised method is free to sit under an assumption', () => {
+    const findings = run(
+      thesis([
+        claim({
+          confidence: 'assumed',
+          evidence: [{ method: 'scraping', source: 'posts.json', n: 2000 }],
         }),
       ]),
     );

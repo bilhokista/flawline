@@ -18,6 +18,7 @@ export const FINDING_CODES = [
   'unsupported-confidence',
   'insufficient-observations',
   'method-ceiling',
+  'unknown-method',
   'stale-evidence',
   'undated-evidence',
   'overreach',
@@ -141,18 +142,29 @@ function checkEvidence(claim: Claim, gate: StageGate): Finding[] {
 
 /**
  * The best evidence on a claim sets its ceiling, so one payment lifts a claim
- * that also cites a dozen interviews. Unlisted methods impose no ceiling.
+ * that also cites a dozen interviews.
+ *
+ * A method this tool does not recognise counts as an assumption. It cannot
+ * check what a name means, and a name it cannot read is not a reason to
+ * believe anything. Stronger evidence beside it still lifts the claim.
  */
 function ceilingOf(evidence: readonly Evidence[]): Exclude<Confidence, 'refuted'> | null {
   let best: Exclude<Confidence, 'refuted'> | null = null;
 
   for (const entry of evidence) {
-    const ceiling = METHOD_CEILINGS[entry.method];
-    if (ceiling === undefined) return null;
+    const ceiling = METHOD_CEILINGS[entry.method] ?? 'assumed';
     if (best === null || strengthOf(ceiling) > strengthOf(best)) best = ceiling;
   }
 
   return best;
+}
+
+function unknownMethodsIn(evidence: readonly Evidence[]): string[] {
+  const names = evidence
+    .filter((entry) => METHOD_CEILINGS[entry.method] === undefined)
+    .map((entry) => entry.method);
+
+  return [...new Set(names)];
 }
 
 /**
@@ -167,6 +179,19 @@ function checkMethodCeiling(claim: Claim): Finding[] {
   const ceiling = ceilingOf(claim.evidence);
   if (ceiling === null) return [];
   if (strengthOf(claim.confidence) <= strengthOf(ceiling)) return [];
+
+  const unknown = unknownMethodsIn(claim.evidence);
+  if (unknown.length > 0) {
+    return [
+      {
+        code: 'unknown-method',
+        severity: 'error',
+        claimId: claim.id,
+        source: claim.source,
+        message: `Marked "${claim.confidence}" on evidence this tool does not recognise: ${unknown.join(', ')}. An unrecognised method counts as an assumption, because nothing here says what was at stake. Rename it to a known method, or leave the claim "assumed".`,
+      },
+    ];
+  }
 
   const methods = [...new Set(claim.evidence.map((entry) => entry.method))].join(', ');
 

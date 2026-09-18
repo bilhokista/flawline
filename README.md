@@ -140,9 +140,13 @@ available early. They cannot establish that anyone will pay, because nothing
 was at stake when the answer was given. Four hundred interviews still stop at
 `indicated`.
 
-Methods not on the list are uncapped. The tool is a mirror, not an adversary —
-if you rename `engagement` to `payment` it will believe you, and you will know
-you did it.
+A method not on the list counts as an assumption. The tool cannot read what a
+name means, and a name it cannot read is not a reason to believe anything.
+Stronger evidence recorded beside it still lifts the claim, so one real payment
+carries a claim that also cites a scrape.
+
+Within the list, the tool is a mirror rather than an adversary — if you rename
+`engagement` to `payment` it will believe you, and you will know you did it.
 
 ### Settled facts about the outside world expire
 
