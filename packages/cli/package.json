@@ -1,6 +1,6 @@
 {
   "name": "flawline",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Evidence-gated strategy pipeline for founders: decide what to build, for whom, and whether anyone will pay \u2014 before you write code.",
   "keywords": [
     "founder",
@@ -40,6 +40,7 @@
   "files": [
     "dist",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "engines": {
@@ -47,7 +48,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "prepack": "npm run build && node -e \"require('fs').copyFileSync('../../README.md','README.md')\"",
+    "prepack": "npm run build && node -e \"['README.md','CHANGELOG.md'].forEach(f=>require('fs').copyFileSync('../../'+f,f))\"",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "lint": "tsc -p tsconfig.json --noEmit"

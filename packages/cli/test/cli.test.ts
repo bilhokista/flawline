@@ -1,9 +1,14 @@
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { parseArgs, run } from '../src/cli.js';
 import { STAGES } from '../src/model.js';
+
+const PACKAGE_VERSION = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+).version as string;
 import { check } from '../src/check.js';
 import { STAGES } from '../src/model.js';
 import { loadThesis, init, STRATEGY_DIR } from '../src/workspace.js';
@@ -73,7 +78,31 @@ describe('run', () => {
   });
 
   test('prints the version', async () => {
-    expect(await run(['--version'])).toEqual({ code: 0, out: '0.1.0' });
+    expect(await run(['--version'])).toEqual({ code: 0, out: PACKAGE_VERSION });
+  });
+
+  test('the plugin manifests carry the same version as the package', async () => {
+    const read = async (path: string) =>
+      JSON.parse(await readFile(new URL(path, import.meta.url), 'utf8')) as {
+        version?: string;
+        metadata?: { version?: string };
+        plugins?: { version?: string }[];
+      };
+
+    const plugin = await read('../../../.claude-plugin/plugin.json');
+    const marketplace = await read('../../../.claude-plugin/marketplace.json');
+
+    expect(plugin.version).toBe(PACKAGE_VERSION);
+    expect(marketplace.metadata?.version).toBe(PACKAGE_VERSION);
+    expect(marketplace.plugins?.[0]?.version).toBe(PACKAGE_VERSION);
+  });
+
+  test('the version it prints is the one it will be published under', async () => {
+    const manifest = JSON.parse(
+      await readFile(new URL('../package.json', import.meta.url), 'utf8'),
+    ) as { version: string };
+
+    expect((await run(['--version'])).out).toBe(manifest.version);
   });
 
   test('exits 2 on an unknown command', async () => {

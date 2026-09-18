@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { createRequire } from 'node:module';
 import { pathToFileURL } from 'node:url';
 import {
   renderFindings,
@@ -12,7 +13,14 @@ import {
 import { STAGES } from './model.js';
 import { init, loadThesis, STRATEGY_DIR } from './workspace.js';
 
-const VERSION = '0.1.0';
+/**
+ * Read from the manifest rather than typed here, so the version the tool
+ * reports cannot drift from the version it is published under. The help text
+ * already drifted once by naming a number instead of counting.
+ */
+const VERSION = (
+  createRequire(import.meta.url)('../package.json') as { version: string }
+).version;
 
 const HELP = `flawline ${VERSION}
 
