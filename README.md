@@ -233,8 +233,8 @@ the stage is a set of questions rather than an invitation to find a secret.
 
 The criterion that ties them together is not from any of the three: **a flaw is
 authentic to one person, so it cannot be copied, and that is what makes it a
-moat rather than a quirk.** That is Dian Bilhokista's, from four years of
-running small businesses, and it is why the project is called flawline.
+moat rather than a quirk.** That one is the author's, and it is why the project
+is called flawline.
 
 ## Working with an AI agent
 
@@ -298,8 +298,8 @@ way anyone notices.
 
 The dependency and gate logic is a design. The method ceilings, the four-month
 shelf life, the owned-versus-borrowed distinction and the advantage stage are
-not — they come from a structured debrief with Dian Bilhokista, who spent four
-years running small businesses. Each one exists because something specific went
+not — they come from a structured debrief with the author about small businesses
+that failed in specific ways. Each rule exists because something specific went
 wrong.
 
 - **Borrowed channels died at three to six months**, twice: marketplace
