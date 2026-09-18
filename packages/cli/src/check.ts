@@ -179,12 +179,12 @@ function checkEvidence(claim: Claim, gate: StageGate): Finding[] {
 function ceilingOf(
   evidence: readonly Evidence[],
   stage: Stage,
-): Exclude<Confidence, 'refuted'> | null {
-  let best: Exclude<Confidence, 'refuted'> | null = null;
+): Exclude<Confidence, 'refuted'> {
+  let best: Exclude<Confidence, 'refuted'> = 'assumed';
 
   for (const entry of evidence) {
     const ceiling = ceilingForMethod(entry.method, stage) ?? 'assumed';
-    if (best === null || strengthOf(ceiling) > strengthOf(best)) best = ceiling;
+    if (strengthOf(ceiling) > strengthOf(best)) best = ceiling;
   }
 
   return best;
@@ -208,7 +208,6 @@ function checkMethodCeiling(claim: Claim): Finding[] {
   if (claim.evidence.length === 0) return [];
 
   const ceiling = ceilingOf(claim.evidence, claim.stage);
-  if (ceiling === null) return [];
   if (strengthOf(claim.confidence) <= strengthOf(ceiling)) return [];
 
   const unknown = unknownMethodsIn(claim.evidence, claim.stage);

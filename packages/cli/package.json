@@ -39,7 +39,6 @@
   },
   "files": [
     "dist",
-    "templates",
     "README.md",
     "LICENSE"
   ],
@@ -48,6 +47,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build && node -e \"require('fs').copyFileSync('../../README.md','README.md')\"",
     "test": "vitest run",
     "test:cov": "vitest run --coverage",
     "lint": "tsc -p tsconfig.json --noEmit"

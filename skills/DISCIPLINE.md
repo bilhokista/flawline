@@ -30,7 +30,9 @@ Rules that admit no exceptions:
 - **Never** cite a source you have not been shown. An `evidence` entry is a
   promise that a reader can go and look.
 - Conversations with friends, co-founders, investors and advisors are **not**
-  customer evidence. Note them in prose if useful; do not count them.
+  customer evidence. Record them as `method: colleague` or `method: friend`
+  rather than dropping them: both cap at `assumed`, so they stay visible without
+  ever lifting a claim.
 - A claim can never be stronger than the claim it rests on. If the founder wants
   a strong downstream claim, the work belongs upstream.
 

@@ -125,9 +125,10 @@ acceptable position. It should be a decision rather than a discovery.
 This is the one stage where the founder is a legitimate primary source, and the
 limits are exact.
 
-- `method: self-report` caps at `indicated`. They know their own history; they
-  are not a reliable judge of its worth, having rehearsed their own explanation
-  of it for years.
+- `method: self-report` caps at `indicated`, and only on this stage. They know
+  their own history; they are not a reliable judge of its worth, having
+  rehearsed their own explanation of it for years. Carried into a stage whose
+  claims are about other people, the same evidence drops to `assumed`.
 - `context-values-it` needs outside evidence: somebody chose them, paid them, or
   approached them **for this reason specifically**. Record `won-for-this-reason`.
 - A deal lost for a missing quality is evidence too. Record
