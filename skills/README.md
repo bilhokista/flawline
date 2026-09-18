@@ -5,8 +5,18 @@ instruction files.
 
 ## Install
 
+In Claude Code, add the marketplace and install all eight skills as a plugin:
+
+```
+/plugin marketplace add bilhokista/flawline
+/plugin install flawline@flawline
+```
+
+To copy the skills in by hand instead, or to use them outside Claude Code:
+
 ```bash
-cp -r flawline-* ~/.claude/skills/
+git clone https://github.com/bilhokista/flawline.git
+cp -r flawline/skills/flawline-* ~/.claude/skills/
 ```
 
 Each directory is a standalone `SKILL.md` with frontmatter, so it also works by

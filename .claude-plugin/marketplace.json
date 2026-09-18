@@ -1,0 +1,34 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "flawline",
+  "description": "Evidence-gated strategy skills for founders. Your strategy document cannot tell you which parts of it are guesses; these skills make every claim declare what holds it up.",
+  "owner": {
+    "name": "Dian Bilhokista",
+    "url": "https://github.com/bilhokista"
+  },
+  "plugins": [
+    {
+      "name": "flawline",
+      "source": "./",
+      "description": "Eight strategy skills run in dependency order, each leaving claims marked assumed, indicated or validated. Pairs with the flawline CLI, which exits 1 when a claim outruns its evidence.",
+      "version": "0.1.0",
+      "category": "productivity",
+      "author": {
+        "name": "Dian Bilhokista"
+      },
+      "keywords": [
+        "strategy",
+        "founder",
+        "startup",
+        "product-discovery",
+        "jobs-to-be-done",
+        "positioning",
+        "go-to-market",
+        "validation"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0"
+  }
+}

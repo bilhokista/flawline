@@ -216,6 +216,15 @@ agent that reads instruction files. They run the interviews, write the claims,
 and — the part that matters — refuse to inflate a confidence because you sound
 certain.
 
+In Claude Code they install as a plugin:
+
+```
+/plugin marketplace add bilhokista/flawline
+/plugin install flawline@flawline
+```
+
+Anywhere else, copy the directories in:
+
 ```bash
 cp -r skills/flawline-* ~/.claude/skills/
 ```
