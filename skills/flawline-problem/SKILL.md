@@ -19,7 +19,13 @@ and then ask what goes badly without it.
 
 ## Run it as an interrogation, not an intake form
 
-Ask these in order. Do not move on until the answer is concrete.
+Open with why they started, not with question 1. Let the story arrive in
+whatever order it arrives, and steer from there. The five below are the shape
+you hold and the order you steer towards — they are not a script to read out,
+and numbering them at the founder turns the stage into the form it is supposed
+to replace. See "Warm to the person, merciless to the claim" in DISCIPLINE.md.
+
+Do not move on until the answer is concrete.
 
 1. **"Describe one time this actually happened."** Push until you get a named
    week, a named role, a number. "Teams struggle with X" is not an answer; it is
