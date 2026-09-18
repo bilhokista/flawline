@@ -1,5 +1,6 @@
 import {
-  METHOD_CEILINGS,
+  ceilingForMethod,
+  SELF_REPORT_STAGE,
   STAGES,
   strengthOf,
   type Claim,
@@ -148,20 +149,23 @@ function checkEvidence(claim: Claim, gate: StageGate): Finding[] {
  * check what a name means, and a name it cannot read is not a reason to
  * believe anything. Stronger evidence beside it still lifts the claim.
  */
-function ceilingOf(evidence: readonly Evidence[]): Exclude<Confidence, 'refuted'> | null {
+function ceilingOf(
+  evidence: readonly Evidence[],
+  stage: Stage,
+): Exclude<Confidence, 'refuted'> | null {
   let best: Exclude<Confidence, 'refuted'> | null = null;
 
   for (const entry of evidence) {
-    const ceiling = METHOD_CEILINGS[entry.method] ?? 'assumed';
+    const ceiling = ceilingForMethod(entry.method, stage) ?? 'assumed';
     if (best === null || strengthOf(ceiling) > strengthOf(best)) best = ceiling;
   }
 
   return best;
 }
 
-function unknownMethodsIn(evidence: readonly Evidence[]): string[] {
+function unknownMethodsIn(evidence: readonly Evidence[], stage: Stage): string[] {
   const names = evidence
-    .filter((entry) => METHOD_CEILINGS[entry.method] === undefined)
+    .filter((entry) => ceilingForMethod(entry.method, stage) === undefined)
     .map((entry) => entry.method);
 
   return [...new Set(names)];
@@ -176,11 +180,11 @@ function checkMethodCeiling(claim: Claim): Finding[] {
   if (claim.confidence === 'assumed' || claim.confidence === 'refuted') return [];
   if (claim.evidence.length === 0) return [];
 
-  const ceiling = ceilingOf(claim.evidence);
+  const ceiling = ceilingOf(claim.evidence, claim.stage);
   if (ceiling === null) return [];
   if (strengthOf(claim.confidence) <= strengthOf(ceiling)) return [];
 
-  const unknown = unknownMethodsIn(claim.evidence);
+  const unknown = unknownMethodsIn(claim.evidence, claim.stage);
   if (unknown.length > 0) {
     return [
       {
@@ -189,6 +193,22 @@ function checkMethodCeiling(claim: Claim): Finding[] {
         claimId: claim.id,
         source: claim.source,
         message: `Marked "${claim.confidence}" on evidence this tool does not recognise: ${unknown.join(', ')}. An unrecognised method counts as an assumption, because nothing here says what was at stake. Rename it to a known method, or leave the claim "assumed".`,
+      },
+    ];
+  }
+
+  const selfReportOffStage =
+    claim.stage !== SELF_REPORT_STAGE &&
+    claim.evidence.some((entry) => entry.method === 'self-report');
+
+  if (selfReportOffStage) {
+    return [
+      {
+        code: 'method-ceiling',
+        severity: 'error',
+        claimId: claim.id,
+        source: claim.source,
+        message: `Marked "${claim.confidence}" on self-report evidence, on a stage whose claims are about other people. Your own history is a source about you, and the ${SELF_REPORT_STAGE} stage is where it counts. Here it stops at "assumed", because you have not asked the people this claim describes.`,
       },
     ];
   }

@@ -235,6 +235,80 @@ describe('method ceilings', () => {
     expect(findings).toEqual([]);
   });
 
+  test('your own history is a legitimate source about you, on the advantage stage', () => {
+    const findings = run(
+      thesis([
+        claim({
+          stage: 'advantage',
+          confidence: 'indicated',
+          evidence: [{ method: 'self-report', source: 'bio.md', n: 1 }],
+        }),
+      ]),
+    );
+
+    expect(findings).toEqual([]);
+  });
+
+  test('your own history says nothing about other people, on any other stage', () => {
+    const findings = run(
+      thesis([
+        claim({
+          stage: 'problem',
+          confidence: 'indicated',
+          evidence: [{ method: 'self-report', source: 'bio.md', n: 1 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+    expect(findings[0]?.message).toContain('have not asked');
+  });
+
+  test('a self-report about the customer stage is capped the same way', () => {
+    const findings = run(
+      thesis([
+        claim({
+          stage: 'customer',
+          confidence: 'indicated',
+          evidence: [{ method: 'self-report', source: 'bio.md', n: 1 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
+  test('the advantage stage still stops a self-report short of validated', () => {
+    const findings = run(
+      thesis([
+        claim({
+          stage: 'advantage',
+          confidence: 'validated',
+          evidence: [{ method: 'self-report', source: 'bio.md', n: 9 }],
+        }),
+      ]),
+    );
+
+    expect(codes(findings)).toEqual(['method-ceiling']);
+  });
+
+  test('a self-report does not drag down real evidence recorded beside it', () => {
+    const findings = run(
+      thesis([
+        claim({
+          stage: 'problem',
+          confidence: 'indicated',
+          evidence: [
+            { method: 'self-report', source: 'bio.md', n: 1 },
+            { method: 'interview', source: 'research.md', n: 5 },
+          ],
+        }),
+      ]),
+    );
+
+    expect(findings).toEqual([]);
+  });
+
   test('an unrecognised method carries no more than an assumption', () => {
     const findings = run(
       thesis([

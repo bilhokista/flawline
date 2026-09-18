@@ -222,7 +222,8 @@ It should be a decision rather than a surprise.
 This stage is the only one where you are a legitimate primary source, and the
 limits are exact.
 
-- \`method: self-report\` is capped at \`indicated\`. You know your own history.
+- \`method: self-report\` is capped at \`indicated\`, and only here. You know your
+  own history.
   You are not a reliable judge of what it is worth, and the reason is that you
   have been rehearsing your own explanation for years.
 - \`context-values-it\` needs outside evidence. Somebody chose you, paid you, or

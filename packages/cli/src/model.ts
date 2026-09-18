@@ -140,7 +140,7 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
 
   // You are a reliable narrator of your own history, and an unreliable one
   // about what that history is worth. So it establishes the trait, never its
-  // value.
+  // value — and only on the stage that is about you. See SELF_REPORT_STAGE.
   'self-report': 'indicated',
 
   // Money, or an unprompted approach. These can settle a claim.
@@ -196,4 +196,24 @@ export interface StageGate {
 export interface Thesis {
   readonly claims: readonly Claim[];
   readonly gates: readonly StageGate[];
+}
+
+/**
+ * The one stage where the founder is a legitimate primary source, because the
+ * claims there are about the founder. Everywhere else a self-report is a
+ * statement about other people made by someone who has not asked them, so it
+ * buys nothing.
+ */
+export const SELF_REPORT_STAGE: Stage = 'advantage';
+
+/**
+ * The ceiling a method imposes on the stage it was recorded on.
+ */
+export function ceilingForMethod(
+  method: string,
+  stage: Stage,
+): Exclude<Confidence, 'refuted'> | undefined {
+  if (method === 'self-report' && stage !== SELF_REPORT_STAGE) return 'assumed';
+
+  return METHOD_CEILINGS[method];
 }
