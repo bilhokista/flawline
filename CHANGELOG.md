@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0
+
+### Added
+
+- **A GitHub Action, so `check` can fail a build.** `uses: bilhokista/flawline@v0`
+  runs the checker over `strategy/` on a pull request. Inputs: `version`,
+  `working-directory`, `annotate`. See `docs/ci.md`.
+- **`--format text|json|github`.** `github` emits workflow annotations, so a
+  finding lands on the claim in the diff rather than in a log nobody opens.
+  `--json` still works and means `--format json`. `--format github` is refused
+  on anything but `check`, which is the command a build can fail on.
+- **Claims carry the line they were declared on.** Only a plainly written `id`
+  is matched; a folded or anchored one is annotated at the top of its file
+  instead, because a wrong line is worse than an imprecise one.
+
 ## 0.3.0
 
 ### Changed

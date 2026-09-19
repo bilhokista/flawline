@@ -54,3 +54,5 @@ export {
 } from './workspace.js';
 
 export { STAGE_TEMPLATES } from './templates.js';
+
+export { renderAnnotations } from './annotations.js';

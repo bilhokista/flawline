@@ -77,6 +77,11 @@ export interface Claim {
   readonly dependsOn: readonly string[];
   /** A claim the thesis cannot survive without. Gates block on these. */
   readonly critical: boolean;
+  /**
+   * 1-based line in {@link source} where the claim's id is written, when it
+   * could be located verbatim. Used to point CI annotations at the claim.
+   */
+  readonly line?: number;
   /** Stage the claim was declared in. */
   readonly stage: Stage;
   /** File the claim was read from, for diagnostics. */

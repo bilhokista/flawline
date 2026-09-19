@@ -10,6 +10,7 @@ import {
   reportPayload,
   summarise,
 } from './report.js';
+import { renderAnnotations } from './annotations.js';
 import { STAGES } from './model.js';
 import { init, loadThesis, STRATEGY_DIR } from './workspace.js';
 
@@ -36,7 +37,9 @@ Usage
 
 Options
   -C, --cwd <dir>     Run against another directory
-      --json          Emit report or check as JSON, for another agent to read
+      --format <fmt>  text (default), json for another agent, or github to
+                      annotate the claims in a pull request
+      --json          Shorthand for --format json
   -h, --help          Show this
   -v, --version       Print the version
 
@@ -46,11 +49,19 @@ Exit codes
   2  the command line was wrong
 `;
 
+export const FORMATS = ['text', 'json', 'github'] as const;
+
+export type Format = (typeof FORMATS)[number];
+
+function isFormat(value: string): value is Format {
+  return (FORMATS as readonly string[]).includes(value);
+}
+
 interface ParsedArgs {
   readonly command: string | null;
   readonly cwd: string;
   readonly help: boolean;
-  readonly json: boolean;
+  readonly format: Format;
   readonly version: boolean;
   readonly error: string | null;
 }
@@ -59,7 +70,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   let command: string | null = null;
   let cwd = process.cwd();
   let help = false;
-  let json = false;
+  let format: Format = 'text';
   let version = false;
   let error: string | null = null;
 
@@ -69,7 +80,19 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     if (argument === '-h' || argument === '--help') {
       help = true;
     } else if (argument === '--json') {
-      json = true;
+      format = 'json';
+    } else if (argument === '--format') {
+      const value = argv[index + 1];
+      if (value === undefined || value.startsWith('-')) {
+        error = '--format needs a format.';
+        break;
+      }
+      if (!isFormat(value)) {
+        error = `--format must be one of ${FORMATS.join(', ')} (got ${value}).`;
+        break;
+      }
+      format = value;
+      index += 1;
     } else if (argument === '-v' || argument === '--version') {
       version = true;
     } else if (argument === '-C' || argument === '--cwd') {
@@ -91,7 +114,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     }
   }
 
-  return { command, cwd, help, json, version, error };
+  return { command, cwd, help, format, version, error };
 }
 
 export interface RunOutcome {
@@ -106,15 +129,22 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
   if (args.version) return { code: 0, out: VERSION };
   if (args.help || args.command === null) return { code: 0, out: HELP };
 
+  if (args.format === 'github' && args.command !== 'check') {
+    return {
+      code: 2,
+      out: '--format github only applies to `flawline check`, which is the command a build can fail on.',
+    };
+  }
+
   switch (args.command) {
     case 'init':
       return runInit(args.cwd);
     case 'status':
       return runStatus(args.cwd);
     case 'report':
-      return runReport(args.cwd, args.json);
+      return runReport(args.cwd, args.format === 'json');
     case 'check':
-      return runCheck(args.cwd, args.json);
+      return runCheck(args.cwd, args.format);
     default:
       return { code: 2, out: `Unknown command: ${args.command}\n\n${HELP}` };
   }
@@ -223,7 +253,7 @@ async function runReport(cwd: string, json = false): Promise<RunOutcome> {
     : { code: 0, out: renderReport(thesis, status) };
 }
 
-async function runCheck(cwd: string, json = false): Promise<RunOutcome> {
+async function runCheck(cwd: string, format: Format = 'text'): Promise<RunOutcome> {
   const { thesis, issues } = await loadThesis(cwd);
 
   if (issues.length > 0) {
@@ -239,10 +269,14 @@ async function runCheck(cwd: string, json = false): Promise<RunOutcome> {
 
   const status = summarise(thesis);
 
-  return {
-    code: status.blocked ? 1 : 0,
-    out: json ? JSON.stringify(findingsPayload(status), null, 2) : renderFindings(status.findings),
-  };
+  const out =
+    format === 'json'
+      ? JSON.stringify(findingsPayload(status), null, 2)
+      : format === 'github'
+        ? renderAnnotations(status.findings, thesis.claims)
+        : renderFindings(status.findings);
+
+  return { code: status.blocked ? 1 : 0, out };
 }
 
 /* c8 ignore start -- process wiring, exercised by the binary rather than tests */

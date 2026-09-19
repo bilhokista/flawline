@@ -157,6 +157,59 @@ describe('machine readable output', () => {
     expect(payload.findings).toEqual([]);
     expect(payload.blocked).toBe(false);
   });
+
+  test('check --format github annotates each finding at its claim', async () => {
+    await writeStage(
+      'problem.md',
+      '---\nstage: problem\nclaims:\n  - id: p\n    statement: S\n    confidence: validated\n---\n',
+    );
+
+    const result = await run(['check', '--format', 'github', '-C', root]);
+
+    expect(result.code).toBe(1);
+    expect(result.out).toContain('::error file=');
+    expect(result.out).toContain('line=4');
+    expect(result.out).toContain('title=flawline%3A unsupported-confidence');
+  });
+
+  test('a clean check in github format has nothing to annotate', async () => {
+    await init(root);
+
+    const result = await run(['check', '--format', 'github', '-C', root]);
+
+    expect(result.code).toBe(0);
+    expect(result.out).toBe('');
+  });
+
+  test('--format json matches the older --json spelling', async () => {
+    await init(root);
+
+    const viaFlag = await run(['check', '--json', '-C', root]);
+    const viaFormat = await run(['check', '--format', 'json', '-C', root]);
+
+    expect(viaFormat).toEqual(viaFlag);
+  });
+
+  test('says so when --format is given nothing to read', async () => {
+    const result = await run(['check', '--format']);
+
+    expect(result.code).toBe(2);
+    expect(result.out).toContain('--format needs a format.');
+  });
+
+  test('refuses a format it cannot produce', async () => {
+    const result = await run(['check', '--format', 'xml']);
+
+    expect(result.code).toBe(2);
+    expect(result.out).toContain('--format must be one of text, json, github');
+  });
+
+  test('github format is only meaningful for check', async () => {
+    const result = await run(['report', '--format', 'github', '-C', root]);
+
+    expect(result.code).toBe(2);
+    expect(result.out).toContain('--format github only applies to `flawline check`');
+  });
 });
 
 describe('report', () => {

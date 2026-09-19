@@ -1,0 +1,36 @@
+name: flawline
+description: Fail the build when a strategy claim leans on more evidence than it has.
+author: flawline
+
+branding:
+  icon: git-pull-request
+  color: purple
+
+inputs:
+  version:
+    description: Version of the flawline package to run. Pin it to keep a build reproducible.
+    required: false
+    default: latest
+  working-directory:
+    description: Directory holding the strategy/ documents.
+    required: false
+    default: .
+  annotate:
+    description: Annotate the offending claims in the diff. Set to false for plain log output.
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    - name: flawline check
+      shell: bash
+      run: |
+        format=text
+        if [ "${{ inputs.annotate }}" = "true" ]; then
+          format=github
+        fi
+        npx --yes "flawline@${{ inputs.version }}" check \
+          --format "$format" \
+          --cwd "${{ inputs.working-directory }}"
+        echo "flawline: no claim outruns its evidence."

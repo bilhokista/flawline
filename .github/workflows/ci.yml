@@ -41,3 +41,48 @@ jobs:
           node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init
           node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" check
           node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" status
+
+  action:
+    # The action this repo publishes is wiring, and wiring breaks silently.
+    # Both outcomes are exercised: a clean thesis passes, an overstated one
+    # fails and is annotated at the line that overstated itself.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: a fresh thesis passes
+        run: |
+          mkdir -p fixture/clean
+          cd fixture/clean
+          node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" init
+      # The action runs the published package, which lags this branch, so the
+      # annotation format is exercised against the local build a step below.
+      - uses: ./
+        with:
+          working-directory: fixture/clean
+          annotate: 'false'
+      - name: an overstated claim fails, on its own line
+        run: |
+          mkdir -p fixture/overstated/strategy
+          cat > fixture/overstated/strategy/problem.md <<'DOC'
+          ---
+          stage: problem
+          claims:
+            - id: overstated
+              statement: Everyone has this problem.
+              confidence: validated
+          ---
+          DOC
+          out=$(node "$GITHUB_WORKSPACE/packages/cli/dist/cli.js" check \
+            --format github --cwd fixture/overstated) && status=0 || status=$?
+
+          test "$status" = "1" || { echo "expected exit 1, got $status"; exit 1; }
+          case "$out" in
+            *"::error file=strategy/problem.md,line=4"*) ;;
+            *) echo "no annotation on the claim: $out"; exit 1 ;;
+          esac

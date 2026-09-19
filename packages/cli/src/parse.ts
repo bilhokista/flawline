@@ -176,6 +176,35 @@ function readGate(
   };
 }
 
+/**
+ * Locates the line a claim's id is written on, scanning forward so repeated
+ * ids map to their own declarations in order.
+ *
+ * Only a plainly written id is matched. YAML can express the same string a
+ * dozen ways, and guessing at a folded or anchored one would put an
+ * annotation on the wrong claim, which is worse than putting it on none.
+ */
+function makeLineFinder(document: string): (id: string) => number | undefined {
+  const lines = document.split(/\r?\n/);
+  let cursor = 0;
+
+  return (id: string): number | undefined => {
+    for (let index = cursor; index < lines.length; index += 1) {
+      const text = lines[index] as string;
+      const match = /^\s*-?\s*id:\s*(.*?)\s*$/.exec(text);
+      if (!match) continue;
+
+      const written = (match[1] as string).replace(/^(['"])([\s\S]*)\1$/, '$2');
+      if (written !== id) continue;
+
+      cursor = index + 1;
+      return index + 1;
+    }
+
+    return undefined;
+  };
+}
+
 /** Reads one stage document into claims plus its optional gate override. */
 export function parseDocument(
   document: string,
@@ -229,6 +258,7 @@ export function parseDocument(
   }
 
   const claims: Claim[] = [];
+  const lineOf = makeLineFinder(document);
 
   claimsRaw.forEach((entry, index) => {
     const claimRecord = asRecord(entry);
@@ -267,11 +297,14 @@ export function parseDocument(
       return;
     }
 
+    const line = lineOf(id);
+
     claims.push({
       id,
       statement,
       confidence: confidenceRaw,
       critical: criticalRaw,
+      ...(line !== undefined ? { line } : {}),
       stage,
       source,
       evidence: readEvidence(claimRecord['evidence'], source, id, issues),
