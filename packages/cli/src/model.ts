@@ -169,6 +169,24 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   // two limits that stop it becoming a comfortable substitute for asking.
   'incident-record': 'indicated',
 
+  // A review left by someone the platform confirms paid for the thing. Two
+  // facts arrive together: a stranger described the problem in their own words
+  // without being asked, and they had already spent money trying to solve it.
+  // That is better than an interview on the axis interviews are weakest --
+  // nobody was being polite to a researcher -- and worse on specificity,
+  // because you cannot ask a follow-up question.
+  //
+  // It stops at `indicated` because the purchase was somebody else's product.
+  // It says people pay to solve this. It says nothing about paying you.
+  'verified-review': 'indicated',
+
+  // Outreach sent by an agent without telling the recipient. A reply measures
+  // what a stranger says to a fiction, which is the `friend` problem wearing
+  // different clothes: the relationship is doing the talking, not the offer.
+  // Recorded so an honest author has a truthful label, since the checker cannot
+  // tell who pressed send.
+  'bot-outreach': 'assumed',
+
   // Money, or an unprompted approach. These can settle a claim.
   deposit: 'validated',
   payment: 'validated',
@@ -255,22 +273,36 @@ export const SELF_REPORT_STAGE: Stage = 'advantage';
 export const INCIDENT_RECORD_STAGE: Stage = 'problem';
 
 /**
- * Claims an incident record cannot raise, even on its own stage.
- *
- * A record proves the event occurred. What it cost the person, and what they
- * already do about it, live in their head and come out only when someone asks.
- * Reading a hundred incident reports establishes neither, and an evening spent
- * gathering them feels enough like progress to replace the conversation that
- * would.
- *
- * These are the ids the stage templates ship. Rename them and this rule cannot
- * see the claim — the stage ceiling still applies, but the judgement about what
- * an incident can carry passes back to the author.
+ * Where a review about somebody else's product can carry weight: the stages
+ * whose claims are about what people already do. Past that point the claims are
+ * about your offer, and a review of a competitor is a fact about them.
  */
-export const OCCURRENCE_ONLY_CLAIM_IDS: ReadonlySet<string> = new Set([
-  'problem-is-expensive',
-  'they-already-try',
-]);
+export const REVIEW_STAGES: ReadonlySet<Stage> = new Set<Stage>(['problem', 'customer']);
+
+
+/**
+ * Claims a method cannot raise, whatever its ceiling, because the answer is not
+ * in the artefact it reads.
+ *
+ * Declared here rather than buried in the checker so that the argument is
+ * legible: each entry should be defensible in one sentence, and an entry that
+ * cannot be defended should be deleted rather than kept for safety.
+ */
+export const METHOD_CLAIM_LIMITS: Readonly<Record<string, readonly string[]>> = {
+  // A record says the event happened. What it cost, and what the person does
+  // about it, live in their head.
+  'incident-record': ['problem-is-expensive', 'they-already-try'],
+
+  // A review shows the problem and the purchase, so it reaches
+  // `they-already-try` where an incident record cannot. What the problem costs
+  // is still absent: people write about being annoyed, not about the money.
+  'verified-review': ['problem-is-expensive'],
+};
+
+/** Every claim id any method is blocked from raising. */
+export const OCCURRENCE_ONLY_CLAIM_IDS: ReadonlySet<string> = new Set(
+  METHOD_CLAIM_LIMITS['incident-record'],
+);
 
 /**
  * The ceiling a method imposes on the stage it was recorded on.
@@ -281,6 +313,7 @@ export function ceilingForMethod(
 ): Exclude<Confidence, 'refuted'> | undefined {
   if (method === 'self-report' && stage !== SELF_REPORT_STAGE) return 'assumed';
   if (method === 'incident-record' && stage !== INCIDENT_RECORD_STAGE) return 'assumed';
+  if (method === 'verified-review' && !REVIEW_STAGES.has(stage)) return 'assumed';
 
   return METHOD_CEILINGS[method];
 }

@@ -184,6 +184,7 @@ flowchart TB
 | `incident-beyond-occurrence` | An incident record used for what the incident cost, or what people already do about it. |
 | `stage-opened-early` | A stage document written before the stage behind it holds. |
 | `no-refutation-recorded` | A document with a critical claim that never says what would refute it. |
+| `method-beyond-reach` | A method used for a claim its artefact cannot answer. |
 
 ### The kind of signal caps the confidence
 
@@ -198,6 +199,8 @@ anyone paying.
 | Interviews and surveys | `indicated` |
 | Self-report about your own history | `indicated` |
 | The record of one incident, published by whoever it went wrong for | `indicated` |
+| A review by someone the platform confirms paid | `indicated` |
+| Outreach an agent sent without saying so | `assumed` |
 | Waitlists, landing pages, demos that went well | `indicated` |
 | Quote and proposal requests | `indicated` |
 | Deposits, payments, repeat payments | `validated` |

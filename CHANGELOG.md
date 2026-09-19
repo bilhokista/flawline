@@ -1,5 +1,39 @@
 # Changelog
 
+## 0.8.0
+
+### Added
+
+- **`verified-review`, at `indicated`.** A review left by someone the platform
+  confirms paid. Two facts arrive together: a stranger described the problem
+  unprompted, and they had already spent money trying to solve it. Better than
+  an interview where interviews are weakest — nobody was being polite to a
+  researcher — and worse on specificity, because there is no follow-up
+  question.
+
+  It counts on the `problem` and `customer` stages, where the claims are about
+  what people already do. Past that the claims are about your offer, and a
+  review of a competitor is a fact about them.
+
+  It may raise `they-already-try`, which an incident record cannot: a purchase
+  *is* them already trying. It may not raise `problem-is-expensive`, reported
+  as the new `method-beyond-reach` finding. People write reviews about being
+  annoyed, not about the money.
+
+- **`bot-outreach`, at `assumed`.** Outreach an agent sent without telling the
+  recipient. A reply measures what a stranger says to a fiction, which is the
+  `friend` problem in different clothes. The checker cannot tell who pressed
+  send, so this exists to give an honest author a truthful label rather than to
+  catch a dishonest one.
+
+### Changed
+
+- The per-method claim limits are now declared in one place,
+  `METHOD_CLAIM_LIMITS`, instead of living inside the checker. Each entry
+  should be defensible in one sentence; one that is not should be deleted
+  rather than kept for safety. `OCCURRENCE_ONLY_CLAIM_IDS` is derived from it
+  and still exported.
+
 ## 0.7.0
 
 Documents written by hand under 0.6.0 will need one new section each. The

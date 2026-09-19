@@ -1,7 +1,7 @@
 {
   "name": "flawline",
   "description": "Eight strategy skills that refuse to let a claim be stronger than its evidence. Problem, advantage, customer, offer, model, evidence, narrative, motion \u2014 run in dependency order, each one leaving behind claims marked assumed, indicated or validated rather than prose that hides which is which.",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": {
     "name": "Dian Bilhokista",
     "url": "https://github.com/bilhokista"

@@ -1,5 +1,81 @@
 # Changelog
 
+## 0.7.0
+
+Documents written by hand under 0.6.0 will need one new section each. The
+templates ship it, so `flawline init` is unaffected.
+
+### Added
+
+- **`no-refutation-recorded`: a document carrying a critical claim must say how
+  it could be wrong.** This is the only rule that reads prose, and it reads it
+  for one structural fact — is there a `## What would refute this` section, and
+  does it say anything. It does not grade writing. A checker with opinions
+  about sentences becomes a style argument and stops being about evidence.
+
+  It exists because one failure survived every other rule: confidences recorded
+  honestly as `assumed`, and prose underneath them arguing the idea will work.
+  Naming what would refute a claim is the opposite motion to selling it, so a
+  document that cannot manage a line of it is a pitch wearing a thesis's
+  clothes.
+
+  `How this could be wrong` is accepted as the other spelling. Heading depth and
+  case are ignored; an empty section is not.
+
+- **Every stage template now ships its refutation section**, pre-filled with
+  what would kill that stage's own claims.
+
+### Changed
+
+- `parseThesis` returns the prose of each document alongside the claims, as
+  `Thesis.prose`. It is optional, so a caller assembling claims by hand is not
+  forced to invent prose it does not have, and the rule stays quiet when it is
+  absent.
+
+## 0.6.0
+
+Documents written ahead of their evidence now fail. A thesis that passed under
+0.5.0 can fail under this release, and that is the point of it.
+
+### Changed
+
+- **Writing every stage at once is no longer free.** `init` has withheld the
+  later documents since 0.3.0, but withholding was a behaviour of one command,
+  and anything writing files directly walked straight past it. Eight stages of
+  honest `assumed` claims used to report "No findings" and exit 0 — a complete
+  strategy for any idea at all, blessed by the checker. The new
+  `stage-opened-early` finding enforces the same ordering the scaffolding
+  always implied.
+
+  A stage opens when the stage before it declares at least one critical claim
+  and every one of them meets its gate. A stage that declares nothing critical
+  is unexamined rather than settled, so it opens nothing.
+
+  Two deliberate exemptions, so the rule punishes slop rather than work in
+  progress: a set of claims with no `problem` stage is a fragment and is left
+  alone, and so is a thesis that names nothing critical at all.
+
+  If this fires across a thesis you wrote by hand, the honest fix is usually to
+  delete the documents ahead of the evidence rather than to weaken the gates.
+
+## 0.5.0
+
+### Added
+
+- **`incident-record`, a method that reaches `indicated` from a desk.** The
+  record of one specific occurrence — named identifiers, a date, a URL —
+  published by whoever it went wrong for, or by the person it happened to
+  before anyone asked. It is not research about a market, so it does not sit
+  with `scraping` and `desk-research` at `assumed`.
+
+  Two limits keep it honest, because a method gathered alone at night is the
+  easiest one to over-read:
+  - It counts on the **problem stage only**. Elsewhere it is an assumption.
+  - It can never raise **`problem-is-expensive`** or **`they-already-try`**,
+    reported as the new `incident-beyond-occurrence` finding. A record
+    establishes that a thing happened. What it cost, and what the person does
+    about it, come out only when someone asks them.
+
 ## 0.4.0
 
 ### Added

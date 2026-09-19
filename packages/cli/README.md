@@ -181,6 +181,9 @@ flowchart TB
 | `unknown-dependency` | Depends on a claim that does not exist. |
 | `dependency-cycle` | Two claims justifying each other. |
 | `duplicate-claim-id` | The same id declared twice. |
+| `incident-beyond-occurrence` | An incident record used for what the incident cost, or what people already do about it. |
+| `stage-opened-early` | A stage document written before the stage behind it holds. |
+| `no-refutation-recorded` | A document with a critical claim that never says what would refute it. |
 
 ### The kind of signal caps the confidence
 
@@ -194,6 +197,7 @@ anyone paying.
 | Warm replies in DMs, stated intent | `assumed` |
 | Interviews and surveys | `indicated` |
 | Self-report about your own history | `indicated` |
+| The record of one incident, published by whoever it went wrong for | `indicated` |
 | Waitlists, landing pages, demos that went well | `indicated` |
 | Quote and proposal requests | `indicated` |
 | Deposits, payments, repeat payments | `validated` |
@@ -216,6 +220,16 @@ answer about the relationship, and the offer cannot be separated out
 afterwards. So does reading about a market rather than sampling it: `scraping`
 and `desk-research` cap at `assumed`, because nobody in a scraped post was
 asked your question or had anything at stake when they wrote it.
+
+`incident-record` is the one exception to that, and it is a narrow one. A
+post-mortem naming the three payments that failed, the error code and the date,
+published by the company that failed to pay, is not research about a market. It
+is the event itself, written down by someone with something to lose, at a URL
+anyone can open. Two limits keep it from becoming the comfortable evidence the
+other desk methods are: it counts on the problem stage only, and it can never
+raise `problem-is-expensive` or `they-already-try`. A record says a thing
+happened. What it cost, and what the person did next, are answers only that
+person has.
 
 A method not on the list counts as an assumption. The tool cannot read what a
 name means, and a name it cannot read is not a reason to believe anything.

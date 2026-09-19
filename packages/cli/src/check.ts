@@ -1,5 +1,6 @@
 import {
   ceilingForMethod,
+  METHOD_CLAIM_LIMITS,
   OCCURRENCE_ONLY_CLAIM_IDS,
   SELF_REPORT_STAGE,
   STAGES,
@@ -30,6 +31,7 @@ export const FINDING_CODES = [
   'incident-beyond-occurrence',
   'stage-opened-early',
   'no-refutation-recorded',
+  'method-beyond-reach',
 ] as const;
 
 export type FindingCode = (typeof FINDING_CODES)[number];
@@ -151,6 +153,7 @@ export function check(thesis: Thesis, options: CheckOptions = {}): Finding[] {
     const gate = gateFor(claim.stage, thesis.gates);
     findings.push(...checkEvidence(claim, gate));
     findings.push(...checkIncidentReach(claim));
+    findings.push(...checkMethodReach(claim));
     findings.push(...checkMethodCeiling(claim));
     findings.push(...checkFreshness(claim, gate, now));
     findings.push(...checkDependencies(claim, byId));
@@ -237,6 +240,35 @@ function unknownMethodsIn(evidence: readonly Evidence[], stage: Stage): string[]
     .map((entry) => entry.method);
 
   return [...new Set(names)];
+}
+
+/**
+ * A method used for a claim its artefact cannot answer.
+ *
+ * `incident-record` keeps its own finding because its message explains a
+ * distinction people argue with. Every other limited method reports here.
+ */
+function checkMethodReach(claim: Claim): Finding[] {
+  if (claim.confidence === 'assumed' || claim.confidence === 'refuted') return [];
+
+  for (const entry of claim.evidence) {
+    if (entry.method === 'incident-record') continue;
+
+    const blocked = METHOD_CLAIM_LIMITS[entry.method];
+    if (!blocked?.includes(claim.id)) continue;
+
+    return [
+      {
+        code: 'method-beyond-reach',
+        severity: 'error',
+        claimId: claim.id,
+        source: claim.source,
+        message: `Marked "${claim.confidence}" on ${entry.method} evidence, which cannot reach this claim. It shows what people do, not what it costs them, and the cost is the part only they can tell you. Ask someone who lived it, or leave this "assumed".`,
+      },
+    ];
+  }
+
+  return [];
 }
 
 /**
