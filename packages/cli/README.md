@@ -80,6 +80,31 @@ held to the same rule as a claim.
 act on. One task does not delegate: an agent cannot sit down with a stranger,
 and until someone does, nothing leaves `assumed`.
 
+## In CI
+
+`check` exits 1 on a claim that outruns its evidence, so a pull request that
+quietly promotes a guess to a fact fails like any other broken build.
+
+```yaml
+name: strategy
+
+on:
+  pull_request:
+    paths: ['strategy/**']
+
+jobs:
+  flawline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bilhokista/flawline@v0
+```
+
+Findings arrive as annotations on the offending lines, in the diff, where the
+person upgrading the claim has to answer for it. Gate the pull request that
+edits `strategy/`, not the deploy — [docs/ci.md](docs/ci.md) has the inputs, the
+exit codes, and what not to block.
+
 ## How a claim works
 
 ```yaml
