@@ -1,5 +1,17 @@
 # Growth — 5 bets, not 50 improvements
 
+```mermaid
+flowchart TB
+    B1[1. linter positioning<br/>1 afternoon] --> B5[5. zero-FP badge<br/>1 hour]
+    B5 --> B2[2. HN launch<br/>1 morning]
+    B2 --> B3[3. case studies ×3<br/>3 afternoons]
+    B2 --> B4[4. agent listing<br/>1 day]
+    B3 --> WIN[avalanche<br/>1 winner pays for all]
+    B4 --> WIN
+    style B2 fill:#ffe,stroke:#333
+    style WIN fill:#efe,stroke:#333
+```
+
 Adoption devtool is power-law: 4% of moments drive 93% of users.
 So no roadmap polish. Five cheap bets, each with a pass/fail number
 written before it runs. Decided after, every result is a pass.

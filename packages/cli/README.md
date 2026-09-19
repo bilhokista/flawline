@@ -1,5 +1,9 @@
 # flawline
 
+[![npm](https://img.shields.io/npm/v/flawline)](https://www.npmjs.com/package/flawline)
+[![CI](https://github.com/bilhokista/flawline/actions/workflows/ci.yml/badge.svg)](https://github.com/bilhokista/flawline/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 **Your strategy document cannot tell you which parts of it are guesses. This one can.**
 
 A founder's thesis is a stack of claims. The problem is real, the segment is
@@ -60,6 +64,14 @@ strategy/
   evidence.md    what to test, in what order, with thresholds set in advance
   narrative.md   vision, mission, positioning, the story
   motion.md      go to market, selling, hiring the bottleneck
+```
+
+```mermaid
+flowchart LR
+    P[problem] --> A[advantage] --> C[customer] --> O[offer]
+    O --> M[model] --> E[evidence] --> N[narrative] --> MO[motion]
+    style P fill:#f9f,stroke:#333
+    style MO fill:#9f9,stroke:#333
 ```
 
 Edit the statements to say what you actually believe. Commit them. Then:
@@ -141,6 +153,18 @@ Four fields do the work:
 | `evidence` | Where a stranger could go and check. No entry, no confidence above `assumed`. |
 | `depends_on` | What this claim rests on. The checker walks it. |
 | `critical` | The thesis does not survive without this one. Gates block on it. |
+
+```mermaid
+flowchart TB
+    AS[assumed<br/>belief, no evidence] --> IN[indicated<br/>real signal, below bar]
+    IN --> VA[validated<br/>meets gate + right kind]
+    VA -.->|refuted| RF[refuted<br/>reality said no]
+    IN -.->|refuted| RF
+    style AS fill:#fee,stroke:#333
+    style IN fill:#ffe,stroke:#333
+    style VA fill:#efe,stroke:#333
+    style RF fill:#000,stroke:#f00,color:#fff
+```
 
 ## What `check` actually enforces
 

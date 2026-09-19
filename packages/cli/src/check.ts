@@ -1,5 +1,6 @@
 import {
   ceilingForMethod,
+  OCCURRENCE_ONLY_CLAIM_IDS,
   SELF_REPORT_STAGE,
   STAGES,
   strengthOf,
@@ -26,6 +27,7 @@ export const FINDING_CODES = [
   'rests-on-refuted',
   'gate-not-met',
   'duplicate-claim-id',
+  'incident-beyond-occurrence',
 ] as const;
 
 export type FindingCode = (typeof FINDING_CODES)[number];
@@ -143,6 +145,7 @@ export function check(thesis: Thesis, options: CheckOptions = {}): Finding[] {
   for (const claim of byId.values()) {
     const gate = gateFor(claim.stage, thesis.gates);
     findings.push(...checkEvidence(claim, gate));
+    findings.push(...checkIncidentReach(claim));
     findings.push(...checkMethodCeiling(claim));
     findings.push(...checkFreshness(claim, gate, now));
     findings.push(...checkDependencies(claim, byId));
@@ -227,6 +230,32 @@ function unknownMethodsIn(evidence: readonly Evidence[], stage: Stage): string[]
     .map((entry) => entry.method);
 
   return [...new Set(names)];
+}
+
+/**
+ * An incident record proves an event happened. It cannot say what the event
+ * cost the person it happened to, or what they already do to avoid it, because
+ * neither of those is written in the record — they are answers only that person
+ * can give.
+ *
+ * Without this rule the method would be the easiest evidence in the tool to
+ * gather and the easiest to over-read: an evening of reading other people's
+ * incident reports would close the two claims that most need a conversation.
+ */
+function checkIncidentReach(claim: Claim): Finding[] {
+  if (claim.confidence === 'assumed' || claim.confidence === 'refuted') return [];
+  if (!OCCURRENCE_ONLY_CLAIM_IDS.has(claim.id)) return [];
+  if (!claim.evidence.some((entry) => entry.method === 'incident-record')) return [];
+
+  return [
+    {
+      code: 'incident-beyond-occurrence',
+      severity: 'error',
+      claimId: claim.id,
+      source: claim.source,
+      message: `Marked "${claim.confidence}" on an incident record. A record establishes that the thing happened; it does not establish what it cost the person it happened to, or what they already do about it. Ask someone who lived it, or leave this "assumed".`,
+    },
+  ];
 }
 
 /**

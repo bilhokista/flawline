@@ -1,6 +1,6 @@
 {
   "name": "flawline",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Canvas, UVP and go-to-market as claims in git. A checker fails the build when a guess is dressed up as a fact.",
   "keywords": [
     "founder",

@@ -156,6 +156,19 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   // value — and only on the stage that is about you. See SELF_REPORT_STAGE.
   'self-report': 'indicated',
 
+  // The record of a specific occurrence, published by someone who had
+  // something to lose by publishing it — the operator who failed, the payer
+  // who did not pay — or by the person it happened to, unprompted, before
+  // anyone asked. Not a report about a pattern: named identifiers, a date, and
+  // a URL a stranger can open.
+  //
+  // It outranks desk-research because nobody was performing for a researcher
+  // and the artefact survives the reading. It stops at `indicated` because an
+  // incident establishes that a thing happened, never that anyone would pay to
+  // prevent it. See INCIDENT_RECORD_STAGE and OCCURRENCE_ONLY_CLAIM_IDS for the
+  // two limits that stop it becoming a comfortable substitute for asking.
+  'incident-record': 'indicated',
+
   // Money, or an unprompted approach. These can settle a claim.
   deposit: 'validated',
   payment: 'validated',
@@ -220,6 +233,35 @@ export interface Thesis {
 export const SELF_REPORT_STAGE: Stage = 'advantage';
 
 /**
+ * The one stage an incident record can speak to. An incident is proof that
+ * something happened in the world, which is the problem stage's question.
+ *
+ * It says nothing about who the customer is, what they would buy, or whether a
+ * channel works, so everywhere else it is an assumption — collected without
+ * leaving a desk, which is exactly the comfortable evidence the ceilings exist
+ * to keep in its place.
+ */
+export const INCIDENT_RECORD_STAGE: Stage = 'problem';
+
+/**
+ * Claims an incident record cannot raise, even on its own stage.
+ *
+ * A record proves the event occurred. What it cost the person, and what they
+ * already do about it, live in their head and come out only when someone asks.
+ * Reading a hundred incident reports establishes neither, and an evening spent
+ * gathering them feels enough like progress to replace the conversation that
+ * would.
+ *
+ * These are the ids the stage templates ship. Rename them and this rule cannot
+ * see the claim — the stage ceiling still applies, but the judgement about what
+ * an incident can carry passes back to the author.
+ */
+export const OCCURRENCE_ONLY_CLAIM_IDS: ReadonlySet<string> = new Set([
+  'problem-is-expensive',
+  'they-already-try',
+]);
+
+/**
  * The ceiling a method imposes on the stage it was recorded on.
  */
 export function ceilingForMethod(
@@ -227,6 +269,7 @@ export function ceilingForMethod(
   stage: Stage,
 ): Exclude<Confidence, 'refuted'> | undefined {
   if (method === 'self-report' && stage !== SELF_REPORT_STAGE) return 'assumed';
+  if (method === 'incident-record' && stage !== INCIDENT_RECORD_STAGE) return 'assumed';
 
   return METHOD_CEILINGS[method];
 }

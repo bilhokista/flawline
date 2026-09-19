@@ -1,5 +1,9 @@
 # flawline
 
+[![npm](https://img.shields.io/npm/v/flawline)](https://www.npmjs.com/package/flawline)
+[![CI](https://github.com/bilhokista/flawline/actions/workflows/ci.yml/badge.svg)](https://github.com/bilhokista/flawline/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 **Your strategy document cannot tell you which parts of it are guesses. This one can.**
 
 A founder's thesis is a stack of claims. The problem is real, the segment is
@@ -60,6 +64,14 @@ strategy/
   evidence.md    what to test, in what order, with thresholds set in advance
   narrative.md   vision, mission, positioning, the story
   motion.md      go to market, selling, hiring the bottleneck
+```
+
+```mermaid
+flowchart LR
+    P[problem] --> A[advantage] --> C[customer] --> O[offer]
+    O --> M[model] --> E[evidence] --> N[narrative] --> MO[motion]
+    style P fill:#f9f,stroke:#333
+    style MO fill:#9f9,stroke:#333
 ```
 
 Edit the statements to say what you actually believe. Commit them. Then:
@@ -142,6 +154,18 @@ Four fields do the work:
 | `depends_on` | What this claim rests on. The checker walks it. |
 | `critical` | The thesis does not survive without this one. Gates block on it. |
 
+```mermaid
+flowchart TB
+    AS[assumed<br/>belief, no evidence] --> IN[indicated<br/>real signal, below bar]
+    IN --> VA[validated<br/>meets gate + right kind]
+    VA -.->|refuted| RF[refuted<br/>reality said no]
+    IN -.->|refuted| RF
+    style AS fill:#fee,stroke:#333
+    style IN fill:#ffe,stroke:#333
+    style VA fill:#efe,stroke:#333
+    style RF fill:#000,stroke:#f00,color:#fff
+```
+
 ## What `check` actually enforces
 
 | Finding | Meaning |
@@ -157,6 +181,7 @@ Four fields do the work:
 | `unknown-dependency` | Depends on a claim that does not exist. |
 | `dependency-cycle` | Two claims justifying each other. |
 | `duplicate-claim-id` | The same id declared twice. |
+| `incident-beyond-occurrence` | An incident record used for what the incident cost, or what people already do about it. |
 
 ### The kind of signal caps the confidence
 
@@ -170,6 +195,7 @@ anyone paying.
 | Warm replies in DMs, stated intent | `assumed` |
 | Interviews and surveys | `indicated` |
 | Self-report about your own history | `indicated` |
+| The record of one incident, published by whoever it went wrong for | `indicated` |
 | Waitlists, landing pages, demos that went well | `indicated` |
 | Quote and proposal requests | `indicated` |
 | Deposits, payments, repeat payments | `validated` |
@@ -192,6 +218,16 @@ answer about the relationship, and the offer cannot be separated out
 afterwards. So does reading about a market rather than sampling it: `scraping`
 and `desk-research` cap at `assumed`, because nobody in a scraped post was
 asked your question or had anything at stake when they wrote it.
+
+`incident-record` is the one exception to that, and it is a narrow one. A
+post-mortem naming the three payments that failed, the error code and the date,
+published by the company that failed to pay, is not research about a market. It
+is the event itself, written down by someone with something to lose, at a URL
+anyone can open. Two limits keep it from becoming the comfortable evidence the
+other desk methods are: it counts on the problem stage only, and it can never
+raise `problem-is-expensive` or `they-already-try`. A record says a thing
+happened. What it cost, and what the person did next, are answers only that
+person has.
 
 A method not on the list counts as an assumption. The tool cannot read what a
 name means, and a name it cannot read is not a reason to believe anything.

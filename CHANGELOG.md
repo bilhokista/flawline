@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.5.0
+
+### Added
+
+- **`incident-record`, a method that reaches `indicated` from a desk.** The
+  record of one specific occurrence — named identifiers, a date, a URL —
+  published by whoever it went wrong for, or by the person it happened to
+  before anyone asked. It is not research about a market, so it does not sit
+  with `scraping` and `desk-research` at `assumed`.
+
+  Two limits keep it honest, because a method gathered alone at night is the
+  easiest one to over-read:
+  - It counts on the **problem stage only**. Elsewhere it is an assumption.
+  - It can never raise **`problem-is-expensive`** or **`they-already-try`**,
+    reported as the new `incident-beyond-occurrence` finding. A record
+    establishes that a thing happened. What it cost, and what the person does
+    about it, come out only when someone asks them.
+
 ## 0.4.0
 
 ### Added
