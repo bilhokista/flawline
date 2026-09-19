@@ -357,7 +357,7 @@ describe('graph integrity', () => {
 });
 
 describe('stage gates', () => {
-  test('planning every stage ahead is free while it is all still assumed', () => {
+  test('writing every stage ahead is not free, however honest the confidences', () => {
     const findings = check(
       thesis([
         claim({ id: 'p', stage: 'problem', critical: true, confidence: 'assumed' }),
@@ -366,7 +366,9 @@ describe('stage gates', () => {
       ]),
     );
 
-    expect(findings).toEqual([]);
+    // Every confidence here is accurate and the document still establishes
+    // nothing. Passing it clean is what let an agent fill eight stages and exit 0.
+    expect(codes(findings)).toContain('stage-opened-early');
   });
 
   test('a weak critical claim in the furthest stage is not yet a problem', () => {
@@ -390,9 +392,10 @@ describe('stage gates', () => {
       ]),
     );
 
-    expect(codes(findings)).toEqual(['gate-not-met']);
-    expect(findings[0]?.claimId).toBe('problem-real');
-    expect(findings[0]?.message).toContain('motion');
+    const gate = findings.find((finding) => finding.code === 'gate-not-met');
+
+    expect(gate?.claimId).toBe('problem-real');
+    expect(gate?.message).toContain('motion');
   });
 
   test('does not block on a non-critical weak claim in an earlier stage', () => {
@@ -411,7 +414,7 @@ describe('stage gates', () => {
     expect(findings).toEqual([]);
   });
 
-  test('passes once the earlier critical claim meets its gate', () => {
+  test('stops reporting gate-not-met once the earlier critical claim meets its gate', () => {
     const findings = check(
       thesis([
         claim({
@@ -430,7 +433,7 @@ describe('stage gates', () => {
       ]),
     );
 
-    expect(findings).toEqual([]);
+    expect(codes(findings)).not.toContain('gate-not-met');
   });
 
   test('a stricter gate can demand validated, not merely indicated', () => {
@@ -455,7 +458,7 @@ describe('stage gates', () => {
       ),
     );
 
-    expect(codes(findings)).toEqual(['gate-not-met']);
+    expect(codes(findings)).toContain('gate-not-met');
   });
 
   test('a refuted critical claim behind you blocks the gate', () => {
@@ -471,7 +474,7 @@ describe('stage gates', () => {
       ]),
     );
 
-    expect(codes(findings)).toEqual(['gate-not-met']);
+    expect(codes(findings)).toContain('gate-not-met');
   });
 });
 

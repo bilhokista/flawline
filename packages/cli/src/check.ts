@@ -28,6 +28,7 @@ export const FINDING_CODES = [
   'gate-not-met',
   'duplicate-claim-id',
   'incident-beyond-occurrence',
+  'stage-opened-early',
 ] as const;
 
 export type FindingCode = (typeof FINDING_CODES)[number];
@@ -91,9 +92,12 @@ function qualifyingObservations(claim: Claim, target: Exclude<Confidence, 'refut
  * How far the thesis has actually come: the last stage holding a claim that
  * has left `assumed`.
  *
- * Writing down what you intend to believe later is planning, and planning
- * ahead costs nothing — `init` fills every stage on the first run. So a stage
- * counts as reached only once something in it has been substantiated.
+ * A stage counts as reached only once something in it has been substantiated,
+ * because an assumption written down is a plan rather than a finding.
+ *
+ * That is about the frontier, not about permission to write. Since 0.3.0 `init`
+ * hands over one stage at a time, and `stage-opened-early` enforces the same
+ * ordering against anything that writes the files directly.
  *
  * Returns -1 when nothing has been substantiated anywhere.
  */
@@ -153,6 +157,7 @@ export function check(thesis: Thesis, options: CheckOptions = {}): Finding[] {
 
   findings.push(...checkCycles(byId));
   findings.push(...checkGates(byId, thesis.gates));
+  findings.push(...checkStagesOpenedEarly(thesis.claims, byId, thesis.gates));
 
   return findings;
 }
@@ -469,6 +474,102 @@ function checkGates(byId: ReadonlyMap<string, Claim>, gates: readonly StageGate[
         message: `Critical ${claim.stage} claim is "${claim.confidence}" but the gate requires "${gate.requires}", and work has already moved on to ${STAGES[furthest]}. Close this before going further.`,
       });
     }
+  }
+
+  return findings;
+}
+
+/**
+ * Whether a stage has bought the right to open the one after it: it declares at
+ * least one critical claim, and every one of them meets its gate.
+ *
+ * A stage with no critical claim is not settled, it is unexamined. Treating it
+ * as passed would make "declare nothing important" the cheapest way through the
+ * whole pipeline.
+ */
+function stageHolds(
+  stage: Stage,
+  claims: readonly Claim[],
+  gates: readonly StageGate[],
+): { holds: boolean; reason: string } {
+  const critical = claims.filter((claim) => claim.stage === stage && claim.critical);
+
+  if (critical.length === 0) {
+    return { holds: false, reason: `${stage} declares no critical claim` };
+  }
+
+  const gate = gateFor(stage, gates);
+  const unmet = critical.filter(
+    (claim) =>
+      claim.confidence === 'refuted' ||
+      strengthOf(claim.confidence) < strengthOf(gate.requires),
+  );
+
+  return unmet.length === 0
+    ? { holds: true, reason: '' }
+    : {
+        holds: false,
+        reason: `${unmet.length} critical ${stage} claim(s) below "${gate.requires}"`,
+      };
+}
+
+/**
+ * A stage document that exists before the stage before it holds.
+ *
+ * `init` withholds the later documents for exactly this reason, but withholding
+ * is a behaviour of one command and anything that writes files directly walks
+ * straight past it — which is what an agent asked to "fill in the strategy"
+ * does first. Before this check, eight documents of pure assumption passed
+ * clean and exited 0, which is the slop this tool exists to refuse.
+ *
+ * Reported once per stage, at its first claim, naming the stage that is
+ * holding the line rather than the whole chain behind it.
+ */
+function checkStagesOpenedEarly(
+  claims: readonly Claim[],
+  byId: ReadonlyMap<string, Claim>,
+  gates: readonly StageGate[],
+): Finding[] {
+  const unique = [...byId.values()];
+  const findings: Finding[] = [];
+
+  // Ordering is only meaningful once there is a thesis to order. A set of
+  // claims with no problem stage at all is a fragment — a partial workspace, or
+  // a single stage being worked on deliberately — and inventing a violation
+  // there would punish the person who has not yet written the document this
+  // rule protects.
+  const started = unique.some((claim) => claim.stage === STAGES[0]);
+  if (!started) return findings;
+
+  // Nor is a thesis that names nothing critical. Gates are built out of
+  // critical claims, so with none declared there is no line for a stage to
+  // cross, and reporting one would be inventing a rule the author never set.
+  if (!unique.some((claim) => claim.critical)) return findings;
+
+  for (const [index, stage] of STAGES.entries()) {
+    if (index === 0) continue;
+
+    // Report at the claim as written, so the annotation lands on the document
+    // rather than on whichever copy survived de-duplication.
+    const anchor = claims.find((claim) => claim.stage === stage);
+    if (!anchor) continue;
+
+    // Name the earliest stage that does not hold, not merely the one directly
+    // behind. When stages are skipped, the stage before is empty and blaming it
+    // sends the reader to a document that was never the problem.
+    const blocker = STAGES.slice(0, index)
+      .map((earlier) => ({ earlier, ...stageHolds(earlier, unique, gates) }))
+      .find((result) => !result.holds);
+
+    if (!blocker) continue;
+
+    findings.push({
+      code: 'stage-opened-early',
+      severity: 'error',
+      claimId: anchor.id,
+      source: anchor.source,
+      message: `The ${stage} stage is written while ${blocker.reason}. Each stage opens when the one before it holds; a document written ahead of its evidence reads as confident and establishes nothing. Close ${blocker.earlier} first, or delete this document until you can.`,
+    });
   }
 
   return findings;

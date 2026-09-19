@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.6.0
+
+Documents written ahead of their evidence now fail. A thesis that passed under
+0.5.0 can fail under this release, and that is the point of it.
+
+### Changed
+
+- **Writing every stage at once is no longer free.** `init` has withheld the
+  later documents since 0.3.0, but withholding was a behaviour of one command,
+  and anything writing files directly walked straight past it. Eight stages of
+  honest `assumed` claims used to report "No findings" and exit 0 — a complete
+  strategy for any idea at all, blessed by the checker. The new
+  `stage-opened-early` finding enforces the same ordering the scaffolding
+  always implied.
+
+  A stage opens when the stage before it declares at least one critical claim
+  and every one of them meets its gate. A stage that declares nothing critical
+  is unexamined rather than settled, so it opens nothing.
+
+  Two deliberate exemptions, so the rule punishes slop rather than work in
+  progress: a set of claims with no `problem` stage is a fragment and is left
+  alone, and so is a thesis that names nothing critical at all.
+
+  If this fires across a thesis you wrote by hand, the honest fix is usually to
+  delete the documents ahead of the evidence rather than to weaken the gates.
+
 ## 0.5.0
 
 ### Added

@@ -306,12 +306,17 @@ describe('the scaffolded thesis', () => {
     expect(issues).toEqual([]);
   });
 
-  test('passes check, because every starter claim admits it is an assumption', async () => {
+  test('does not pass check when every stage is laid down at once', async () => {
     await layDownEveryStage();
 
     const { thesis } = await loadThesis(root);
+    const codes = check(thesis).map((finding) => finding.code);
 
-    expect(check(thesis)).toEqual([]);
+    // Honest confidences are not enough. A document written ahead of its
+    // evidence establishes nothing, and `init` withholds the later stages for
+    // this reason -- the checker now says so too, for anything that writes the
+    // files directly.
+    expect(codes).toContain('stage-opened-early');
   });
 
   test('declares claims in every stage', async () => {
@@ -405,7 +410,7 @@ describe('check', () => {
     expect(result.out).toContain('gate-not-met');
   });
 
-  test('exits 0 when later stages are only sketched, because planning is free', async () => {
+  test('exits 1 when a later stage is written before the problem holds', async () => {
     await writeStage(
       'problem.md',
       '---\nstage: problem\nclaims:\n  - id: p\n    statement: Something hurts\n    critical: true\n---\n',
@@ -417,7 +422,8 @@ describe('check', () => {
 
     const result = await run(['check', '-C', root]);
 
-    expect(result.code).toBe(0);
+    expect(result.code).toBe(1);
+    expect(result.out).toContain('stage-opened-early');
   });
 });
 

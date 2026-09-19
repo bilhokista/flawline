@@ -182,6 +182,7 @@ flowchart TB
 | `dependency-cycle` | Two claims justifying each other. |
 | `duplicate-claim-id` | The same id declared twice. |
 | `incident-beyond-occurrence` | An incident record used for what the incident cost, or what people already do about it. |
+| `stage-opened-early` | A stage document written before the stage behind it holds. |
 
 ### The kind of signal caps the confidence
 
