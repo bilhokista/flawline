@@ -222,6 +222,17 @@ export interface StageGate {
 export interface Thesis {
   readonly claims: readonly Claim[];
   readonly gates: readonly StageGate[];
+  /**
+   * What each document says below its frontmatter, keyed by source.
+   *
+   * The checker reads it for one thing only: whether a document admits how it
+   * could be wrong. It has no opinion on the writing, because a checker that
+   * grades prose becomes a style argument and stops being about evidence.
+   *
+   * Optional, so a caller assembling claims by hand is not forced to invent
+   * prose it does not have.
+   */
+  readonly prose?: ReadonlyMap<string, string>;
 }
 
 /**

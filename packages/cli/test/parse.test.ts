@@ -325,6 +325,9 @@ describe('parseThesis', () => {
   });
 
   test('produces an empty thesis from no documents', () => {
-    expect(parseThesis([])).toEqual({ thesis: { claims: [], gates: [] }, issues: [] });
+    expect(parseThesis([])).toEqual({
+      thesis: { claims: [], gates: [], prose: new Map() },
+      issues: [],
+    });
   });
 });

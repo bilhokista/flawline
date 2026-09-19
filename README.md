@@ -183,6 +183,7 @@ flowchart TB
 | `duplicate-claim-id` | The same id declared twice. |
 | `incident-beyond-occurrence` | An incident record used for what the incident cost, or what people already do about it. |
 | `stage-opened-early` | A stage document written before the stage behind it holds. |
+| `no-refutation-recorded` | A document with a critical claim that never says what would refute it. |
 
 ### The kind of signal caps the confidence
 

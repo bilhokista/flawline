@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.7.0
+
+Documents written by hand under 0.6.0 will need one new section each. The
+templates ship it, so `flawline init` is unaffected.
+
+### Added
+
+- **`no-refutation-recorded`: a document carrying a critical claim must say how
+  it could be wrong.** This is the only rule that reads prose, and it reads it
+  for one structural fact — is there a `## What would refute this` section, and
+  does it say anything. It does not grade writing. A checker with opinions
+  about sentences becomes a style argument and stops being about evidence.
+
+  It exists because one failure survived every other rule: confidences recorded
+  honestly as `assumed`, and prose underneath them arguing the idea will work.
+  Naming what would refute a claim is the opposite motion to selling it, so a
+  document that cannot manage a line of it is a pitch wearing a thesis's
+  clothes.
+
+  `How this could be wrong` is accepted as the other spelling. Heading depth and
+  case are ignored; an empty section is not.
+
+- **Every stage template now ships its refutation section**, pre-filled with
+  what would kill that stage's own claims.
+
+### Changed
+
+- `parseThesis` returns the prose of each document alongside the claims, as
+  `Thesis.prose`. It is optional, so a caller assembling claims by hand is not
+  forced to invent prose it does not have, and the rule stays quiet when it is
+  absent.
+
 ## 0.6.0
 
 Documents written ahead of their evidence now fail. A thesis that passed under

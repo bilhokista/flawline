@@ -29,6 +29,7 @@ export const FINDING_CODES = [
   'duplicate-claim-id',
   'incident-beyond-occurrence',
   'stage-opened-early',
+  'no-refutation-recorded',
 ] as const;
 
 export type FindingCode = (typeof FINDING_CODES)[number];
@@ -158,6 +159,7 @@ export function check(thesis: Thesis, options: CheckOptions = {}): Finding[] {
   findings.push(...checkCycles(byId));
   findings.push(...checkGates(byId, thesis.gates));
   findings.push(...checkStagesOpenedEarly(thesis.claims, byId, thesis.gates));
+  findings.push(...checkRefutationRecorded(thesis));
 
   return findings;
 }
@@ -573,6 +575,74 @@ function checkStagesOpenedEarly(
   }
 
   return findings;
+}
+
+/**
+ * Headings a writer reaches for when saying how the document could be wrong.
+ * Matched on the heading text, not on the prose, because the alternative is a
+ * checker with opinions about sentences.
+ */
+const REFUTATION_HEADINGS = [/what would refute/i, /how (this|it) could be wrong/i];
+
+/**
+ * A document carrying a critical claim and never admitting how it could be
+ * wrong.
+ *
+ * This is the only rule here that reads prose, and it reads it for exactly one
+ * structural fact: is there a section that names what would kill the claim, and
+ * does it say anything. It does not grade the writing. A checker that judged
+ * prose quality would become a style argument and stop being about evidence.
+ *
+ * It earns its place because the failure it catches is the one that survives
+ * every other rule: confidences recorded honestly as `assumed`, and prose
+ * underneath them arguing that the idea will work. Writing down what would
+ * refute a claim is the opposite motion to selling it, and a document that
+ * cannot manage a line of it is a pitch wearing a thesis's clothes.
+ */
+function checkRefutationRecorded(thesis: Thesis): Finding[] {
+  if (!thesis.prose) return [];
+
+  const findings: Finding[] = [];
+  const seen = new Set<string>();
+
+  for (const claim of thesis.claims) {
+    if (!claim.critical) continue;
+    if (seen.has(claim.source)) continue;
+    seen.add(claim.source);
+
+    const prose = thesis.prose.get(claim.source);
+    if (prose === undefined) continue;
+    if (hasRefutationSection(prose)) continue;
+
+    findings.push({
+      code: 'no-refutation-recorded',
+      severity: 'error',
+      claimId: claim.id,
+      source: claim.source,
+      message: `This document carries a critical claim and never says what would refute it. Add a "What would refute this" section naming the observation that would kill the claim. A thesis that cannot say how it could be wrong is a pitch.`,
+    });
+  }
+
+  return findings;
+}
+
+/** A refutation heading with at least one non-empty line under it. */
+function hasRefutationSection(prose: string): boolean {
+  const lines = prose.split(/\r?\n/);
+
+  for (const [index, line] of lines.entries()) {
+    const heading = /^#{1,6}\s+(.*)$/.exec(line);
+    if (!heading) continue;
+    if (!REFUTATION_HEADINGS.some((pattern) => pattern.test(heading[1] as string))) continue;
+
+    const body = lines.slice(index + 1);
+    const end = body.findIndex((next) => /^#{1,6}\s/.test(next));
+    const section = (end === -1 ? body : body.slice(0, end)).join('\n');
+
+    if (section.trim() !== '') return true;
+  }
+
+  return false;
 }
 
 export function hasBlockingFindings(findings: readonly Finding[]): boolean {

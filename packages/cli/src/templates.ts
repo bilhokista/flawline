@@ -71,7 +71,19 @@ If you cannot answer that, you do not have a problem yet. You have a topic.
 The gate on this stage asks for \`indicated\` on the critical claims. That means
 you have talked to real people, not that you feel confident. Five conversations
 is a floor, not a target.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`problem-exists\` is refuted if the people you ask cannot recall one
+  occurrence. Not "they say it is not a problem" — they cannot remember it
+  happening.
+- \`problem-is-expensive\` is refuted if they recall it and shrug.
+- \`they-already-try\` is refuted if nobody does anything about it today, which
+  usually means it does not hurt enough to act on.\n`;
 
 const ADVANTAGE = `---
 stage: advantage
@@ -249,7 +261,19 @@ it, and the offer should be the one only you would think to build.
 Carry \`expensive-to-fake\` into the model stage, where
 \`moat-or-honest-absence\` depends on it directly. A moat claim with no answer
 here is a moat claim with nothing under it.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`what-is-authentically-mine\` is refuted if someone with none of your history
+  does the same work to the same standard.
+- \`expensive-to-fake\` is refuted if a competent stranger could assemble it in a
+  weekend.
+- \`context-values-it\` is refuted if buyers pick the cheaper generic option
+  every time.\n`;
 
 const CUSTOMER = `---
 stage: customer
@@ -354,7 +378,19 @@ nothing at all, and the checker treats it that way.
 If you cannot name ten real people or one reliable channel where this segment
 gathers, mark \`segment-is-reachable\` as \`assumed\` and stop. An unreachable
 segment makes every later stage academic.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`segment-is-reachable\` is refuted if you cannot name one place these people
+  already gather and read their words there.
+- \`what-they-want-done\` is refuted if the job you wrote down is not the one
+  they describe in their own words.
+- \`who-can-say-yes\` is refuted the first time a deal dies somewhere you did not
+  know a decision was made.\n`;
 
 const OFFER = `---
 stage: offer
@@ -436,7 +472,17 @@ ninth on the buyer's list. Check the rank, not just the fit.
 \`they-will-switch\` is the claim most founders skip and most businesses die of.
 Do not mark it \`indicated\` on enthusiasm. Mark it when someone changed their
 behaviour: a deposit, a pilot, a calendar invite they kept.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`they-will-switch\` is refuted if people agree the offer is better and keep
+  doing what they did before.
+- \`offer-is-better-than-today\` is refuted if today's workaround turns out to be
+  good enough on the dimension that decides.\n`;
 
 const MODEL = `---
 stage: model
@@ -569,7 +615,19 @@ you when a fact has quietly become a memory.
 
 \`unit-economics-work\` depending on \`price-clears-value\` is not bureaucracy.
 A margin calculated from a price nobody has paid is arithmetic about fiction.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`price-clears-value\` is refuted the first time the price is the stated reason
+  for a no.
+- \`channel-exists\` is refuted if reaching one buyer costs more than the buyer
+  is worth.
+- \`unit-economics-work\` is refuted if serving the tenth customer costs what
+  serving the first did.\n`;
 
 const EVIDENCE = `---
 stage: evidence
@@ -645,7 +703,19 @@ When a test finishes, go back and edit the claim it tested: raise the confidence
 and add the evidence, or set it to \`refuted\`. Then run \`flawline check\`.
 Refuting one claim is supposed to break the claims above it. That breakage is
 the tool working.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`riskiest-assumption-named\` is refuted if the thing that actually kills the
+  thesis was not on the list.
+- \`test-is-cheaper-than-building\` is refuted if designing the test turns out to
+  cost more than shipping the feature.
+- \`pass-fail-set-in-advance\` is refuted the moment a threshold moves after the
+  result is in.\n`;
 
 const NARRATIVE = `---
 stage: narrative
@@ -721,7 +791,17 @@ companies end up with beautiful assets that say nothing.
 Narrative claims are easy to mark \`validated\` because they feel true. They are
 \`indicated\` only when someone repeated your position back to you accurately
 without prompting. That is the test: can they retell it?
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`positioning-is-contested\` is refuted if no competitor would disagree with
+  your positioning statement. Nobody argues with a description.
+- \`story-is-theirs-not-yours\` is refuted if the story only works when you are
+  the one telling it.\n`;
 
 const MOTION = `---
 stage: motion
@@ -838,7 +918,19 @@ headcount produce coordination work instead of output.
 
 Once \`sale-is-repeatable\` is settled, you know what to build and for whom.
 That is the boundary of this tool. Build-side methods take over from here.
-`;
+
+## What would refute this
+
+Write these down before you need them. A claim you cannot imagine being wrong
+is not a claim, and naming the refutation now is what stops you explaining a
+bad result away later.
+
+- \`first-channel-proven\` is refuted if the only people who ever bought came
+  through someone you already knew.
+- \`someone-unrelated-paid\` is refuted if every payer turns out to be a friend,
+  an investor, or a favour.
+- \`sale-is-repeatable\` is refuted if the second sale needed a different story
+  from the first.\n`;
 
 export const STAGE_TEMPLATES: Readonly<Record<Stage, string>> = {
   problem: PROBLEM,

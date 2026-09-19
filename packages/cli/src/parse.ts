@@ -27,6 +27,17 @@ export function extractFrontmatter(document: string): string | null {
   return match?.[1] ?? null;
 }
 
+/**
+ * Everything below the frontmatter block: the document as a reader sees it.
+ *
+ * A document with no frontmatter comes back whole, because the reader still has
+ * prose in front of them even when the parser has nothing.
+ */
+export function proseBelow(document: string): string {
+  const match = FRONTMATTER.exec(document);
+  return match ? document.slice(match[0].length) : document;
+}
+
 function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
@@ -209,16 +220,17 @@ function makeLineFinder(document: string): (id: string) => number | undefined {
 export function parseDocument(
   document: string,
   source: string,
-): { claims: Claim[]; gate: StageGate | null; issues: ParseIssue[] } {
+): { claims: Claim[]; gate: StageGate | null; issues: ParseIssue[]; prose: string } {
   const issues: ParseIssue[] = [];
   const frontmatter = extractFrontmatter(document);
+  const prose = proseBelow(document);
 
   if (frontmatter === null) {
     issues.push({
       source,
       message: 'No YAML frontmatter found. A stage document must open with a --- block.',
     });
-    return { claims: [], gate: null, issues };
+    return { claims: [], gate: null, issues, prose };
   }
 
   let parsed: unknown;
@@ -227,13 +239,13 @@ export function parseDocument(
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
     issues.push({ source, message: `Frontmatter is not valid YAML: ${detail}` });
-    return { claims: [], gate: null, issues };
+    return { claims: [], gate: null, issues, prose };
   }
 
   const record = asRecord(parsed);
   if (!record) {
     issues.push({ source, message: 'Frontmatter must be a mapping.' });
-    return { claims: [], gate: null, issues };
+    return { claims: [], gate: null, issues, prose };
   }
 
   const stageRaw = record['stage'];
@@ -242,7 +254,7 @@ export function parseDocument(
       source,
       message: `"stage" must be one of problem, customer, offer, model, evidence, narrative, motion (got ${JSON.stringify(stageRaw)}).`,
     });
-    return { claims: [], gate: null, issues };
+    return { claims: [], gate: null, issues, prose };
   }
   const stage: Stage = stageRaw;
 
@@ -250,11 +262,11 @@ export function parseDocument(
 
   const claimsRaw = record['claims'];
   if (claimsRaw === undefined || claimsRaw === null) {
-    return { claims: [], gate, issues };
+    return { claims: [], gate, issues, prose };
   }
   if (!Array.isArray(claimsRaw)) {
     issues.push({ source, message: '"claims" must be a list.' });
-    return { claims: [], gate, issues };
+    return { claims: [], gate, issues, prose };
   }
 
   const claims: Claim[] = [];
@@ -317,7 +329,7 @@ export function parseDocument(
     });
   });
 
-  return { claims, gate, issues };
+  return { claims, gate, issues, prose };
 }
 
 /** Assembles a thesis from every stage document found. */
@@ -327,13 +339,15 @@ export function parseThesis(
   const claims: Claim[] = [];
   const gates: StageGate[] = [];
   const issues: ParseIssue[] = [];
+  const prose = new Map<string, string>();
 
   for (const document of documents) {
     const result = parseDocument(document.content, document.source);
     claims.push(...result.claims);
     if (result.gate) gates.push(result.gate);
     issues.push(...result.issues);
+    prose.set(document.source, result.prose);
   }
 
-  return { thesis: { claims, gates }, issues };
+  return { thesis: { claims, gates, prose }, issues };
 }
