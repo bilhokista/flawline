@@ -1,7 +1,7 @@
 {
   "name": "flawline",
   "version": "0.4.0",
-  "description": "Evidence-gated strategy pipeline for founders: decide what to build, for whom, and whether anyone will pay — before you write code.",
+  "description": "Canvas, UVP and go-to-market as claims in git. A checker fails the build when a guess is dressed up as a fact.",
   "keywords": [
     "founder",
     "startup",
@@ -12,7 +12,10 @@
     "go-to-market",
     "claude-code",
     "agent-skills",
-    "validation"
+    "validation",
+    "vibe-coding",
+    "uvp",
+    "positioning"
   ],
   "license": "MIT",
   "author": "Dian Bilhokista",

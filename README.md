@@ -377,4 +377,4 @@ licence is honoured rather than quietly dropped.
 2. **Methodology changes need a reason, not a preference.** Say what goes wrong
    for a real founder today, and what the change would have caught.
 
-120 tests, 98% coverage. `npm test` at the repository root.
+ 177 tests, 98% coverage. `npm test` at the repository root.

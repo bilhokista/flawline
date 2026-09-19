@@ -4,7 +4,7 @@
 
 ```bash
 npm install
-npm test          # 120 tests
+npm test          # 177 tests
 npm run lint      # typecheck, no emit
 npm run build
 ```
