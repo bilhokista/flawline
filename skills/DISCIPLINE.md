@@ -79,6 +79,7 @@ they were willing to do. Gathering more of it multiplies the saying.
 | Working inside it and watching it go wrong | `indicated` | Nobody was performing for you, which beats an interview. Still one witness, still nothing at stake. Record it as `field-observation`; watching from outside without that access is not this. |
 | The record of one incident, published by whoever it went wrong for | `indicated` | Record it as `incident-record`. Problem stage only, and never for what it cost or what people already do about it — a record holds neither. |
 | A review by someone the platform confirms paid | `indicated` | Record it as `verified-review`. Problem and customer stages only. It reaches `they-already-try` — a purchase is them already trying — but never what the problem costs. |
+| Code someone else shipped to prevent this failure | `indicated` | Record it as `shipped-workaround`. The mitigation itself, not a post about the risk. Reaches `they-already-try`, because the workaround is in their repository rather than their head. Never what it cost. |
 | Outreach an agent sent without saying so | `assumed` | Record it as `bot-outreach`. A reply to a fiction measures the fiction. |
 | Waitlists, landing pages, demos that went well | `indicated` | Interest with no cost attached. |
 | Quote and proposal requests | `indicated` | Looks like a buyer right up until it evaporates. |

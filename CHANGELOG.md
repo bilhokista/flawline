@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.9.0
+
+### Added
+
+- **`shipped-workaround`, at `indicated`.** Code somebody else shipped whose
+  purpose is to prevent this failure: a guard, an override, a manual procedure
+  documented in a product's own README. The mitigation itself, in a repository
+  a stranger can open — not a post about the risk.
+
+  It reaches `they-already-try`, which `incident-record` cannot, and the reason
+  the older limit does not apply is worth stating. That limit exists because
+  what someone does about a problem lives in their head. Once they have shipped
+  the workaround, it does not: it is in their repository, as code, with a commit
+  date. Engineering effort spent avoiding something is evidence they were
+  avoiding it.
+
+  It stops at `indicated` because effort is not cost — a team can guard against
+  a risk that never once cost anybody anything — and it cannot raise
+  `problem-is-expensive`, reported as `method-beyond-reach`.
+
+  Like `verified-review`, it counts on the `problem` and `customer` stages
+  only. Both now share `OTHERS_BEHAVIOUR_METHODS`, because both describe what
+  other people already do, and past those stages the claims are about your own
+  offer.
+
 ## 0.8.0
 
 ### Added

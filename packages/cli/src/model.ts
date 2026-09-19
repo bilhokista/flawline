@@ -187,6 +187,22 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   // tell who pressed send.
   'bot-outreach': 'assumed',
 
+  // Code somebody else shipped whose purpose is to prevent this failure: a
+  // guard, an override, a documented manual procedure in a product's own
+  // README. Not a blog post about the risk -- the mitigation itself, in a
+  // repository a stranger can open.
+  //
+  // It reaches `they-already-try`, which an incident record cannot, and the
+  // reason the incident-record limit does not apply here is worth stating:
+  // that limit exists because what someone does about a problem lives in their
+  // head. When they have shipped the workaround, it does not. It is in their
+  // repository, as code, with a commit date.
+  //
+  // Engineering effort spent avoiding something is evidence they were avoiding
+  // it. It stops at `indicated` because effort is not cost: a team can guard
+  // against a risk that never once cost anybody anything.
+  'shipped-workaround': 'indicated',
+
   // Money, or an unprompted approach. These can settle a claim.
   deposit: 'validated',
   payment: 'validated',
@@ -279,6 +295,16 @@ export const INCIDENT_RECORD_STAGE: Stage = 'problem';
  */
 export const REVIEW_STAGES: ReadonlySet<Stage> = new Set<Stage>(['problem', 'customer']);
 
+/**
+ * Methods that describe what other people already do, and therefore count only
+ * on the stages whose claims are about other people. Past those, the claims are
+ * about your offer, and somebody else's product is a fact about them.
+ */
+export const OTHERS_BEHAVIOUR_METHODS: ReadonlySet<string> = new Set([
+  'verified-review',
+  'shipped-workaround',
+]);
+
 
 /**
  * Claims a method cannot raise, whatever its ceiling, because the answer is not
@@ -297,6 +323,10 @@ export const METHOD_CLAIM_LIMITS: Readonly<Record<string, readonly string[]>> = 
   // `they-already-try` where an incident record cannot. What the problem costs
   // is still absent: people write about being annoyed, not about the money.
   'verified-review': ['problem-is-expensive'],
+
+  // The workaround shows the problem and the response. What the problem cost
+  // before they built the guard is not in the repository.
+  'shipped-workaround': ['problem-is-expensive'],
 };
 
 /** Every claim id any method is blocked from raising. */
@@ -313,7 +343,7 @@ export function ceilingForMethod(
 ): Exclude<Confidence, 'refuted'> | undefined {
   if (method === 'self-report' && stage !== SELF_REPORT_STAGE) return 'assumed';
   if (method === 'incident-record' && stage !== INCIDENT_RECORD_STAGE) return 'assumed';
-  if (method === 'verified-review' && !REVIEW_STAGES.has(stage)) return 'assumed';
+  if (OTHERS_BEHAVIOUR_METHODS.has(method) && !REVIEW_STAGES.has(stage)) return 'assumed';
 
   return METHOD_CEILINGS[method];
 }

@@ -200,6 +200,7 @@ anyone paying.
 | Self-report about your own history | `indicated` |
 | The record of one incident, published by whoever it went wrong for | `indicated` |
 | A review by someone the platform confirms paid | `indicated` |
+| Code someone else shipped to prevent this failure | `indicated` |
 | Outreach an agent sent without saying so | `assumed` |
 | Waitlists, landing pages, demos that went well | `indicated` |
 | Quote and proposal requests | `indicated` |
