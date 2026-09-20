@@ -80,7 +80,64 @@ Edit the statements to say what you actually believe. Commit them. Then:
 npx flawline status   # what is settled, what is still a guess
 npx flawline check    # exits 1 when a claim outruns its evidence
 npx flawline report   # where this stands, and the one thing to do next
+npx flawline council <stage>   # put a stage to readers who were not told
+                               # what you concluded
+npx flawline what-if <claim>=refuted   # what was resting on this?
 ```
+
+`what-if` is the cheapest command here: no clock, no network, no model. It
+copies the thesis with one confidence changed, runs the ordinary checker over
+the copy, and reports what newly breaks. Every rule it applies already exists —
+it is the dependency graph answering a question nobody was asking it.
+
+```console
+$ npx flawline what-if problem-exists=refuted
+If problem-exists were refuted (it is assumed today):
+
+  segment-is-reachable         customer   (indicated, critical)
+  first-channel-proven         motion     (validated, critical)
+
+2 claim(s) across 3 stage(s) would be resting on a refuted premise.
+1 of them is currently "validated" — settled on its own evidence, and orphaned by this.
+
+Nothing was changed. This is the graph answering a question.
+```
+
+That is the shape this project exists to make visible: twenty sales and a
+conversion rate worth celebrating, resting on a problem statement nobody has
+checked with a customer.
+
+The graph is only as good as the edges someone remembered to write, and the
+dependency that costs six months is usually the one nobody noticed. `--deep`
+adds a panel for that: three seats scan every other claim for a dependency the
+document never declared, and — only when the customer stage carries real signal
+with sources — personas built from that material say what losing the claim
+changes for them.
+
+```console
+$ npx flawline what-if problem-exists --deep --ingest verdict.json
+strategy/model.md: warning: [whatif-undeclared-edge] price-clears-value
+    2 of 3 seats read "price-clears-value" as resting on "problem-exists",
+    which it does not declare. The fee is justified as cheap "against a
+    rebuild" — the rebuild cost is problem-exists. If they are right, add it
+    to depends_on — until then the graph cannot tell you this claim is at risk.
+
+0 error(s), 1 warning(s).
+```
+
+The two halves stay apart on purpose. The graph is the same answer every run and
+`evidence.md` may rest on it; the panel is a set of questions. Both are warnings
+and neither writes: a panel can tell you a claim is thinner than it looks, and
+can never tell you one is stronger.
+
+`council` writes a pack of claims with the `confidence:` lines stripped out,
+for a panel of four readers and a chairman. A reader shown "validated" grades
+your verdict; a reader shown the statement and its evidence reaches one. Their
+answers come back through `council --ingest` as warnings, and exit 0 — because
+a council can tell you a claim is thinner than it looks and can never tell you
+one is stronger. Only evidence does that. No key, no network: the pack goes out
+as JSON and the verdict comes back as JSON, so the panel can be five models,
+five subagents or five people in a room.
 
 `report` names the riskiest claim resting on nothing, says how much is riding on
 it, and gives exactly one recommendation. It also names what it refuses to
@@ -91,6 +148,41 @@ held to the same rule as a claim.
 `report --json` and `check --json` emit the same content for another agent to
 act on. One task does not delegate: an agent cannot sit down with a stranger,
 and until someone does, nothing leaves `assumed`.
+
+## When there is no demand to find yet
+
+Every method here reads demand that already exists. A founder creating a
+category has none of it, and running the checker against them says the thesis
+is empty — true, useless, and the last time they open the tool.
+
+`creates_market: true` is how that gets written down, and it is not an
+exemption. The claim must declare what is fixed in advance instead:
+
+```yaml
+creates_market: true
+precautions:
+  turn_back: 2026-12-01
+  cost_ceiling: Rp 40,000,000 and my own time until December.
+  learn: Whether anyone will pay for a category nobody is searching for yet.
+```
+
+While the date is ahead, the claim passes its gate and the stages after it
+open — with a warning on every run, never silently. On the date, that stops by
+itself:
+
+```console
+$ npx flawline check
+strategy/problem.md: error: [turn-back-passed] problem-exists
+    The turn-back date was 2026-08-01 and this claim is still "assumed". You
+    set that date yourself, before starting, for this moment — when you are
+    far enough in to be certain it is nearly there.
+```
+
+The date is mechanical rather than a reminder, and that is the point. The
+person far enough in to be sure the market is nearly there is the last one who
+should get a vote on whether to keep going. It buys ordering and never
+strength: a downstream claim still cannot be stated more strongly than the bet
+underneath it.
 
 ## In CI
 
@@ -184,6 +276,7 @@ flowchart TB
 | `incident-beyond-occurrence` | An incident record used for what the incident cost, or what people already do about it. |
 | `stage-opened-early` | A stage document written before the stage behind it holds. |
 | `no-refutation-recorded` | A document with a critical claim that never says what would refute it. |
+| `method-beyond-reach` | A method used for a claim its artefact cannot answer. |
 
 ### The kind of signal caps the confidence
 
@@ -198,6 +291,9 @@ anyone paying.
 | Interviews and surveys | `indicated` |
 | Self-report about your own history | `indicated` |
 | The record of one incident, published by whoever it went wrong for | `indicated` |
+| A review by someone the platform confirms paid | `indicated` |
+| Code someone else shipped to prevent this failure | `indicated` |
+| Outreach an agent sent without saying so | `assumed` |
 | Waitlists, landing pages, demos that went well | `indicated` |
 | Quote and proposal requests | `indicated` |
 | Deposits, payments, repeat payments | `validated` |

@@ -1,5 +1,188 @@
 # Changelog
 
+## 0.10.0
+
+### Added
+
+- **`search-demand` and `forum-question`, at `indicated`.** Aggregate search
+  volume for a need, and questions people posted in public wanting an answer.
+  Both were previously filed under `scraping` and bought nothing, which was
+  wrong about the axis that matters: nobody was answering a researcher. A query
+  is typed by someone who wanted the thing at that moment, and a public
+  question is asked by someone who wanted a way out and said so in their own
+  words. Neither was prompted, both leave an artefact a stranger can reopen,
+  and neither is an opinion about behaviour — they are behaviour.
+
+  Both stop at `indicated` because nothing was at stake. Both are confined to
+  the `problem` and `customer` stages, and neither reaches
+  `problem-is-expensive`: people search and post when they are annoyed and when
+  they are bleeding money, and it reads the same either way.
+
+  Record `search-demand` with the query, the tool and the date range, so a
+  stranger can run it again. Record `forum-question` one entry per thread, with
+  its URL and date. Count threads, never replies — a post with two hundred
+  comments is one person with one problem and an audience.
+
+- **`official-statistics`, at `assumed`.** A census, a national survey, an
+  official register. The ceiling is not a judgement on the source: it is the
+  best-measured thing in the table, and it measures the wrong thing.
+  Statistics count populations, every claim here is about how people behave
+  toward a problem, and the sentence that walks from one to the other is the
+  oldest slide in the deck.
+
+  Recorded anyway, for the reason `bot-outreach` is — someone will cite it, so
+  it should have a name that tells the truth about what it buys. It keeps the
+  power that matters: a ceiling caps support, a refutation is not support, so a
+  statistic showing the population is a fortieth of the assumption still kills
+  the claim outright.
+
+- **`flawline council <stage>`.** A pack of claims with the `confidence:` lines
+  stripped, for four judging seats and a chairman. The stripping is the whole
+  mechanism: a reader shown "validated" grades a verdict, a reader shown the
+  statement and its evidence reaches one, and the two are indistinguishable in
+  the output, so it has to be protected at the input.
+
+  Seats are fixed for every stage rather than generated, so runs can be
+  compared — a claim that survived the evidence auditor in March and does not
+  in June has changed. `method-challenger` is the sharpest, because its answer
+  is falsifiable: it names a ceiling blind, and the tool compares that to the
+  line actually written.
+
+  Verdicts come back through `council --ingest` as warnings, exit 0. A council
+  can lower a claim and never raise one. Nobody on a panel went anywhere, asked
+  anyone or paid for anything, so a unanimous council changes no `confidence:`
+  and never appears in an `evidence:` block.
+
+  The model lives outside the checker. The pack goes out as JSON and the
+  verdict comes back as JSON, so `check` stays offline, single-dependency and
+  reproducible in CI, and the panel can be five models, five subagents or five
+  people in a room.
+
+- **`flawline what-if <claim>=refuted`.** `depends_on` has been in the
+  documents since the beginning and nothing ever asked it anything. This copies
+  the thesis with one confidence changed, runs the ordinary checker over the
+  copy, and reports what newly breaks — no clock, no network, no model, and
+  deliberately no new rules.
+
+  Findings already present are subtracted, so a thesis with existing problems
+  does not report all of them as consequences of the knock-out. It exits 0 and
+  writes nothing: a counterfactual is not a failure.
+
+- **`flawline what-if <claim> --deep`.** The graph is exactly as good as the
+  edges someone remembered to write, and the dependency that costs six months
+  is the one nobody noticed. Three seats scan every other claim for an
+  undeclared edge, and two must agree before it is reported.
+
+  Personas say what losing the claim changes for them, and only when the
+  customer stage carries real signal with sources; any persona citing none is
+  refused. A persona invented by a model is a confident voice with nothing
+  behind it in a customer's costume. The persona half may report one thing —
+  that nobody the claim is about would notice losing it. Agreement is silence.
+
+- **`creates_market: true`, with `precautions`.** Every method here reads
+  demand that already exists, and a founder creating a category has none of it.
+  The flag is not an exemption; it is a more expensive obligation. A claim
+  carrying it must declare `turn_back`, `cost_ceiling`, and what it learns
+  either way, or it is refused.
+
+  While the turn-back date is ahead, the claim passes its gate and the stages
+  after it open, with a warning on every run. On the date that stops by itself:
+  the claim becomes an error and the stages close again. The date is mechanical
+  rather than a reminder, because the person far enough in to be certain the
+  market is nearly there is the last one who should get a vote on whether to
+  keep going.
+
+  It buys ordering and never strength — a downstream claim still cannot be
+  stated more strongly than the bet underneath it. A claim declaring the flag
+  while citing `search-demand`, `forum-question` or reviews is told so: the
+  market was already there.
+
+- **`/flawline-council` and `/flawline-what-if`.** Slash commands that run both
+  panels end to end — one agent per seat, each given only its own question and
+  refusal, none told what the founder concluded.
+
+- **`flawline-council` skill**, and a section in `DISCIPLINE.md` for the rule
+  that governs all of the above: an argument is not an observation.
+
+### Changed
+
+- **`Claim` gained a required `createsMarket` field**, and an optional
+  `precautions`. Code that builds a `Claim` value directly against the exported
+  types must set it. Documents are unaffected: `creates_market` defaults to
+  false when absent.
+
+- **New finding codes**, all of them warnings written by the panels rather than
+  by `check`: `council-dissent`, `council-ceiling-dissent`, `council-pack-stale`,
+  `council-unknown-claim`, `whatif-undeclared-edge`,
+  `whatif-persona-indifferent`, `whatif-pack-stale`, `whatif-unknown-claim`.
+  `check` itself gained `precautions-missing`, `turn-back-passed`,
+  `proceeding-without-evidence` and `market-already-exists`.
+
+### Fixed
+
+- **A positional argument after any command was silently ignored.** `flawline
+  check twice` checked everything while appearing to narrow. Only `council` and
+  `what-if` take a positional now; everything else reports it.
+
+## 0.9.0
+
+### Added
+
+- **`shipped-workaround`, at `indicated`.** Code somebody else shipped whose
+  purpose is to prevent this failure: a guard, an override, a manual procedure
+  documented in a product's own README. The mitigation itself, in a repository
+  a stranger can open — not a post about the risk.
+
+  It reaches `they-already-try`, which `incident-record` cannot, and the reason
+  the older limit does not apply is worth stating. That limit exists because
+  what someone does about a problem lives in their head. Once they have shipped
+  the workaround, it does not: it is in their repository, as code, with a commit
+  date. Engineering effort spent avoiding something is evidence they were
+  avoiding it.
+
+  It stops at `indicated` because effort is not cost — a team can guard against
+  a risk that never once cost anybody anything — and it cannot raise
+  `problem-is-expensive`, reported as `method-beyond-reach`.
+
+  Like `verified-review`, it counts on the `problem` and `customer` stages
+  only. Both now share `OTHERS_BEHAVIOUR_METHODS`, because both describe what
+  other people already do, and past those stages the claims are about your own
+  offer.
+
+## 0.8.0
+
+### Added
+
+- **`verified-review`, at `indicated`.** A review left by someone the platform
+  confirms paid. Two facts arrive together: a stranger described the problem
+  unprompted, and they had already spent money trying to solve it. Better than
+  an interview where interviews are weakest — nobody was being polite to a
+  researcher — and worse on specificity, because there is no follow-up
+  question.
+
+  It counts on the `problem` and `customer` stages, where the claims are about
+  what people already do. Past that the claims are about your offer, and a
+  review of a competitor is a fact about them.
+
+  It may raise `they-already-try`, which an incident record cannot: a purchase
+  *is* them already trying. It may not raise `problem-is-expensive`, reported
+  as the new `method-beyond-reach` finding. People write reviews about being
+  annoyed, not about the money.
+
+- **`bot-outreach`, at `assumed`.** Outreach an agent sent without telling the
+  recipient. A reply measures what a stranger says to a fiction, which is the
+  `friend` problem in different clothes. The checker cannot tell who pressed
+  send, so this exists to give an honest author a truthful label rather than to
+  catch a dishonest one.
+
+### Changed
+
+- The per-method claim limits are now declared in one place,
+  `METHOD_CLAIM_LIMITS`, instead of living inside the checker. Each entry
+  should be defensible in one sentence; one that is not should be deleted
+  rather than kept for safety. `OCCURRENCE_ONLY_CLAIM_IDS` is derived from it
+  and still exported.
+
 ## 0.7.0
 
 Documents written by hand under 0.6.0 will need one new section each. The
