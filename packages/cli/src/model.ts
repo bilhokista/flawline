@@ -180,6 +180,63 @@ export const METHOD_CEILINGS: Readonly<Record<string, Exclude<Confidence, 'refut
   // It says people pay to solve this. It says nothing about paying you.
   'verified-review': 'indicated',
 
+  // Aggregate search queries for a need, read from a tool that reports volume
+  // over a period: the query itself, the source, and the dates, recorded so a
+  // stranger can run it again and see roughly what you saw.
+  //
+  // It outranks scraping and desk-research, which it would otherwise be filed
+  // under, on the axis those two are weakest. A forum post and an industry
+  // report are both written for an audience. A search is not: nobody types one
+  // to be seen, and nobody types one who did not want the thing at that moment.
+  // That makes it a trace of behaviour rather than an opinion about behaviour.
+  //
+  // It stops at `indicated` because nothing was at stake. Wanting to find
+  // something is not paying for it, and a query says nothing about what the
+  // searcher would accept or what they are already using. See
+  // METHOD_CLAIM_LIMITS and OTHERS_BEHAVIOUR_METHODS for the two limits that
+  // keep an afternoon with a keyword tool from closing the claims that need a
+  // person.
+  'search-demand': 'indicated',
+
+  // A question somebody posted in public because they wanted an answer: Reddit,
+  // Quora, Kaskus, a Stack Exchange site, a Facebook group. The question, with
+  // its URL and date — not a comment under it, and not an opinion piece.
+  //
+  // It belongs beside search-demand rather than under scraping for the same
+  // reason: nobody was answering a researcher. The asker wanted a way out of
+  // something and said so in their own words, unprompted, at the moment it was
+  // a problem. That is the axis interviews are weakest on.
+  //
+  // It is weaker than search-demand on one axis and stronger on another. A post
+  // is written for an audience, so some of it is performance, which a query
+  // never is. But it is prose, so it says what the person was trying to do, and
+  // a query never does.
+  //
+  // It stops at `indicated` because nothing was at stake. Count threads, never
+  // replies: one thread is one person with one problem, however many people
+  // pile in underneath.
+  'forum-question': 'indicated',
+
+  // A published figure from a statistical authority: a census, a national
+  // survey, an official register. BPS, a national statistics office, a
+  // regulator's return.
+  //
+  // It sits at `assumed` and that is not a comment on the source. It is the
+  // best-measured thing in this table. It measures the wrong thing: statistics
+  // count populations, and every claim in this tool is about how some people
+  // behave toward your problem. "1.2 million households in this regency" is
+  // solid, checkable, and silent on whether one of them cannot find a builder
+  // they trust. Reading it as demand is the oldest slide in the deck.
+  //
+  // Recorded anyway, for the reason `bot-outreach` is: someone will cite it, so
+  // it should have a name that tells the truth about what it buys.
+  //
+  // It keeps one real power. A ceiling only caps support, and `refuted` is not
+  // support — so a statistic that shows the population is a fortieth of what
+  // the thesis assumed may still kill the claim outright. Like a council, it
+  // can lower and never raise.
+  'official-statistics': 'assumed',
+
   // Outreach sent by an agent without telling the recipient. A reply measures
   // what a stranger says to a fiction, which is the `friend` problem wearing
   // different clothes: the relationship is doing the talking, not the offer.
@@ -303,6 +360,8 @@ export const REVIEW_STAGES: ReadonlySet<Stage> = new Set<Stage>(['problem', 'cus
 export const OTHERS_BEHAVIOUR_METHODS: ReadonlySet<string> = new Set([
   'verified-review',
   'shipped-workaround',
+  'search-demand',
+  'forum-question',
 ]);
 
 
@@ -327,6 +386,17 @@ export const METHOD_CLAIM_LIMITS: Readonly<Record<string, readonly string[]>> = 
   // The workaround shows the problem and the response. What the problem cost
   // before they built the guard is not in the repository.
   'shipped-workaround': ['problem-is-expensive'],
+
+  // A query shows someone looking for a way out, which is an attempt, so this
+  // reaches `they-already-try`. What the problem costs them is not in a search
+  // box: people search when they are annoyed and when they are bleeding money,
+  // and the query reads identically either way.
+  'search-demand': ['problem-is-expensive'],
+
+  // Asking in public is an attempt, so this reaches `they-already-try` too.
+  // Cost is absent for the same reason it is absent from a review: people post
+  // about being stuck, not about what being stuck billed them.
+  'forum-question': ['problem-is-expensive'],
 };
 
 /** Every claim id any method is blocked from raising. */
