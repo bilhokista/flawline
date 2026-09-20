@@ -56,6 +56,8 @@ export function strengthOf(confidence: Exclude<Confidence, 'refuted'>): number {
   return STRENGTH[confidence];
 }
 
+import type { Precautions } from './market.js';
+
 /** A pointer to something that actually happened outside the document. */
 export interface Evidence {
   /** How the signal was collected, e.g. `interview`, `landing-page`, `sale`. */
@@ -77,6 +79,16 @@ export interface Claim {
   readonly dependsOn: readonly string[];
   /** A claim the thesis cannot survive without. Gates block on these. */
   readonly critical: boolean;
+  /**
+   * The market this claim describes does not exist yet, so no evidence of
+   * existing demand can be gathered for it.
+   *
+   * Not an exemption. A claim carrying this must declare {@link precautions}
+   * instead, and it is held to them mechanically. See market.ts.
+   */
+  readonly createsMarket: boolean;
+  /** What is fixed in advance in place of evidence. See market.ts. */
+  readonly precautions?: Precautions;
   /**
    * 1-based line in {@link source} where the claim's id is written, when it
    * could be located verbatim. Used to point CI annotations at the claim.

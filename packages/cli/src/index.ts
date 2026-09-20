@@ -63,6 +63,13 @@ export { STAGE_TEMPLATES } from './templates.js';
 export { renderAnnotations } from './annotations.js';
 
 export {
+  checkMarketCreation,
+  missingPrecautions,
+  precautionsHold,
+  type Precautions,
+} from './market.js';
+
+export {
   COUNCIL_SEATS,
   JUDGING_SEATS,
   POSITIONS,

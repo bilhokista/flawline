@@ -8,6 +8,7 @@ import {
   type StageGate,
   type Thesis,
 } from './model.js';
+import type { Precautions } from './market.js';
 
 export interface ParseIssue {
   readonly source: string;
@@ -309,6 +310,14 @@ export function parseDocument(
       return;
     }
 
+    const createsMarketRaw = claimRecord['creates_market'] ?? claimRecord['createsMarket'] ?? false;
+    if (typeof createsMarketRaw !== 'boolean') {
+      issues.push({ source, message: `Claim "${id}": "creates_market" must be true or false.` });
+      return;
+    }
+
+    const precautions = readPrecautions(claimRecord['precautions'], source, id, issues);
+
     const line = lineOf(id);
 
     claims.push({
@@ -316,6 +325,8 @@ export function parseDocument(
       statement,
       confidence: confidenceRaw,
       critical: criticalRaw,
+      createsMarket: createsMarketRaw,
+      ...(precautions !== undefined ? { precautions } : {}),
       ...(line !== undefined ? { line } : {}),
       stage,
       source,
@@ -330,6 +341,42 @@ export function parseDocument(
   });
 
   return { claims, gate, issues, prose };
+}
+
+/**
+ * Reads the block a market-creation claim stands on.
+ *
+ * Absent is legitimate and means the claim is an ordinary one; the checker
+ * decides whether that is allowed. A block that is present but malformed is
+ * reported here, because a misspelt key would otherwise read as a missing
+ * precaution and send the author looking in the wrong place.
+ */
+function readPrecautions(
+  value: unknown,
+  source: string,
+  id: string,
+  issues: ParseIssue[],
+): Precautions | undefined {
+  if (value === undefined || value === null) return undefined;
+
+  if (typeof value !== 'object' || Array.isArray(value)) {
+    issues.push({
+      source,
+      message: `Claim "${id}": "precautions" must be a block with turn_back, cost_ceiling and learn.`,
+    });
+    return undefined;
+  }
+
+  const record = value as Record<string, unknown>;
+  const turnBack = record['turn_back'] ?? record['turnBack'];
+  const costCeiling = record['cost_ceiling'] ?? record['costCeiling'];
+  const learn = record['learn'];
+
+  return {
+    turnBack: typeof turnBack === 'string' ? turnBack : '',
+    costCeiling: typeof costCeiling === 'string' ? costCeiling : '',
+    learn: typeof learn === 'string' ? learn : '',
+  };
 }
 
 /** Assembles a thesis from every stage document found. */

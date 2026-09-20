@@ -135,6 +135,46 @@ claim. The opposite result is silence. Personas saying a claim matters
 enormously confirms nothing, because they are readings of your own research
 rather than customers.
 
+## A market nobody has made yet is a bet, and a bet needs a stopping rule
+
+Every method here reads demand that already exists. A founder genuinely
+creating a category has none of it and never will until they have built the
+thing, so the honest answer to "where is your evidence" is that there cannot
+be any yet.
+
+`creates_market: true` is how that is written down. It is **not** an exemption.
+A claim carrying it must also carry `precautions`, and is held to them by the
+checker:
+
+```yaml
+creates_market: true
+precautions:
+  turn_back: 2026-12-01
+  cost_ceiling: Rp 40,000,000 and my own time until December.
+  learn: Whether anyone will pay for a category that does not exist yet.
+```
+
+The argument is Amundsen's. He did not improvise his way to the pole; he
+foresaw, laid depots, and fixed his turn-back dates before leaving. Scott
+improvised. What a market creator can offer in place of evidence is exactly
+that — a date decided in advance and a cost they have agreed to stop at.
+
+While the date is ahead, the claim passes its gate and the stages after it
+open, with a warning on every run. On the date, that stops by itself: the
+claim becomes an error and the stages close again.
+
+Say plainly why the date is mechanical rather than a reminder. The person far
+enough in to be certain the market is nearly there is the last person who
+should get a vote on whether to keep going. That is what setting it in advance
+was for.
+
+Two things to hold on to:
+
+- **The flag buys ordering, never strength.** A downstream claim still cannot
+  be stated more strongly than the bet underneath it.
+- **Fail forward only counts if you survive the failure**, and surviving is a
+  budget question. `cost_ceiling` is the whole of "fail fast" that is real.
+
 ## Settled facts about the outside world expire
 
 The `model` and `motion` stages ship with `evidence_half_life_days: 120`. A

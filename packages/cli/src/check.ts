@@ -12,6 +12,7 @@ import {
   type StageGate,
   type Thesis,
 } from './model.js';
+import { checkMarketCreation, precautionsHold } from './market.js';
 
 export type Severity = 'error' | 'warning';
 
@@ -32,6 +33,12 @@ export const FINDING_CODES = [
   'stage-opened-early',
   'no-refutation-recorded',
   'method-beyond-reach',
+  // Written when a claim stands on precautions rather than evidence. See
+  // market.ts: the flag is an obligation, not an exemption.
+  'precautions-missing',
+  'turn-back-passed',
+  'proceeding-without-evidence',
+  'market-already-exists',
   // Written by `flawline council`, never by `check`. A panel reports; it cannot
   // fail a build, so these are warnings by construction. See council.ts.
   'council-dissent',
@@ -172,8 +179,9 @@ export function check(thesis: Thesis, options: CheckOptions = {}): Finding[] {
   }
 
   findings.push(...checkCycles(byId));
-  findings.push(...checkGates(byId, thesis.gates));
-  findings.push(...checkStagesOpenedEarly(thesis.claims, byId, thesis.gates));
+  findings.push(...checkGates(byId, thesis.gates, now));
+  findings.push(...checkStagesOpenedEarly(thesis.claims, byId, thesis.gates, now));
+  findings.push(...checkMarketCreation([...byId.values()], now));
   findings.push(...checkRefutationRecorded(thesis));
 
   return findings;
@@ -496,7 +504,11 @@ function checkCycles(byId: ReadonlyMap<string, Claim>): Finding[] {
  * confirmed something is the act that must be earned, so only that moves the
  * frontier forward.
  */
-function checkGates(byId: ReadonlyMap<string, Claim>, gates: readonly StageGate[]): Finding[] {
+function checkGates(
+  byId: ReadonlyMap<string, Claim>,
+  gates: readonly StageGate[],
+  now: Date,
+): Finding[] {
   const claims = [...byId.values()];
   const furthest = furthestStageIndex(claims);
 
@@ -511,7 +523,11 @@ function checkGates(byId: ReadonlyMap<string, Claim>, gates: readonly StageGate[
       claim.confidence !== 'refuted' &&
       strengthOf(claim.confidence) >= strengthOf(gate.requires);
 
-    if (!met) {
+    // A market-creation claim standing on unexpired precautions passes the gate
+    // it cannot evidence. That is the trade market.ts describes, and it lapses
+    // by itself: once the turn-back date is behind, this stops and the stage
+    // closes again without anyone deciding to close it.
+    if (!met && !precautionsHold(claim, now)) {
       findings.push({
         code: 'gate-not-met',
         severity: 'error',
@@ -537,6 +553,7 @@ function stageHolds(
   stage: Stage,
   claims: readonly Claim[],
   gates: readonly StageGate[],
+  now: Date,
 ): { holds: boolean; reason: string } {
   const critical = claims.filter((claim) => claim.stage === stage && claim.critical);
 
@@ -547,8 +564,9 @@ function stageHolds(
   const gate = gateFor(stage, gates);
   const unmet = critical.filter(
     (claim) =>
-      claim.confidence === 'refuted' ||
-      strengthOf(claim.confidence) < strengthOf(gate.requires),
+      (claim.confidence === 'refuted' ||
+        strengthOf(claim.confidence) < strengthOf(gate.requires)) &&
+      !precautionsHold(claim, now),
   );
 
   return unmet.length === 0
@@ -575,6 +593,7 @@ function checkStagesOpenedEarly(
   claims: readonly Claim[],
   byId: ReadonlyMap<string, Claim>,
   gates: readonly StageGate[],
+  now: Date,
 ): Finding[] {
   const unique = [...byId.values()];
   const findings: Finding[] = [];
@@ -604,7 +623,7 @@ function checkStagesOpenedEarly(
     // behind. When stages are skipped, the stage before is empty and blaming it
     // sends the reader to a document that was never the problem.
     const blocker = STAGES.slice(0, index)
-      .map((earlier) => ({ earlier, ...stageHolds(earlier, unique, gates) }))
+      .map((earlier) => ({ earlier, ...stageHolds(earlier, unique, gates, now) }))
       .find((result) => !result.holds);
 
     if (!blocker) continue;

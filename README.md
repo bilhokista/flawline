@@ -149,6 +149,41 @@ held to the same rule as a claim.
 act on. One task does not delegate: an agent cannot sit down with a stranger,
 and until someone does, nothing leaves `assumed`.
 
+## When there is no demand to find yet
+
+Every method here reads demand that already exists. A founder creating a
+category has none of it, and running the checker against them says the thesis
+is empty — true, useless, and the last time they open the tool.
+
+`creates_market: true` is how that gets written down, and it is not an
+exemption. The claim must declare what is fixed in advance instead:
+
+```yaml
+creates_market: true
+precautions:
+  turn_back: 2026-12-01
+  cost_ceiling: Rp 40,000,000 and my own time until December.
+  learn: Whether anyone will pay for a category nobody is searching for yet.
+```
+
+While the date is ahead, the claim passes its gate and the stages after it
+open — with a warning on every run, never silently. On the date, that stops by
+itself:
+
+```console
+$ npx flawline check
+strategy/problem.md: error: [turn-back-passed] problem-exists
+    The turn-back date was 2026-08-01 and this claim is still "assumed". You
+    set that date yourself, before starting, for this moment — when you are
+    far enough in to be certain it is nearly there.
+```
+
+The date is mechanical rather than a reminder, and that is the point. The
+person far enough in to be sure the market is nearly there is the last one who
+should get a vote on whether to keep going. It buys ordering and never
+strength: a downstream claim still cannot be stated more strongly than the bet
+underneath it.
+
 ## In CI
 
 `check` exits 1 on a claim that outruns its evidence, so a pull request that
