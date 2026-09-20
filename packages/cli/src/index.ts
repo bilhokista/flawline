@@ -77,3 +77,10 @@ export {
   type SeatVerdict,
   type VerdictParse,
 } from './council.js';
+
+export {
+  parseAssignment,
+  whatIf,
+  type Assignment,
+  type WhatIfResult,
+} from './whatif.js';

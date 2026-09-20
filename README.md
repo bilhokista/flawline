@@ -82,6 +82,7 @@ npx flawline check    # exits 1 when a claim outruns its evidence
 npx flawline report   # where this stands, and the one thing to do next
 npx flawline council <stage>   # put a stage to readers who were not told
                                # what you concluded
+npx flawline what-if <claim>=refuted   # what was resting on this?
 ```
 
 `report` names the riskiest claim resting on nothing, says how much is riding
@@ -95,6 +96,28 @@ a council can tell you a claim is thinner than it looks and can never tell you
 one is stronger. Only evidence does that. No key, no network: the pack goes out
 as JSON and the verdict comes back as JSON, so the panel can be five models,
 five subagents or five people in a room.
+
+`what-if` is the cheapest command here: no clock, no network, no model. It
+copies the thesis with one confidence changed, runs the ordinary checker over
+the copy, and reports what newly breaks. Every rule it applies already exists —
+it is the dependency graph answering a question nobody was asking it.
+
+```console
+$ npx flawline what-if problem-exists=refuted
+If problem-exists were refuted (it is assumed today):
+
+  segment-is-reachable         customer   (indicated, critical)
+  first-channel-proven         motion     (validated, critical)
+
+2 claim(s) across 3 stage(s) would be resting on a refuted premise.
+1 of them is currently "validated" — settled on its own evidence, and orphaned by this.
+
+Nothing was changed. This is the graph answering a question.
+```
+
+That is the shape this project exists to make visible: twenty sales and a
+conversion rate worth celebrating, resting on a problem statement nobody has
+checked with a customer.
 
 ## In CI
 

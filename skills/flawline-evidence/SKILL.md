@@ -23,6 +23,11 @@ Test the top-right first: high damage, low cost. Founders reliably default to
 the bottom-left — cheap tests of things that cannot hurt them — because it feels
 like progress and cannot produce bad news. Name the pattern when you see it.
 
+Do not estimate the damage column by eye. `npx flawline what-if <claim>=refuted`
+walks the dependency graph and names every claim that would be left resting on
+a refuted premise, how many of them were `validated`, and which stages would
+reopen. It changes nothing — it is the graph answering a question.
+
 Run `npx flawline status` and read the `assumed` counts. The riskiest
 assumption is usually a critical claim in an early stage that everything else
 depends on. The dependency graph already knows; use it.

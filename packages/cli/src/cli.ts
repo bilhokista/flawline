@@ -13,6 +13,7 @@ import {
 import { renderAnnotations } from './annotations.js';
 import { isStage, STAGES } from './model.js';
 import { buildPack, councilFindings, parseVerdict } from './council.js';
+import { parseAssignment, whatIf, type WhatIfResult } from './whatif.js';
 import { init, loadThesis, readVerdict, writePack, STRATEGY_DIR } from './workspace.js';
 
 /**
@@ -36,6 +37,7 @@ Usage
   flawline report    Say where this stands and what the evidence lets you do
   flawline check     Fail if any claim leans on more support than it has
   flawline council   Put a stage to a panel that is not shown your conclusions
+  flawline what-if   Knock out a claim and see what was resting on it
 
 Options
   -C, --cwd <dir>     Run against another directory
@@ -56,8 +58,11 @@ export const FORMATS = ['text', 'json', 'github'] as const;
 
 export type Format = (typeof FORMATS)[number];
 
-/** The one command that takes a positional argument: the stage to convene on. */
-const COMMAND_WITH_TARGET = 'council';
+/**
+ * Commands that take a positional argument: the stage `council` convenes on,
+ * and the claim `what-if` knocks out.
+ */
+const COMMANDS_WITH_TARGET: ReadonlySet<string> = new Set(['council', 'what-if']);
 
 function isFormat(value: string): value is Format {
   return (FORMATS as readonly string[]).includes(value);
@@ -127,7 +132,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       break;
     } else if (command === null) {
       command = argument;
-    } else if (command === COMMAND_WITH_TARGET && target === null) {
+    } else if (COMMANDS_WITH_TARGET.has(command) && target === null) {
       // Only `council` takes a positional. Every other command rejecting one is
       // load-bearing: `flawline check strategy/problem.md` looks like it would
       // check that file, and silently ignoring the path would check everything
@@ -172,6 +177,8 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
       return runCheck(args.cwd, args.format);
     case 'council':
       return runCouncil(args.cwd, args.target, args.ingest, args.format === 'json');
+    case 'what-if':
+      return runWhatIf(args.cwd, args.target, args.format === 'json');
     default:
       return { code: 2, out: `Unknown command: ${args.command}\n\n${HELP}` };
   }
@@ -401,6 +408,107 @@ async function ingestVerdict(
   lines.push(findings.length === 0 ? 'The council found nothing the document does not already admit.' : renderFindings(findings));
 
   return { code: 0, out: lines.join('\n') };
+}
+
+/**
+ * Answers the question without acting on it.
+ *
+ * Exits 0 whatever it finds. A counterfactual is not a failure: nothing here
+ * happened, and a command that failed a build over something imagined would be
+ * reporting damage the repository has not taken.
+ */
+async function runWhatIf(cwd: string, target: string | null, json = false): Promise<RunOutcome> {
+  if (target === null) {
+    return {
+      code: 2,
+      out: 'flawline what-if needs a claim, e.g. `flawline what-if problem-exists=refuted`.',
+    };
+  }
+
+  const assignment = parseAssignment(target);
+  if (assignment.error !== null) return { code: 2, out: assignment.error };
+
+  const { thesis, issues } = await loadThesis(cwd);
+  if (issues.length > 0) return { code: 1, out: renderParseIssues(issues) };
+
+  if (thesis.claims.length === 0) {
+    return { code: 1, out: `No claims found in ${STRATEGY_DIR}/. Run \`flawline init\` first.` };
+  }
+
+  const result = whatIf(thesis, assignment.claimId, assignment.confidence);
+
+  if (result.target === null) {
+    return {
+      code: 1,
+      out: `No claim called "${assignment.claimId}". Run \`flawline status\` to see the ids.`,
+    };
+  }
+
+  return json
+    ? { code: 0, out: JSON.stringify(whatIfPayload(result), null, 2) }
+    : { code: 0, out: renderWhatIf(result) };
+}
+
+function whatIfPayload(result: WhatIfResult) {
+  return {
+    claim: result.target?.id ?? null,
+    confidence: result.confidence,
+    dependents: result.dependents.map((claim) => ({
+      id: claim.id,
+      stage: claim.stage,
+      confidence: claim.confidence,
+      critical: claim.critical,
+    })),
+    stagesAffected: result.stagesAffected,
+    validatedCount: result.validatedCount,
+    criticalCount: result.criticalCount,
+    introduced: result.introduced,
+  };
+}
+
+function renderWhatIf(result: WhatIfResult): string {
+  const target = result.target as NonNullable<WhatIfResult['target']>;
+  const lines: string[] = [
+    `If ${target.id} were ${result.confidence} (it is ${target.confidence} today):`,
+    '',
+  ];
+
+  if (result.dependents.length === 0) {
+    lines.push('  Nothing rests on it. This claim is a leaf, so being wrong about');
+    lines.push('  it costs you this claim and no other.');
+    return lines.join('\n');
+  }
+
+  for (const claim of result.dependents) {
+    const marks = [claim.confidence, claim.critical ? 'critical' : null]
+      .filter((mark) => mark !== null)
+      .join(', ');
+    lines.push(`  ${claim.id.padEnd(28)} ${claim.stage.padEnd(10)} (${marks})`);
+  }
+
+  lines.push('');
+  lines.push(
+    `${result.dependents.length} claim(s) across ${result.stagesAffected.length} stage(s) would be resting on a refuted premise.`,
+  );
+
+  if (result.validatedCount > 0) {
+    const one = result.validatedCount === 1;
+    lines.push(
+      `${result.validatedCount} of them ${one ? 'is' : 'are'} currently "validated" — settled on ${one ? 'its' : 'their'} own evidence, and orphaned by this.`,
+    );
+  }
+
+  if (result.introduced.length > 0) {
+    lines.push('');
+    lines.push(`\`flawline check\` would newly report ${result.introduced.length} finding(s):`);
+    lines.push('');
+    lines.push(renderFindings(result.introduced));
+  }
+
+  lines.push('');
+  lines.push('Nothing was changed. This is the graph answering a question.');
+
+  return lines.join('\n');
 }
 
 /* c8 ignore start -- process wiring, exercised by the binary rather than tests */
