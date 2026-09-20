@@ -2,6 +2,7 @@ import { readdir, readFile, mkdir, writeFile, access } from 'node:fs/promises';
 import { isAbsolute, join, relative, sep } from 'node:path';
 import { openStages } from './advice.js';
 import type { CouncilPack } from './council.js';
+import type { DeepPack } from './deep.js';
 import { STAGES, type Stage } from './model.js';
 import { parseThesis, type ParseResult } from './parse.js';
 import { STAGE_TEMPLATES } from './templates.js';
@@ -17,6 +18,9 @@ export const STRATEGY_DIR = 'strategy';
  * repository that keeps months of packs invites reading them as findings.
  */
 export const COUNCIL_DIR = '.flawline/council';
+
+/** Where deep what-if packs are written, for the same reason as COUNCIL_DIR. */
+export const WHATIF_DIR = '.flawline/whatif';
 
 export interface LoadedDocument {
   readonly source: string;
@@ -126,6 +130,18 @@ export async function writePack(root: string, pack: CouncilPack): Promise<string
   const display = `${COUNCIL_DIR}/${pack.stage}.json`;
   const body = `${JSON.stringify(pack, null, 2)}\n`;
   await writeFile(join(directory, `${pack.stage}.json`), body, 'utf8');
+
+  return display;
+}
+
+/** Writes a deep what-if pack, returning the path to hand the panel. */
+export async function writeDeepPack(root: string, pack: DeepPack): Promise<string> {
+  const directory = join(root, WHATIF_DIR);
+  await mkdir(directory, { recursive: true });
+
+  const display = `${WHATIF_DIR}/${pack.claim}.json`;
+  const body = `${JSON.stringify(pack, null, 2)}\n`;
+  await writeFile(join(directory, `${pack.claim}.json`), body, 'utf8');
 
   return display;
 }

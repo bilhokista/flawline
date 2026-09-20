@@ -14,7 +14,15 @@ import { renderAnnotations } from './annotations.js';
 import { isStage, STAGES } from './model.js';
 import { buildPack, councilFindings, parseVerdict } from './council.js';
 import { parseAssignment, whatIf, type WhatIfResult } from './whatif.js';
-import { init, loadThesis, readVerdict, writePack, STRATEGY_DIR } from './workspace.js';
+import { buildDeepPack, deepFindings, parseDeepVerdict, type DeepPack } from './deep.js';
+import {
+  init,
+  loadThesis,
+  readVerdict,
+  writeDeepPack,
+  writePack,
+  STRATEGY_DIR,
+} from './workspace.js';
 
 /**
  * Read from the manifest rather than typed here, so the version the tool
@@ -38,13 +46,15 @@ Usage
   flawline check     Fail if any claim leans on more support than it has
   flawline council   Put a stage to a panel that is not shown your conclusions
   flawline what-if   Knock out a claim and see what was resting on it
+                     (--deep also asks a panel which edges you never declared)
 
 Options
   -C, --cwd <dir>     Run against another directory
       --format <fmt>  text (default), json for another agent, or github to
                       annotate the claims in a pull request
       --json          Shorthand for --format json
-      --ingest <file> Read a council's verdict back in (flawline council only)
+      --ingest <file> Read a panel's verdict back in (council and what-if)
+      --deep          Ask a panel for the edges the graph cannot see
   -h, --help          Show this
   -v, --version       Print the version
 
@@ -73,6 +83,7 @@ interface ParsedArgs {
   /** A positional after the command, e.g. the stage `council` runs against. */
   readonly target: string | null;
   readonly ingest: string | null;
+  readonly deep: boolean;
   readonly cwd: string;
   readonly help: boolean;
   readonly format: Format;
@@ -84,6 +95,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
   let command: string | null = null;
   let target: string | null = null;
   let ingest: string | null = null;
+  let deep = false;
   let cwd = process.cwd();
   let help = false;
   let format: Format = 'text';
@@ -109,6 +121,8 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       }
       format = value;
       index += 1;
+    } else if (argument === '--deep') {
+      deep = true;
     } else if (argument === '--ingest') {
       const value = argv[index + 1];
       if (value === undefined || value.startsWith('-')) {
@@ -144,7 +158,7 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
     }
   }
 
-  return { command, target, ingest, cwd, help, format, version, error };
+  return { command, target, ingest, deep, cwd, help, format, version, error };
 }
 
 export interface RunOutcome {
@@ -178,7 +192,7 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
     case 'council':
       return runCouncil(args.cwd, args.target, args.ingest, args.format === 'json');
     case 'what-if':
-      return runWhatIf(args.cwd, args.target, args.format === 'json');
+      return runWhatIf(args.cwd, args.target, args.deep, args.ingest, args.format === 'json');
     default:
       return { code: 2, out: `Unknown command: ${args.command}\n\n${HELP}` };
   }
@@ -417,7 +431,15 @@ async function ingestVerdict(
  * happened, and a command that failed a build over something imagined would be
  * reporting damage the repository has not taken.
  */
-async function runWhatIf(cwd: string, target: string | null, json = false): Promise<RunOutcome> {
+async function runWhatIf(
+  cwd: string,
+  target: string | null,
+  deep = false,
+  ingest: string | null = null,
+  json = false,
+): Promise<RunOutcome> {
+  if (ingest !== null) return ingestDeep(cwd, ingest, json);
+
   if (target === null) {
     return {
       code: 2,
@@ -442,6 +464,17 @@ async function runWhatIf(cwd: string, target: string | null, json = false): Prom
       code: 1,
       out: `No claim called "${assignment.claimId}". Run \`flawline status\` to see the ids.`,
     };
+  }
+
+  if (deep) {
+    const pack = buildDeepPack(thesis, assignment.claimId);
+    const path = await writeDeepPack(cwd, pack);
+
+    if (json) return { code: 0, out: JSON.stringify(pack, null, 2) };
+
+    return { code: 0, out: `${renderWhatIf(result)}
+
+${renderDeepHandoff(pack, path)}` };
   }
 
   return json
@@ -509,6 +542,81 @@ function renderWhatIf(result: WhatIfResult): string {
   lines.push('Nothing was changed. This is the graph answering a question.');
 
   return lines.join('\n');
+}
+
+/**
+ * What the graph has just said, and what it cannot say.
+ *
+ * Printed under the deterministic answer rather than instead of it, because the
+ * two are different kinds of claim and folding them together would make the
+ * reliable half look as provisional as the panel half.
+ */
+function renderDeepHandoff(pack: DeepPack, path: string): string {
+  const lines: string[] = [
+    'The answer above is only as good as the edges someone wrote down.',
+    '',
+    `wrote  ${path}`,
+    '',
+    `${pack.candidates.length} claim(s) for a panel of ${pack.edgeSeats.length} to scan for a dependency you never declared.`,
+  ];
+
+  if (pack.personas.available) {
+    lines.push(
+      `Personas may be built from ${pack.personas.claims.length} grounded customer claim(s); each one must cite the source it came from.`,
+    );
+  } else {
+    lines.push(`No personas: ${pack.personas.reason}`);
+  }
+
+  lines.push('');
+  lines.push('Run the panel, then:');
+  lines.push('  flawline what-if --ingest <verdict.json>');
+
+  return lines.join('\n');
+}
+
+async function ingestDeep(cwd: string, file: string, json: boolean): Promise<RunOutcome> {
+  const { thesis, issues } = await loadThesis(cwd);
+  if (issues.length > 0) return { code: 1, out: renderParseIssues(issues) };
+
+  let text: string;
+  try {
+    text = await readVerdict(cwd, file);
+  } catch {
+    return { code: 1, out: `Could not read the verdict at ${file}.` };
+  }
+
+  const { verdict, issues: verdictIssues } = parseDeepVerdict(text);
+
+  if (verdict === null) {
+    return { code: 1, out: verdictIssues.map((issue) => `error: ${issue}`).join('\n') };
+  }
+
+  if (!thesis.claims.some((claim) => claim.id === verdict.claim)) {
+    return {
+      code: 1,
+      out: `This verdict is about "${verdict.claim}", which is not a claim in this thesis.`,
+    };
+  }
+
+  const findings = deepFindings(thesis, verdict);
+
+  if (json) {
+    return { code: 0, out: JSON.stringify({ findings, issues: verdictIssues }, null, 2) };
+  }
+
+  const lines: string[] = [];
+
+  for (const issue of verdictIssues) lines.push(`note: ${issue}`);
+  if (verdictIssues.length > 0) lines.push('');
+
+  lines.push(
+    findings.length === 0
+      ? 'The panel found no edge the document does not already declare.'
+      : renderFindings(findings),
+  );
+
+  return { code: 0, out: lines.join('\n') };
 }
 
 /* c8 ignore start -- process wiring, exercised by the binary rather than tests */

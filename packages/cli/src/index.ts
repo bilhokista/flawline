@@ -50,7 +50,9 @@ export {
   templateFor,
   STRATEGY_DIR,
   COUNCIL_DIR,
+  WHATIF_DIR,
   writePack,
+  writeDeepPack,
   readVerdict,
   type InitResult,
   type LoadedDocument,
@@ -84,3 +86,20 @@ export {
   type Assignment,
   type WhatIfResult,
 } from './whatif.js';
+
+export {
+  EDGE_SEATS,
+  PERSONA_IMPACTS,
+  buildDeepPack,
+  deepFindings,
+  parseDeepVerdict,
+  personaMaterial,
+  type DeepClaim,
+  type DeepPack,
+  type DeepVerdict,
+  type DeepVerdictParse,
+  type EdgeReturn,
+  type PersonaImpact,
+  type PersonaMaterial,
+  type PersonaReturn,
+} from './deep.js';

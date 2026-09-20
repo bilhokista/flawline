@@ -124,6 +124,16 @@ Two rules follow, and both are easy to break by accident:
   seat has been anchored, its answer is worth nothing and looks identical.
 - **Never let a council's output become a source.** "The panel agreed" is not a
   `source:` a stranger can open, because there is nothing there to open.
+- **Never build a persona out of nothing.** `flawline what-if --deep` will run a
+  persona panel only when the customer stage carries real signal with sources,
+  and refuses any persona that cites none. A persona invented by a model is a
+  confident voice with nothing behind it, wearing a customer's costume — and it
+  will agree with whatever the document already says.
+
+A persona panel has one thing it may report: that nobody would notice losing a
+claim. The opposite result is silence. Personas saying a claim matters
+enormously confirms nothing, because they are readings of your own research
+rather than customers.
 
 ## Settled facts about the outside world expire
 

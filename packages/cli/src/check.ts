@@ -38,6 +38,12 @@ export const FINDING_CODES = [
   'council-ceiling-dissent',
   'council-pack-stale',
   'council-unknown-claim',
+  // Written by `flawline what-if --deep`, never by `check`. Same reason as the
+  // council codes above: a panel reports, it does not fail a build.
+  'whatif-undeclared-edge',
+  'whatif-persona-indifferent',
+  'whatif-pack-stale',
+  'whatif-unknown-claim',
 ] as const;
 
 export type FindingCode = (typeof FINDING_CODES)[number];

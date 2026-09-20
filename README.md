@@ -85,18 +85,6 @@ npx flawline council <stage>   # put a stage to readers who were not told
 npx flawline what-if <claim>=refuted   # what was resting on this?
 ```
 
-`report` names the riskiest claim resting on nothing, says how much is riding
-on it, and gives exactly one recommendation.
-
-`council` writes a pack of claims with the `confidence:` lines stripped out,
-for a panel of four readers and a chairman. A reader shown "validated" grades
-your verdict; a reader shown the statement and its evidence reaches one. Their
-answers come back through `council --ingest` as warnings, and exit 0 — because
-a council can tell you a claim is thinner than it looks and can never tell you
-one is stronger. Only evidence does that. No key, no network: the pack goes out
-as JSON and the verdict comes back as JSON, so the panel can be five models,
-five subagents or five people in a room.
-
 `what-if` is the cheapest command here: no clock, no network, no model. It
 copies the thesis with one confidence changed, runs the ordinary checker over
 the copy, and reports what newly breaks. Every rule it applies already exists —
@@ -118,6 +106,48 @@ Nothing was changed. This is the graph answering a question.
 That is the shape this project exists to make visible: twenty sales and a
 conversion rate worth celebrating, resting on a problem statement nobody has
 checked with a customer.
+
+The graph is only as good as the edges someone remembered to write, and the
+dependency that costs six months is usually the one nobody noticed. `--deep`
+adds a panel for that: three seats scan every other claim for a dependency the
+document never declared, and — only when the customer stage carries real signal
+with sources — personas built from that material say what losing the claim
+changes for them.
+
+```console
+$ npx flawline what-if problem-exists --deep --ingest verdict.json
+strategy/model.md: warning: [whatif-undeclared-edge] price-clears-value
+    2 of 3 seats read "price-clears-value" as resting on "problem-exists",
+    which it does not declare. The fee is justified as cheap "against a
+    rebuild" — the rebuild cost is problem-exists. If they are right, add it
+    to depends_on — until then the graph cannot tell you this claim is at risk.
+
+0 error(s), 1 warning(s).
+```
+
+The two halves stay apart on purpose. The graph is the same answer every run and
+`evidence.md` may rest on it; the panel is a set of questions. Both are warnings
+and neither writes: a panel can tell you a claim is thinner than it looks, and
+can never tell you one is stronger.
+
+`council` writes a pack of claims with the `confidence:` lines stripped out,
+for a panel of four readers and a chairman. A reader shown "validated" grades
+your verdict; a reader shown the statement and its evidence reaches one. Their
+answers come back through `council --ingest` as warnings, and exit 0 — because
+a council can tell you a claim is thinner than it looks and can never tell you
+one is stronger. Only evidence does that. No key, no network: the pack goes out
+as JSON and the verdict comes back as JSON, so the panel can be five models,
+five subagents or five people in a room.
+
+`report` names the riskiest claim resting on nothing, says how much is riding on
+it, and gives exactly one recommendation. It also names what it refuses to
+advise on and why — a summary that recommends a channel on top of eight
+assumptions is the slide this project exists to prevent, so a recommendation is
+held to the same rule as a claim.
+
+`report --json` and `check --json` emit the same content for another agent to
+act on. One task does not delegate: an agent cannot sit down with a stranger,
+and until someone does, nothing leaves `assumed`.
 
 ## In CI
 

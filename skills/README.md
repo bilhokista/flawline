@@ -35,8 +35,8 @@ pointing any other agent at the file directly.
 | `flawline-narrative` | `why-this-exists`, `positioning-is-contested`, `story-is-theirs-not-yours` | Positioning, vision, mission, brand story. |
 | `flawline-motion` | `first-channel-proven`, `someone-unrelated-paid`, `sale-is-repeatable`, `org-matches-the-bottleneck` | Go to market, selling, hiring the bottleneck. |
 
-A slash command runs the panel end to end, spawning one agent per seat and
-ingesting the result: `/flawline-council <stage>`.
+Two slash commands run the panels end to end, spawning one agent per seat and
+ingesting the result: `/flawline-council <stage>` and `/flawline-what-if <claim>`.
 
 One more skill sits outside the order:
 
