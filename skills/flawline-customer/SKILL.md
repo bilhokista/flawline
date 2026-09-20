@@ -27,6 +27,36 @@ Push the founder through the narrowing, and let them feel the discomfort — it 
 the point. Ten named people is a market you can start in; a category is a market
 you can only describe.
 
+## Find the segment before you ask anyone
+
+A founder who cannot list ten names usually cannot invent them either, and
+sitting them down to guess produces a segment made of adjectives. Aggregate
+search volume is the cheapest way out: the queries people already type for this
+need, the words they use, and how the volume splits by place, season or role.
+
+Record it as `search-demand`, with the query, the tool and the date range, so a
+stranger can run it again. A cluster of queries is a candidate segment and the
+vocabulary to approach it with — which is what the interviews are for.
+
+Public questions do the other half. A thread on Reddit, Quora or a local forum
+where somebody asked for a way out of this says, in their own words, what they
+were trying to do — which a query never does. Record it as `forum-question`,
+one entry per thread with its URL and date. Count threads, not replies: a post
+with two hundred comments is one person with one problem and an audience.
+
+Census figures are the trap here, so name it before the founder reaches for
+them. `official-statistics` buys nothing, and not because the source is weak —
+it is the best-measured thing available. It counts populations, and this stage
+is about behaviour. "1.2 million households in this regency" cannot become "they
+cannot find a builder they trust", and the sentence that walks from one to the
+other is the oldest slide in the deck. It can still refute: if the real
+population is a fortieth of what the thesis assumed, write `refuted` and move
+on.
+
+It is a starting point and not a finish. A query establishes that people are
+looking, never what the problem costs them or what they would pay, so it
+reaches `indicated` and stops. The names still have to come from somewhere.
+
 ## Design the interviews before running them
 
 The single rule: **ask about the last time, never about the future.**

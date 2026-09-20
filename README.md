@@ -80,17 +80,21 @@ Edit the statements to say what you actually believe. Commit them. Then:
 npx flawline status   # what is settled, what is still a guess
 npx flawline check    # exits 1 when a claim outruns its evidence
 npx flawline report   # where this stands, and the one thing to do next
+npx flawline council <stage>   # put a stage to readers who were not told
+                               # what you concluded
 ```
 
-`report` names the riskiest claim resting on nothing, says how much is riding on
-it, and gives exactly one recommendation. It also names what it refuses to
-advise on and why — a summary that recommends a channel on top of eight
-assumptions is the slide this project exists to prevent, so a recommendation is
-held to the same rule as a claim.
+`report` names the riskiest claim resting on nothing, says how much is riding
+on it, and gives exactly one recommendation.
 
-`report --json` and `check --json` emit the same content for another agent to
-act on. One task does not delegate: an agent cannot sit down with a stranger,
-and until someone does, nothing leaves `assumed`.
+`council` writes a pack of claims with the `confidence:` lines stripped out,
+for a panel of four readers and a chairman. A reader shown "validated" grades
+your verdict; a reader shown the statement and its evidence reaches one. Their
+answers come back through `council --ingest` as warnings, and exit 0 — because
+a council can tell you a claim is thinner than it looks and can never tell you
+one is stronger. Only evidence does that. No key, no network: the pack goes out
+as JSON and the verdict comes back as JSON, so the panel can be five models,
+five subagents or five people in a room.
 
 ## In CI
 

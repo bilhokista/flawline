@@ -32,6 +32,12 @@ export const FINDING_CODES = [
   'stage-opened-early',
   'no-refutation-recorded',
   'method-beyond-reach',
+  // Written by `flawline council`, never by `check`. A panel reports; it cannot
+  // fail a build, so these are warnings by construction. See council.ts.
+  'council-dissent',
+  'council-ceiling-dissent',
+  'council-pack-stale',
+  'council-unknown-claim',
 ] as const;
 
 export type FindingCode = (typeof FINDING_CODES)[number];

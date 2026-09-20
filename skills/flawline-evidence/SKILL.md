@@ -57,6 +57,9 @@ pass, because humans are extremely good at finding the reading that suits them.
 Work down this list before accepting that code is necessary:
 
 - Ask for the money and see what happens. The shortest test in existence.
+- Count who is already searching for it, and in what words. Cheapest test on
+  the list, and the only one that runs without talking to anyone. Record it as
+  `search-demand`. It can kill a premise and never confirm one.
 - Sell the outcome and deliver it by hand for the first few customers.
 - Take a deposit or a signed letter of intent.
 - Put up a page describing the offer precisely and count who asks to buy.

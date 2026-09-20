@@ -1,12 +1,22 @@
 import { readdir, readFile, mkdir, writeFile, access } from 'node:fs/promises';
-import { join, relative, sep } from 'node:path';
+import { isAbsolute, join, relative, sep } from 'node:path';
 import { openStages } from './advice.js';
+import type { CouncilPack } from './council.js';
 import { STAGES, type Stage } from './model.js';
 import { parseThesis, type ParseResult } from './parse.js';
 import { STAGE_TEMPLATES } from './templates.js';
 
 /** Directory, relative to the project root, where stage documents live. */
 export const STRATEGY_DIR = 'strategy';
+
+/**
+ * Where council packs are written.
+ *
+ * Under a dot-directory because a pack is a question, not a record. The answer
+ * belongs in the stage document as an edited claim or a new evidence entry; a
+ * repository that keeps months of packs invites reading them as findings.
+ */
+export const COUNCIL_DIR = '.flawline/council';
 
 export interface LoadedDocument {
   readonly source: string;
@@ -106,4 +116,20 @@ export async function init(root: string): Promise<InitResult> {
 
 export function templateFor(stage: Stage): string {
   return STAGE_TEMPLATES[stage];
+}
+
+/** Writes a council pack, returning the path a reader should hand the panel. */
+export async function writePack(root: string, pack: CouncilPack): Promise<string> {
+  const directory = join(root, COUNCIL_DIR);
+  await mkdir(directory, { recursive: true });
+
+  const display = `${COUNCIL_DIR}/${pack.stage}.json`;
+  const body = `${JSON.stringify(pack, null, 2)}\n`;
+  await writeFile(join(directory, `${pack.stage}.json`), body, 'utf8');
+
+  return display;
+}
+
+export async function readVerdict(root: string, file: string): Promise<string> {
+  return readFile(isAbsolute(file) ? file : join(root, file), 'utf8');
 }

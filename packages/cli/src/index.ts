@@ -49,6 +49,9 @@ export {
   loadDocuments,
   templateFor,
   STRATEGY_DIR,
+  COUNCIL_DIR,
+  writePack,
+  readVerdict,
   type InitResult,
   type LoadedDocument,
 } from './workspace.js';
@@ -56,3 +59,21 @@ export {
 export { STAGE_TEMPLATES } from './templates.js';
 
 export { renderAnnotations } from './annotations.js';
+
+export {
+  COUNCIL_SEATS,
+  JUDGING_SEATS,
+  POSITIONS,
+  buildPack,
+  councilFindings,
+  parseVerdict,
+  isPosition,
+  type Seat,
+  type Position,
+  type PackedClaim,
+  type CouncilPack,
+  type CouncilVerdict,
+  type SeatReturn,
+  type SeatVerdict,
+  type VerdictParse,
+} from './council.js';

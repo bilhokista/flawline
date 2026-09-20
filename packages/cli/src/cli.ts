@@ -11,8 +11,9 @@ import {
   summarise,
 } from './report.js';
 import { renderAnnotations } from './annotations.js';
-import { STAGES } from './model.js';
-import { init, loadThesis, STRATEGY_DIR } from './workspace.js';
+import { isStage, STAGES } from './model.js';
+import { buildPack, councilFindings, parseVerdict } from './council.js';
+import { init, loadThesis, readVerdict, writePack, STRATEGY_DIR } from './workspace.js';
 
 /**
  * Read from the manifest rather than typed here, so the version the tool
@@ -34,12 +35,14 @@ Usage
   flawline status    Show how far the thesis has come and what is settled
   flawline report    Say where this stands and what the evidence lets you do
   flawline check     Fail if any claim leans on more support than it has
+  flawline council   Put a stage to a panel that is not shown your conclusions
 
 Options
   -C, --cwd <dir>     Run against another directory
       --format <fmt>  text (default), json for another agent, or github to
                       annotate the claims in a pull request
       --json          Shorthand for --format json
+      --ingest <file> Read a council's verdict back in (flawline council only)
   -h, --help          Show this
   -v, --version       Print the version
 
@@ -53,12 +56,18 @@ export const FORMATS = ['text', 'json', 'github'] as const;
 
 export type Format = (typeof FORMATS)[number];
 
+/** The one command that takes a positional argument: the stage to convene on. */
+const COMMAND_WITH_TARGET = 'council';
+
 function isFormat(value: string): value is Format {
   return (FORMATS as readonly string[]).includes(value);
 }
 
 interface ParsedArgs {
   readonly command: string | null;
+  /** A positional after the command, e.g. the stage `council` runs against. */
+  readonly target: string | null;
+  readonly ingest: string | null;
   readonly cwd: string;
   readonly help: boolean;
   readonly format: Format;
@@ -68,6 +77,8 @@ interface ParsedArgs {
 
 export function parseArgs(argv: readonly string[]): ParsedArgs {
   let command: string | null = null;
+  let target: string | null = null;
+  let ingest: string | null = null;
   let cwd = process.cwd();
   let help = false;
   let format: Format = 'text';
@@ -93,6 +104,14 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       }
       format = value;
       index += 1;
+    } else if (argument === '--ingest') {
+      const value = argv[index + 1];
+      if (value === undefined || value.startsWith('-')) {
+        error = '--ingest needs a verdict file.';
+        break;
+      }
+      ingest = value;
+      index += 1;
     } else if (argument === '-v' || argument === '--version') {
       version = true;
     } else if (argument === '-C' || argument === '--cwd') {
@@ -108,13 +127,19 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
       break;
     } else if (command === null) {
       command = argument;
+    } else if (command === COMMAND_WITH_TARGET && target === null) {
+      // Only `council` takes a positional. Every other command rejecting one is
+      // load-bearing: `flawline check strategy/problem.md` looks like it would
+      // check that file, and silently ignoring the path would check everything
+      // while appearing to narrow.
+      target = argument;
     } else {
       error = `Unexpected argument: ${argument}`;
       break;
     }
   }
 
-  return { command, cwd, help, format, version, error };
+  return { command, target, ingest, cwd, help, format, version, error };
 }
 
 export interface RunOutcome {
@@ -145,6 +170,8 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
       return runReport(args.cwd, args.format === 'json');
     case 'check':
       return runCheck(args.cwd, args.format);
+    case 'council':
+      return runCouncil(args.cwd, args.target, args.ingest, args.format === 'json');
     default:
       return { code: 2, out: `Unknown command: ${args.command}\n\n${HELP}` };
   }
@@ -277,6 +304,103 @@ async function runCheck(cwd: string, format: Format = 'text'): Promise<RunOutcom
         : renderFindings(status.findings);
 
   return { code: status.blocked ? 1 : 0, out };
+}
+
+/**
+ * Two halves of one conversation, kept deliberately apart.
+ *
+ * Without `--ingest` this writes a pack and stops. With it, it reads a verdict
+ * and reports. Nothing in between talks to a model, because the moment this
+ * command could call one, `flawline` would need a key, a network and a budget
+ * to tell a founder their claim is thin — and the answer would stop being the
+ * same twice.
+ */
+async function runCouncil(
+  cwd: string,
+  target: string | null,
+  ingest: string | null,
+  json = false,
+): Promise<RunOutcome> {
+  const { thesis, issues } = await loadThesis(cwd);
+
+  if (issues.length > 0) return { code: 1, out: renderParseIssues(issues) };
+
+  if (thesis.claims.length === 0) {
+    return { code: 1, out: `No claims found in ${STRATEGY_DIR}/. Run \`flawline init\` first.` };
+  }
+
+  if (ingest !== null) return ingestVerdict(cwd, thesis, ingest, json);
+
+  if (target === null) {
+    return {
+      code: 2,
+      out: `flawline council needs a stage: ${STAGES.join(', ')}.`,
+    };
+  }
+
+  if (!isStage(target)) {
+    return { code: 2, out: `Unknown stage: ${target}. Expected one of ${STAGES.join(', ')}.` };
+  }
+
+  const pack = buildPack(thesis, target);
+
+  if (pack.claims.length === 0) {
+    return { code: 1, out: `No claims in ${STRATEGY_DIR}/${target}.md to put to a council.` };
+  }
+
+  const path = await writePack(cwd, pack);
+
+  if (json) return { code: 0, out: JSON.stringify(pack, null, 2) };
+
+  return {
+    code: 0,
+    out: [
+      `wrote  ${path}`,
+      '',
+      `${pack.claims.length} claim(s), ${pack.seats.length} seats. The confidences are not in the`,
+      'pack: a reader shown your conclusion grades it instead of reaching one.',
+      '',
+      'Give the pack to a panel — models, subagents or people — then:',
+      `  flawline council --ingest <verdict.json>`,
+      '',
+      'Nothing a council says can raise a confidence. Only evidence does that.',
+    ].join('\n'),
+  };
+}
+
+async function ingestVerdict(
+  cwd: string,
+  thesis: Awaited<ReturnType<typeof loadThesis>>['thesis'],
+  file: string,
+  json: boolean,
+): Promise<RunOutcome> {
+  let text: string;
+  try {
+    text = await readVerdict(cwd, file);
+  } catch {
+    return { code: 1, out: `Could not read the verdict at ${file}.` };
+  }
+
+  const { verdict, issues: verdictIssues } = parseVerdict(text);
+
+  if (verdict === null) {
+    return { code: 1, out: verdictIssues.map((issue) => `error: ${issue}`).join('\n') };
+  }
+
+  const findings = councilFindings(thesis, verdict);
+
+  if (json) {
+    return { code: 0, out: JSON.stringify({ findings, issues: verdictIssues }, null, 2) };
+  }
+
+  const lines: string[] = [];
+
+  for (const issue of verdictIssues) lines.push(`note: ${issue}`);
+  if (verdictIssues.length > 0) lines.push('');
+
+  lines.push(findings.length === 0 ? 'The council found nothing the document does not already admit.' : renderFindings(findings));
+
+  return { code: 0, out: lines.join('\n') };
 }
 
 /* c8 ignore start -- process wiring, exercised by the binary rather than tests */

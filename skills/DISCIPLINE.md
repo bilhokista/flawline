@@ -56,6 +56,8 @@ Rules that admit no exceptions:
   not evidence.
 - **Never** invent, estimate or round an `n`. If you do not know the count, omit
   it; one unnumbered entry counts as one observation.
+- **Never** count a thread by its replies. A post with two hundred comments is
+  one person describing one problem; the pile-on is an audience, not a sample.
 - **Never** cite a source you have not been shown. An `evidence` entry is a
   promise that a reader can go and look.
 - Conversations with friends, co-founders, investors and advisors are **not**
@@ -80,6 +82,10 @@ they were willing to do. Gathering more of it multiplies the saying.
 | The record of one incident, published by whoever it went wrong for | `indicated` | Record it as `incident-record`. Problem stage only, and never for what it cost or what people already do about it — a record holds neither. |
 | A review by someone the platform confirms paid | `indicated` | Record it as `verified-review`. Problem and customer stages only. It reaches `they-already-try` — a purchase is them already trying — but never what the problem costs. |
 | Code someone else shipped to prevent this failure | `indicated` | Record it as `shipped-workaround`. The mitigation itself, not a post about the risk. Reaches `they-already-try`, because the workaround is in their repository rather than their head. Never what it cost. |
+| Aggregate search volume for a need | `indicated` | Record it as `search-demand`, with the query, the tool and the dates, so a stranger can run it again. Problem and customer stages only. Nobody types a query to be seen, which beats a scraped post — it reaches `they-already-try`, never what the problem costs. |
+| A question somebody posted in public, wanting an answer | `indicated` | Record it as `forum-question` — the question with its URL and date, not a comment under it. Problem and customer stages only. Count threads, never replies: one thread is one person, however many pile in. Reaches `they-already-try`, never what it cost. |
+| Census and official statistics | `assumed` | Record it as `official-statistics`. Not a comment on the source — it is the best-measured thing here, and it measures populations, while every claim in this tool is about how people behave toward your problem. It can still `refute`: a ceiling caps support, and a refutation is not support. |
+| Scraped posts, industry reports, competitor teardowns | `assumed` | Record it as `scraping` or `desk-research`. Written for an audience, about a pattern, with nothing at stake. Reading about a market is not sampling it. |
 | Outreach an agent sent without saying so | `assumed` | Record it as `bot-outreach`. A reply to a fiction measures the fiction. |
 | Waitlists, landing pages, demos that went well | `indicated` | Interest with no cost attached. |
 | Quote and proposal requests | `indicated` | Looks like a buyer right up until it evaporates. |
@@ -95,6 +101,29 @@ you, which is exactly why doing it means something.
 still stop at `indicated`. That is not a flaw in the method; it is the honest
 limit of asking people questions. `validated` arrives later and arrives
 carrying a receipt.
+
+## An argument is not an observation
+
+A panel can lower a claim and can never raise one.
+
+`flawline council` puts a stage to readers who are not shown the confidences,
+and reports where they doubt the page. That is worth running, and it is not
+evidence. Nobody on a panel went anywhere, asked anyone or paid for anything, so
+a unanimous council changes no `confidence:` line and never appears in an
+`evidence:` block. Its findings are warnings; the command exits 0.
+
+The asymmetry is the whole point, and it is deliberate rather than cautious. A
+panel that could promote a claim would be a way to manufacture support by
+asking politely — the same failure as a founder who sounds certain, wearing five
+faces instead of one.
+
+Two rules follow, and both are easy to break by accident:
+
+- **Never show a seat the confidence.** A reader shown `validated` grades a
+  verdict; a reader shown the statement and its evidence reaches one. Once a
+  seat has been anchored, its answer is worth nothing and looks identical.
+- **Never let a council's output become a source.** "The panel agreed" is not a
+  `source:` a stranger can open, because there is nothing there to open.
 
 ## Settled facts about the outside world expire
 

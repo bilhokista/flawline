@@ -5,7 +5,7 @@ instruction files.
 
 ## Install
 
-In Claude Code, add the marketplace and install all eight skills as a plugin:
+In Claude Code, add the marketplace and install the skills as a plugin:
 
 ```
 /plugin marketplace add bilhokista/flawline
@@ -34,6 +34,15 @@ pointing any other agent at the file directly.
 | `flawline-evidence` | `riskiest-assumption-named`, `test-is-cheaper-than-building`, `pass-fail-set-in-advance` | Planning validation, scoping an MVP, recording a result. |
 | `flawline-narrative` | `why-this-exists`, `positioning-is-contested`, `story-is-theirs-not-yours` | Positioning, vision, mission, brand story. |
 | `flawline-motion` | `first-channel-proven`, `someone-unrelated-paid`, `sale-is-repeatable`, `org-matches-the-bottleneck` | Go to market, selling, hiring the bottleneck. |
+
+A slash command runs the panel end to end, spawning one agent per seat and
+ingesting the result: `/flawline-council <stage>`.
+
+One more skill sits outside the order:
+
+| Skill | Owns | Invoke it when |
+| --- | --- | --- |
+| `flawline-council` | nothing | A stage is written and about to harden, and wants arguing with. Audits claims; never produces them. |
 
 They are ordered because the claims depend on each other. A skill invoked out of
 order will still run, and will leave its upstream claims marked `assumed` — so

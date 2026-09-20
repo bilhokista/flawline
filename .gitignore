@@ -3,3 +3,8 @@ dist/
 coverage/
 *.log
 .DS_Store
+
+# Council packs are questions put to a panel, not records of anything.
+# The answer belongs in a stage document as an edited claim or a new evidence
+# entry; a repo holding months of packs invites reading them as findings.
+.flawline/
