@@ -95,6 +95,15 @@ export {
 } from './whatif.js';
 
 export {
+  parseXrayVerdict,
+  renderXray,
+  xray,
+  type XrayClaim,
+  type XrayItem,
+  type XrayResult,
+} from './xray.js';
+
+export {
   EDGE_SEATS,
   PERSONA_IMPACTS,
   buildDeepPack,

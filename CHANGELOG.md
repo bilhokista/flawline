@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **`flawline xray <file>`, and `/flawline-xray` in the plugin.** Point it at the
+  page you already have: a landing page, a deck, a README. It reports every
+  claim the page makes, which of them point anywhere, and which carry a number
+  nobody showed. Nobody arrives with an empty `strategy/` folder, and asking
+  them to start over from a blank template was the most expensive first minute
+  the tool had.
+
+  A model does the reading, because finding assertions in prose is reading.
+  The tool refuses anything it cannot check for itself. Every quote has to
+  appear in the source word for word, so a paraphrased or invented claim is
+  rejected and named. A citation counts only when the page carries it. Numbers
+  are spotted by looking, including the ones written out in words: "nine
+  interviews" reads as measured exactly as much as "9" does.
+
+  It never writes to `strategy/`. What an x-ray finds is what the page
+  believes, and all of it starts as `assumed`.
+
 ## 0.10.0
 
 ### Added

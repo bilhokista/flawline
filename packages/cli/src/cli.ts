@@ -15,6 +15,7 @@ import { isStage, STAGES } from './model.js';
 import { buildPack, councilFindings, parseVerdict } from './council.js';
 import { parseAssignment, whatIf, type WhatIfResult } from './whatif.js';
 import { buildDeepPack, deepFindings, parseDeepVerdict, type DeepPack } from './deep.js';
+import { parseXrayVerdict, renderXray, xray } from './xray.js';
 import {
   init,
   loadThesis,
@@ -47,13 +48,14 @@ Usage
   flawline council   Put a stage to a panel that is not shown your conclusions
   flawline what-if   Knock out a claim and see what was resting on it
                      (--deep also asks a panel which edges you never declared)
+  flawline xray      Show which sentences in an existing page or deck are guesses
 
 Options
   -C, --cwd <dir>     Run against another directory
       --format <fmt>  text (default), json for another agent, or github to
                       annotate the claims in a pull request
       --json          Shorthand for --format json
-      --ingest <file> Read a panel's verdict back in (council and what-if)
+      --ingest <file> Read a panel's verdict back in (council, what-if, xray)
       --deep          Ask a panel for the edges the graph cannot see
   -h, --help          Show this
   -v, --version       Print the version
@@ -70,9 +72,9 @@ export type Format = (typeof FORMATS)[number];
 
 /**
  * Commands that take a positional argument: the stage `council` convenes on,
- * and the claim `what-if` knocks out.
+ * the claim `what-if` knocks out, and the document `xray` reads.
  */
-const COMMANDS_WITH_TARGET: ReadonlySet<string> = new Set(['council', 'what-if']);
+const COMMANDS_WITH_TARGET: ReadonlySet<string> = new Set(['council', 'what-if', 'xray']);
 
 function isFormat(value: string): value is Format {
   return (FORMATS as readonly string[]).includes(value);
@@ -193,6 +195,8 @@ export async function run(argv: readonly string[]): Promise<RunOutcome> {
       return runCouncil(args.cwd, args.target, args.ingest, args.format === 'json');
     case 'what-if':
       return runWhatIf(args.cwd, args.target, args.deep, args.ingest, args.format === 'json');
+    case 'xray':
+      return runXray(args.cwd, args.target, args.ingest, args.format === 'json');
     default:
       return { code: 2, out: `Unknown command: ${args.command}\n\n${HELP}` };
   }
@@ -617,6 +621,68 @@ async function ingestDeep(cwd: string, file: string, json: boolean): Promise<Run
   );
 
   return { code: 0, out: lines.join('\n') };
+}
+
+const XRAY_HANDOFF = `Read the document and quote every sentence that asserts something about
+the world: a problem, who has it, what it costs, a result, a number, a claim
+to be first, only or best. Skip descriptions of the product itself.
+
+Quote each one word for word. A paraphrase is rejected, because the point is
+that a reader can find the sentence on the page. Put it in the stage it
+belongs to, and add \`cites\` only when the page itself says where the claim
+came from, spelled as the page spells it.
+
+  { "claims": [ { "quote": "...", "stage": "problem", "cites": "https://..." } ] }
+
+Stages: ${STAGES.join(', ')}.`;
+
+/**
+ * Exits 0 whatever it finds, like `what-if`. The page is not in the repository
+ * the build guards; an x-ray describes it, and failing a build over prose that
+ * was never a claim would teach people to stop running it.
+ */
+async function runXray(
+  cwd: string,
+  target: string | null,
+  ingest: string | null,
+  json: boolean,
+): Promise<RunOutcome> {
+  if (target === null) {
+    return { code: 2, out: 'flawline xray needs a document, e.g. `flawline xray landing.md`.' };
+  }
+
+  let source: string;
+  try {
+    source = await readVerdict(cwd, target);
+  } catch {
+    return { code: 1, out: `Could not read ${target}.` };
+  }
+
+  if (ingest === null) {
+    return {
+      code: 0,
+      out: `${XRAY_HANDOFF}
+
+Write that to a file, then:
+  flawline xray ${target} --ingest <verdict.json>`,
+    };
+  }
+
+  let text: string;
+  try {
+    text = await readVerdict(cwd, ingest);
+  } catch {
+    return { code: 1, out: `Could not read the verdict at ${ingest}.` };
+  }
+
+  const { items, error } = parseXrayVerdict(text);
+  if (error !== null) return { code: 1, out: `error: ${error}` };
+
+  const result = xray(source, items);
+
+  return json
+    ? { code: 0, out: JSON.stringify(result, null, 2) }
+    : { code: 0, out: renderXray(result, target) };
 }
 
 /* c8 ignore start -- process wiring, exercised by the binary rather than tests */
