@@ -39,6 +39,31 @@ worth celebrating, sitting on top of a problem statement nobody had ever checked
 with a customer. Both facts in the same repository, and nothing connecting them.
 The numbers are not the weak link — the sentence underneath them is.
 
+## Start from the page you already have
+
+You do not have to start from a blank template. Point `xray` at your landing
+page, deck or README, and it tells you which sentences are claims and which of
+those point anywhere. This is its own README:
+
+```console
+$ npx flawline xray README.md --ingest verdict.json
+6 claims in README.md. 6 point nowhere: nothing on the page says where they came from.
+3 of them are numbers, which read as measured and were not shown to be.
+
+  problem   "The claim backed by nine interviews looks exactly like the one someone thought of in the shower."
+            points nowhere, and carries a number
+  ...
+
+The rest of the page leans on this one, and nothing on the page backs it:
+  "Your strategy document cannot tell you which parts of it are guesses."
+Check that one first. Every claim on the page starts as `assumed`.
+```
+
+An agent reads the page and quotes the claims (`/flawline-xray <file-or-url>`
+in Claude Code). The tool checks every quote against the page word for word
+and rejects the ones that are not there, so the model can miss a claim but
+cannot invent one.
+
 ## Install
 
 ```bash
