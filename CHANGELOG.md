@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.1
+
+### Fixed
+
+- **`xray` output on a short page.** A single unbacked number was reported as
+  "1 of them are numbers", and a page with one claim was told that "the rest
+  of the page" leaned on it. Both now read correctly in the singular.
+
 ## 0.11.0
 
 ### Added

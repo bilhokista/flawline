@@ -169,7 +169,9 @@ export function renderXray(result: XrayResult, sourceName: string): string {
       'nothing on the page says where they came from.',
   );
 
-  if (bareNumbers.length > 0) {
+  if (bareNumbers.length === 1) {
+    lines.push('1 of them is a number, which reads as measured and was not shown to be.');
+  } else if (bareNumbers.length > 1) {
     lines.push(`${bareNumbers.length} of them are numbers, which read as measured and were not shown to be.`);
   }
 
@@ -188,7 +190,11 @@ export function renderXray(result: XrayResult, sourceName: string): string {
 
   if (foundation) {
     lines.push('');
-    lines.push(`The rest of the page leans on this one, and nothing on the page backs it:`);
+    lines.push(
+      claims.length > 1
+        ? 'The rest of the page leans on this one, and nothing on the page backs it:'
+        : 'Nothing on the page backs it:',
+    );
     lines.push(`  "${foundation.quote}"`);
     lines.push(`Check that one first. Every claim on the page starts as \`assumed\`.`);
   }

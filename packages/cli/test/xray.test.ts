@@ -150,6 +150,17 @@ describe('renderXray', () => {
     );
   });
 
+  test('speaks in the singular about a single claim', () => {
+    const result = xray(LANDING, [
+      { quote: 'Trusted by 500+ companies', stage: 'motion', cites: null },
+    ]);
+
+    const out = renderXray(result, 'landing.md');
+    expect(out).toContain('1 of them is a number, which reads as measured and was not shown to be.');
+    expect(out).toContain('Nothing on the page backs it:');
+    expect(out).not.toContain('leans on');
+  });
+
   test('does not claim a foundation when every claim points somewhere', () => {
     const result = xray(LANDING, [
       { quote: 'Customers cut close time by 40%', stage: 'offer', cites: 'https://acme.example/case' },
